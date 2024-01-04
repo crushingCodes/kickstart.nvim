@@ -44,6 +44,8 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -88,7 +90,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim',       opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -275,7 +277,7 @@ vim.opt.termguicolors = true
 -- NOTE: You can change these options as you wish!
 
 -- Set highlight on search
-vim.o.hlsearch = false
+vim.o.hlsearch = true
 
 -- Make line numbers default
 vim.wo.number = true
@@ -324,8 +326,24 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+vim.keymap.set('n', '<leader>k', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+-- Custom keymaps
+
+-- Move around splits using Ctrl + {h,j,k,l}
+-- https://github.com/brainfucksec/neovim-lua/blob/main/nvim/lua/core/keymaps.lua
+vim.keymap.set('n', '<C-h>', "<C-w>h", { desc = 'Move left' }) 
+vim.keymap.set('n', '<C-j>', "<C-w>j", { desc = 'Move down' }) 
+vim.keymap.set('n', '<C-k>', "<C-w>k", { desc = 'Move up' }) 
+vim.keymap.set('n', '<C-l>', "<C-w>l", { desc = 'Move right' }) 
+
+-- General
+vim.keymap.set('n', '<leader>e', ":NvimTreeToggle<cr>", { desc = 'Open filetree' }) 
+vim.keymap.set('n', '<leader>q', ":q<cr>", { desc = 'Quit' }) 
+vim.keymap.set('n', '<leader>s', ":w<cr>", { desc = 'Save' }) 
+-- resourcing not available with lazyvim
+-- vim.keymap.set('n', '<leader>r', ":so %<cr>", { desc = 'Reload' }) 
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -391,7 +409,8 @@ end
 vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
 
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader>p', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader>P', require('telescope.builtin').commands, { desc = '[?] Commands' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
@@ -407,16 +426,18 @@ local function telescope_live_grep_open_files()
     prompt_title = 'Live Grep in Open Files',
   }
 end
-vim.keymap.set('n', '<leader>s/', telescope_live_grep_open_files, { desc = '[S]earch [/] in Open Files' })
-vim.keymap.set('n', '<leader>ss', require('telescope.builtin').builtin, { desc = '[S]earch [S]elect Telescope' })
+vim.keymap.set('n', '<leader>S/', telescope_live_grep_open_files, { desc = '[S]earch [/] in Open Files' })
+vim.keymap.set('n', '<leader>Ss', require('telescope.builtin').builtin, { desc = '[S]earch [S]elect Telescope' })
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
-vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
-vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
-vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
-vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
-vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set('n', '<leader>gg', ':G<cr>', { desc = 'Git Status' })
+vim.keymap.set('n', '<leader>gp', ':G push<cr>', { desc = 'Git Push' })
+vim.keymap.set('n', '<leader>Sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>Sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
+vim.keymap.set('n', '<leader>Sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
+vim.keymap.set('n', '<leader>Sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>SG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
+vim.keymap.set('n', '<leader>Sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>Sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -427,7 +448,7 @@ vim.defer_fn(function()
     ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-    auto_install = false,
+    auto_install = true,
 
     highlight = { enable = true },
     indent = { enable = true },
@@ -504,8 +525,8 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
-  nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+  nmap('<leader>lr', vim.lsp.buf.rename, '[R]ename')
+  nmap('<leader>la', vim.lsp.buf.code_action, 'Code [A]ction')
 
   nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
@@ -532,14 +553,15 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
+-- Menu
 -- document existing key chains
 require('which-key').register {
   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
-  ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-  ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
+  ['<leader>l'] = { name = '[L]sp', _ = 'which_key_ignore' },
+  ['<leader>S'] = { name = '[S]earch', _ = 'which_key_ignore' },
   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
 }
@@ -658,5 +680,52 @@ cmp.setup {
   },
 }
 
+-- -------------------------- Open at the last cursor position ---------------------------------------
+ local ignore_buftype = { "quickfix", "nofile", "help" }
+ local ignore_filetype = { "gitcommit", "gitrebase", "svn", "hgcommit" }
+
+ local function run()
+   if vim.tbl_contains(ignore_buftype, vim.bo.buftype) then
+     return
+   end
+
+   if vim.tbl_contains(ignore_filetype, vim.bo.filetype) then
+     -- reset cursor to first line
+     vim.cmd [[normal! gg]]
+     return
+   end
+
+   -- If a line has already been specified on the command line, we are done
+   --   nvim file +num
+   if vim.fn.line(".") > 1 then
+     return
+   end
+
+   local last_line = vim.fn.line([['"]])
+   local buff_last_line = vim.fn.line("$")
+
+   -- If the last line is set and the less than the last line in the buffer
+   if last_line > 0 and last_line <= buff_last_line then
+     local win_last_line = vim.fn.line("w$")
+     local win_first_line = vim.fn.line("w0")
+     -- Check if the last line of the buffer is the same as the win
+     if win_last_line == buff_last_line then
+       -- Set line to last line edited
+       vim.cmd [[normal! g`"]]
+       -- Try to center
+     elseif buff_last_line - last_line > ((win_last_line - win_first_line) / 2) - 1 then
+       vim.cmd [[normal! g`"zz]]
+     else
+       vim.cmd [[normal! G'"<c-e>]]
+     end
+   end
+ end
+
+ vim.api.nvim_create_autocmd({ 'BufWinEnter', 'FileType' }, {
+   group    = vim.api.nvim_create_augroup('nvim-lastplace', {}),
+   callback = run
+ })
+
+-- -------------------------- END Open at the last cursor position ---------------------------------------
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
