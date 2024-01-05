@@ -94,9 +94,11 @@ require('lazy').setup({
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
+
     },
   },
-
+  { 'lukas-reineke/lsp-format.nvim'
+  },
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -115,7 +117,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -333,17 +335,20 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 
 -- Move around splits using Ctrl + {h,j,k,l}
 -- https://github.com/brainfucksec/neovim-lua/blob/main/nvim/lua/core/keymaps.lua
-vim.keymap.set('n', '<C-h>', "<C-w>h", { desc = 'Move left' }) 
-vim.keymap.set('n', '<C-j>', "<C-w>j", { desc = 'Move down' }) 
-vim.keymap.set('n', '<C-k>', "<C-w>k", { desc = 'Move up' }) 
-vim.keymap.set('n', '<C-l>', "<C-w>l", { desc = 'Move right' }) 
+vim.keymap.set('n', '<C-h>', "<C-w>h", { desc = 'Move left' })
+vim.keymap.set('n', '<C-j>', "<C-w>j", { desc = 'Move down' })
+vim.keymap.set('n', '<C-k>', "<C-w>k", { desc = 'Move up' })
+vim.keymap.set('n', '<C-l>', "<C-w>l", { desc = 'Move right' })
 
 -- General
-vim.keymap.set('n', '<leader>e', ":NvimTreeToggle<cr>", { desc = 'Open filetree' }) 
-vim.keymap.set('n', '<leader>q', ":q<cr>", { desc = 'Quit' }) 
-vim.keymap.set('n', '<leader>s', ":w<cr>", { desc = 'Save' }) 
+vim.keymap.set('n', '<leader>e', ":NvimTreeToggle<cr>", { desc = 'Open filetree' })
+vim.keymap.set('n', '<leader>q', ":q<cr>", { desc = 'Quit' })
+vim.keymap.set('n', '<leader>s', ":w<cr>", { desc = 'Save' })
 -- resourcing not available with lazyvim
--- vim.keymap.set('n', '<leader>r', ":so %<cr>", { desc = 'Reload' }) 
+-- vim.keymap.set('n', '<leader>r', ":so %<cr>", { desc = 'Reload' })
+
+-- DBUI
+vim.keymap.set('n', '<leader>D', "<cmd>DBUIToggle<cr>", { desc = 'Open Database' })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -431,6 +436,9 @@ vim.keymap.set('n', '<leader>Ss', require('telescope.builtin').builtin, { desc =
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
 vim.keymap.set('n', '<leader>gg', ':G<cr>', { desc = 'Git Status' })
 vim.keymap.set('n', '<leader>gp', ':G push<cr>', { desc = 'Git Push' })
+vim.keymap.set('n', '<leader>gl', ':G log<cr>', { desc = 'Git Log' })
+vim.keymap.set('n', '<leader>gb', ':Telescope git_branches<cr>', { desc = 'Git Branches' })
+vim.keymap.set('n', '<leader>gd', ':Gvdiffsplit!<cr>', { desc = 'Git 3 way diff split' })
 vim.keymap.set('n', '<leader>Sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>Sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>Sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
@@ -495,15 +503,15 @@ vim.defer_fn(function()
           ['[]'] = '@class.outer',
         },
       },
-      swap = {
-        enable = true,
-        swap_next = {
-          ['<leader>a'] = '@parameter.inner',
-        },
-        swap_previous = {
-          ['<leader>A'] = '@parameter.inner',
-        },
-      },
+      -- swap = {
+      --   enable = true,
+      --   swap_next = {
+      --     ['<leader>a'] = '@parameter.inner',
+      --   },
+      --   swap_previous = {
+      --     ['<leader>A'] = '@parameter.inner',
+      --   },
+      -- },
     },
   }
 end, 0)
@@ -532,8 +540,8 @@ local on_attach = function(_, bufnr)
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
   nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-  nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-  nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+  nmap('<leader>ls', require('telescope.builtin').lsp_document_symbols, 'Document [s]ymbols')
+  nmap('<leader>lS', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Workspace [S]ymbols')
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
@@ -563,7 +571,7 @@ require('which-key').register {
   ['<leader>l'] = { name = '[L]sp', _ = 'which_key_ignore' },
   ['<leader>S'] = { name = '[S]earch', _ = 'which_key_ignore' },
   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
-  ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+  ['<leader>w'] = { name = '[D]atabase', _ = 'which_key_ignore' },
 }
 -- register which-key VISUAL mode
 -- required for visual <leader>hs (hunk stage) to work
@@ -628,6 +636,10 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
+require("lsp-format").setup {}
+
+require("lspconfig").lua_ls.setup { on_attach = require("lsp-format").on_attach }
+
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
 local cmp = require 'cmp'
@@ -681,50 +693,50 @@ cmp.setup {
 }
 
 -- -------------------------- Open at the last cursor position ---------------------------------------
- local ignore_buftype = { "quickfix", "nofile", "help" }
- local ignore_filetype = { "gitcommit", "gitrebase", "svn", "hgcommit" }
+local ignore_buftype = { "quickfix", "nofile", "help" }
+local ignore_filetype = { "gitcommit", "gitrebase", "svn", "hgcommit" }
 
- local function run()
-   if vim.tbl_contains(ignore_buftype, vim.bo.buftype) then
-     return
-   end
+local function run()
+  if vim.tbl_contains(ignore_buftype, vim.bo.buftype) then
+    return
+  end
 
-   if vim.tbl_contains(ignore_filetype, vim.bo.filetype) then
-     -- reset cursor to first line
-     vim.cmd [[normal! gg]]
-     return
-   end
+  if vim.tbl_contains(ignore_filetype, vim.bo.filetype) then
+    -- reset cursor to first line
+    vim.cmd [[normal! gg]]
+    return
+  end
 
-   -- If a line has already been specified on the command line, we are done
-   --   nvim file +num
-   if vim.fn.line(".") > 1 then
-     return
-   end
+  -- If a line has already been specified on the command line, we are done
+  --   nvim file +num
+  if vim.fn.line(".") > 1 then
+    return
+  end
 
-   local last_line = vim.fn.line([['"]])
-   local buff_last_line = vim.fn.line("$")
+  local last_line = vim.fn.line([['"]])
+  local buff_last_line = vim.fn.line("$")
 
-   -- If the last line is set and the less than the last line in the buffer
-   if last_line > 0 and last_line <= buff_last_line then
-     local win_last_line = vim.fn.line("w$")
-     local win_first_line = vim.fn.line("w0")
-     -- Check if the last line of the buffer is the same as the win
-     if win_last_line == buff_last_line then
-       -- Set line to last line edited
-       vim.cmd [[normal! g`"]]
-       -- Try to center
-     elseif buff_last_line - last_line > ((win_last_line - win_first_line) / 2) - 1 then
-       vim.cmd [[normal! g`"zz]]
-     else
-       vim.cmd [[normal! G'"<c-e>]]
-     end
-   end
- end
+  -- If the last line is set and the less than the last line in the buffer
+  if last_line > 0 and last_line <= buff_last_line then
+    local win_last_line = vim.fn.line("w$")
+    local win_first_line = vim.fn.line("w0")
+    -- Check if the last line of the buffer is the same as the win
+    if win_last_line == buff_last_line then
+      -- Set line to last line edited
+      vim.cmd [[normal! g`"]]
+      -- Try to center
+    elseif buff_last_line - last_line > ((win_last_line - win_first_line) / 2) - 1 then
+      vim.cmd [[normal! g`"zz]]
+    else
+      vim.cmd [[normal! G'"<c-e>]]
+    end
+  end
+end
 
- vim.api.nvim_create_autocmd({ 'BufWinEnter', 'FileType' }, {
-   group    = vim.api.nvim_create_augroup('nvim-lastplace', {}),
-   callback = run
- })
+vim.api.nvim_create_autocmd({ 'BufWinEnter', 'FileType' }, {
+  group    = vim.api.nvim_create_augroup('nvim-lastplace', {}),
+  callback = run
+})
 
 -- -------------------------- END Open at the last cursor position ---------------------------------------
 -- The line beneath this is called `modeline`. See `:help modeline`

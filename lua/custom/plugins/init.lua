@@ -13,4 +13,24 @@ return {
   },
   { 'nvim-tree/nvim-tree.lua', config = true },
   { 'nvim-tree/nvim-web-devicons' },
+   {
+    'pmizio/typescript-tools.nvim',
+    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+    config = function()
+      require("typescript-tools").setup({
+        settings = {
+          --separate_diagnostic_server = false,
+          expose_as_code_action = {
+            "add_missing_imports", "remove_unused_imports", "organize_imports"
+          },
+          tsserver_file_preferences = {
+            importModuleSpecifierPreference = "non-relative",
+            importModuleSpecifierEnding = "minimal",
+          },
+        }
+      })
+    end,
+  }, 
+  { 'tpope/vim-dadbod' },
+  { 'kristijanhusak/vim-dadbod-ui' },
 }
