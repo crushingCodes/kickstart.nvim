@@ -44,7 +44,7 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-
+--local null_ls = require("null-ls")
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
@@ -94,11 +94,9 @@ require('lazy').setup({
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
-
     },
   },
-  { 'lukas-reineke/lsp-format.nvim'
-  },
+  -- { 'lukas-reineke/lsp-format.nvim' },
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -184,15 +182,14 @@ require('lazy').setup({
         end, { desc = 'git diff against last commit' })
 
         -- Toggles
-        map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
-        map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
+        map('n', '<leader>Tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
+        map('n', '<leader>Td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
 
         -- Text object
         map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
       end,
     },
   },
-
 
   {
     -- Set lualine as statusline
@@ -262,8 +259,19 @@ require('lazy').setup({
   --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
+  {
+    'jose-elias-alvarez/null-ls.nvim',
+    opts = function()
+      return require 'custom.configs.null-ls'
+    end,
+  },
   { import = 'custom.plugins' },
 }, {})
+
+-- local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+-- local null_ls = require("null-ls")
+--
+
 -- nvim-tree
 -- disable netrw at the very start of your init.lua
 vim.g.loaded_netrw = 1
@@ -271,8 +279,6 @@ vim.g.loaded_netrwPlugin = 1
 
 -- set termguicolors to enable highlight groups
 vim.opt.termguicolors = true
-
-
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -335,20 +341,21 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 
 -- Move around splits using Ctrl + {h,j,k,l}
 -- https://github.com/brainfucksec/neovim-lua/blob/main/nvim/lua/core/keymaps.lua
-vim.keymap.set('n', '<C-h>', "<C-w>h", { desc = 'Move left' })
-vim.keymap.set('n', '<C-j>', "<C-w>j", { desc = 'Move down' })
-vim.keymap.set('n', '<C-k>', "<C-w>k", { desc = 'Move up' })
-vim.keymap.set('n', '<C-l>', "<C-w>l", { desc = 'Move right' })
+vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = 'Move left' })
+vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Move down' })
+vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Move up' })
+vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Move right' })
 
 -- General
-vim.keymap.set('n', '<leader>e', ":NvimTreeToggle<cr>", { desc = 'Open filetree' })
-vim.keymap.set('n', '<leader>q', ":q<cr>", { desc = 'Quit' })
-vim.keymap.set('n', '<leader>s', ":w<cr>", { desc = 'Save' })
+vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<cr>', { desc = 'Open filetree' })
+vim.keymap.set('n', '<leader>t', ':Telescope builtin<cr>', { desc = 'Telescope' })
+vim.keymap.set('n', '<leader>q', ':q<cr>', { desc = 'Quit' })
+vim.keymap.set('n', '<leader>s', ':w<cr>', { desc = 'Save' })
 -- resourcing not available with lazyvim
 -- vim.keymap.set('n', '<leader>r', ":so %<cr>", { desc = 'Reload' })
 
 -- DBUI
-vim.keymap.set('n', '<leader>D', "<cmd>DBUIToggle<cr>", { desc = 'Open Database' })
+vim.keymap.set('n', '<leader>D', '<cmd>DBUIToggle<cr>', { desc = 'Open Database' })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -414,8 +421,8 @@ end
 vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
 
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>p', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader>P', require('telescope.builtin').commands, { desc = '[?] Commands' })
+vim.keymap.set('n', '<leader>p', require('telescope.builtin').oldfiles, { desc = 'Find recently opened files' })
+vim.keymap.set('n', '<leader>P', require('telescope.builtin').commands, { desc = 'Commands' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
@@ -570,7 +577,7 @@ require('which-key').register {
   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
   ['<leader>l'] = { name = '[L]sp', _ = 'which_key_ignore' },
   ['<leader>S'] = { name = '[S]earch', _ = 'which_key_ignore' },
-  ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
+  ['<leader>T'] = { name = '[T]oggle', _ = 'which_key_ignore' },
   ['<leader>w'] = { name = '[D]atabase', _ = 'which_key_ignore' },
 }
 -- register which-key VISUAL mode
@@ -596,10 +603,10 @@ require('mason-lspconfig').setup()
 local servers = {
   -- clangd = {},
   -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
-  -- tsserver = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  pyright = {},
+  rust_analyzer = {},
+  tsserver = {},
+  html = { filetypes = { 'html', 'twig', 'hbs' } },
 
   lua_ls = {
     Lua = {
@@ -636,9 +643,9 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
-require("lsp-format").setup {}
-
-require("lspconfig").lua_ls.setup { on_attach = require("lsp-format").on_attach }
+-- require("lsp-format").setup {}
+--
+-- require("lspconfig").lua_ls.setup { on_attach = require("lsp-format").on_attach }
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
@@ -693,8 +700,8 @@ cmp.setup {
 }
 
 -- -------------------------- Open at the last cursor position ---------------------------------------
-local ignore_buftype = { "quickfix", "nofile", "help" }
-local ignore_filetype = { "gitcommit", "gitrebase", "svn", "hgcommit" }
+local ignore_buftype = { 'quickfix', 'nofile', 'help' }
+local ignore_filetype = { 'gitcommit', 'gitrebase', 'svn', 'hgcommit' }
 
 local function run()
   if vim.tbl_contains(ignore_buftype, vim.bo.buftype) then
@@ -709,17 +716,17 @@ local function run()
 
   -- If a line has already been specified on the command line, we are done
   --   nvim file +num
-  if vim.fn.line(".") > 1 then
+  if vim.fn.line '.' > 1 then
     return
   end
 
-  local last_line = vim.fn.line([['"]])
-  local buff_last_line = vim.fn.line("$")
+  local last_line = vim.fn.line [['"]]
+  local buff_last_line = vim.fn.line '$'
 
   -- If the last line is set and the less than the last line in the buffer
   if last_line > 0 and last_line <= buff_last_line then
-    local win_last_line = vim.fn.line("w$")
-    local win_first_line = vim.fn.line("w0")
+    local win_last_line = vim.fn.line 'w$'
+    local win_first_line = vim.fn.line 'w0'
     -- Check if the last line of the buffer is the same as the win
     if win_last_line == buff_last_line then
       -- Set line to last line edited
@@ -734,8 +741,8 @@ local function run()
 end
 
 vim.api.nvim_create_autocmd({ 'BufWinEnter', 'FileType' }, {
-  group    = vim.api.nvim_create_augroup('nvim-lastplace', {}),
-  callback = run
+  group = vim.api.nvim_create_augroup('nvim-lastplace', {}),
+  callback = run,
 })
 
 -- -------------------------- END Open at the last cursor position ---------------------------------------
