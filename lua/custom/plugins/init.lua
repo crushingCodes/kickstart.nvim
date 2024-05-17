@@ -7,25 +7,6 @@ return {
   { 'tpope/vim-abolish' },
   { 'tpope/vim-repeat' },
   { 'tpope/vim-obsession' },
-<<<<<<< Updated upstream
-  -- {
-  --   'Shatur/neovim-ayu',
-  --   config = function()
-  --     require('ayu').setup {}
-  --     vim.cmd.colorscheme 'ayu-dark'
-  --   end,
-  --   priority = 1000,
-  -- },
-=======
-  {
-    'Shatur/neovim-ayu',
-    config = function()
-      require('ayu').setup {}
-      vim.cmd.colorscheme 'ayu-dark'
-    end,
-    priority = 1000,
-  },
->>>>>>> Stashed changes
   {
     'NeogitOrg/neogit',
     dependencies = {
@@ -50,7 +31,6 @@ return {
       require('octo').setup()
     end,
   },
-<<<<<<< Updated upstream
   {
     'rmagatti/auto-session',
     config = function()
@@ -60,6 +40,4 @@ return {
       }
     end,
   },
-=======
->>>>>>> Stashed changes
 }

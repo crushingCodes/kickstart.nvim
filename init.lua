@@ -289,14 +289,9 @@ require('lazy').setup({
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
         ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
-<<<<<<< Updated upstream
         ['<leader>l'] = { name = '[L]sp', _ = 'which_key_ignore' },
         ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
         ['<leader>h'] = { name = 'Git[H]ub', _ = 'which_key_ignore' },
-=======
-        ['<leader>l'] = { name = '[l]sp', _ = 'which_key_ignore' },
-        ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
->>>>>>> Stashed changes
       }
       -- visual mode
       require('which-key').register({
@@ -516,14 +511,11 @@ require('lazy').setup({
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
 
           map('<leader>ta', ':ASToggle<CR>', '[a]uto save')
-<<<<<<< Updated upstream
           map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
           map('<leader>hh', ':Octo pr diff<CR>', 'PR diff')
           map('<leader>hc', ':Octo pr create<CR>', 'PR create')
           map('<leader>q', ':q<CR>', '[q]uit')
           map('<leader>Q', ':qa<CR>', '[Q]uit all')
-=======
->>>>>>> Stashed changes
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -955,9 +947,6 @@ vim.api.nvim_create_autocmd('BufRead', {
   end,
 })
 
-<<<<<<< Updated upstream
 vim.treesitter.language.register("markdown", "octo")
-=======
->>>>>>> Stashed changes
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
