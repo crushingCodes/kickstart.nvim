@@ -22,4 +22,25 @@ return {
       },
     },
   },
+  config = function()
+    require('neo-tree').setup {
+      close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
+      auto_clean_after_session_restore = true, -- Automatically clean up broken neo-tree buffers saved in sessions
+      event_handlers = {
+        {
+          event = 'before_render',
+          handler = function(state)
+            -- add something to the state that can be used by custom components
+          end,
+        },
+        {
+          event = 'file_opened',
+          handler = function(file_path)
+            --auto close
+            require('neo-tree.command').execute { action = 'close' }
+          end,
+        },
+      },
+    }
+  end,
 }
