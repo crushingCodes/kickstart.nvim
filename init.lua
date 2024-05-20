@@ -167,6 +167,34 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+local map = function(keys, func, desc)
+  vim.keymap.set('n', keys, func, { desc = desc })
+end
+
+map('<leader>ta', ':ASToggle<CR>', '[a]uto save')
+map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
+map('<leader>hh', ':Octo pr diff<CR>', 'PR diff')
+map('<leader>hc', ':Octo pr create<CR>', 'PR create')
+-- map('<leader>w', ':w<CR>', '[w]rite')
+
+-- Format and Save
+vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
+
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+
+map('<leader>q', ':q<CR>', '[q]uit')
+
+-- Utils for getting file paths
+map('<leader>yr', ':let @*=expand("%")<CR>', 'Yank [r]elative file path')
+map('<leader>yp', ':let @*=expand("%:p")<CR>', 'Yank full file [p]ath')
+map('<leader>yn', ':let @*=expand("%:t")<CR>', 'Yank file [n]ame')
+map('<leader>yd', ':let @*=expand("%:p:h")<CR>', 'Yank directory [n]ame')
+
+map('<leader>Q', ':qa<CR>', '[Q]uit all')
+
+-- DBUI
+vim.keymap.set('n', '<leader>d', '<cmd>DBUIToggle<cr>', { desc = 'Open Database' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -240,8 +268,6 @@ require('lazy').setup({
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
-  { 'pocco81/auto-save.nvim' },
-
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
   --    require('gitsigns').setup({ ... })
@@ -284,13 +310,13 @@ require('lazy').setup({
       -- Document existing key chains
       require('which-key').register {
         ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
         ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
         ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
         ['<leader>l'] = { name = '[L]sp', _ = 'which_key_ignore' },
         ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
+        ['<leader>gm'] = { name = 'Resolve [m]erge conflicts', _ = 'which_key_ignore' },
+        ['<leader>gM'] = { name = 'Save [m]erge conflict resolution', _ = 'which_key_ignore' },
         ['<leader>h'] = { name = 'Git[H]ub', _ = 'which_key_ignore' },
       }
       -- visual mode
@@ -496,7 +522,7 @@ require('lazy').setup({
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
-          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+          map('<leader>lS', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
@@ -509,13 +535,6 @@ require('lazy').setup({
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
-
-          map('<leader>ta', ':ASToggle<CR>', '[a]uto save')
-          map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
-          map('<leader>hh', ':Octo pr diff<CR>', 'PR diff')
-          map('<leader>hc', ':Octo pr create<CR>', 'PR create')
-          map('<leader>q', ':q<CR>', '[q]uit')
-          map('<leader>Q', ':qa<CR>', '[Q]uit all')
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -621,6 +640,8 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'black',
+        'prettier',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -644,9 +665,10 @@ require('lazy').setup({
     lazy = false,
     keys = {
       {
-        '<leader>f',
+        '<leader>w',
         function()
           require('conform').format { async = true, lsp_fallback = true }
+          vim.cmd 'w'
         end,
         mode = '',
         desc = '[F]ormat buffer',
@@ -850,7 +872,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'python', 'requirements' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -895,7 +917,7 @@ require('lazy').setup({
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
-  require 'custom.plugins'
+  require 'custom.plugins',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
@@ -935,11 +957,7 @@ vim.api.nvim_create_autocmd('BufRead', {
       callback = function()
         local ft = vim.bo[opts.buf].filetype
         local last_known_line = vim.api.nvim_buf_get_mark(opts.buf, '"')[1]
-        if
-          not (ft:match('commit') and ft:match('rebase'))
-          and last_known_line > 1
-          and last_known_line <= vim.api.nvim_buf_line_count(opts.buf)
-        then
+        if not (ft:match 'commit' and ft:match 'rebase') and last_known_line > 1 and last_known_line <= vim.api.nvim_buf_line_count(opts.buf) then
           vim.api.nvim_feedkeys([[g`"]], 'nx', false)
         end
       end,
@@ -947,6 +965,35 @@ vim.api.nvim_create_autocmd('BufRead', {
   end,
 })
 
-vim.treesitter.language.register("markdown", "octo")
+vim.treesitter.language.register('markdown', 'octo')
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- Enable paste to be repeatable
+-- https://vi.stackexchange.com/a/34860/48283
+vim.api.nvim_set_keymap('x', 'p', 'c<c-r><c-r>0<esc>', { noremap = true, silent = true })
+
+-- Visual mode paste from the system clipboard
+vim.api.nvim_set_keymap('x', 'p', '"_d"+P', { noremap = true, silent = true })
+
+-- https://stackoverflow.com/a/59029500
+-- normal mode include current word in search
+vim.api.nvim_set_keymap('n', '#', '#N', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '*', '*N', { noremap = true, silent = true })
+-- visual mode include current selection in search
+vim.api.nvim_set_keymap('x', '#', '#N', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', '*', '*N', { noremap = true, silent = true })
+
+vim.api.nvim_create_autocmd('VimEnter', {
+  desc = 'Auto select virtualenv Nvim open',
+  pattern = '*',
+  callback = function()
+    vim.defer_fn(function()
+      local venv = vim.fn.findfile('requirements.txt', vim.fn.getcwd() .. ';')
+      if venv ~= '' then
+        require('venv-selector').retrieve_from_cache()
+      end
+    end, 200) -- Delay of 200 milliseconds
+  end,
+  once = true,
+})
