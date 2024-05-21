@@ -184,6 +184,38 @@ vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,
 
 map('<leader>q', ':q<CR>', '[q]uit')
 
+-- Merge conflicts
+map('<leader>mm', ':Gdiffsplit!<CR>', '[m]erge conflicts')
+map('<leader>mM', ':Gwrite<CR>', 'Save [M]erge resolution')
+map('<leader>mc', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
+map('<leader>mdp', ':diffput<CR>', 'dp - diffput')
+-- Define the merge menu mappings
+local merge_mappings = {
+  name = '+merge',
+  -- Add other useful shortcuts here
+  -- For example:
+  -- do = { ":diffget<CR>", "Diffget" },
+  -- db = { ":diffget BASE<CR>", "Diffget BASE" },
+}
+
+-- Register the merge menu mappings with which-key
+-- require('which-key').register({
+--   m = merge_mappings,
+-- }, { prefix = '<leader>' })
+
+-- Function to confirm and undo the last commit
+local function confirm_undo_last_commit()
+  local confirm = vim.fn.confirm('Are you sure you want to undo the last commit?', '&Yes\n&No', 2)
+  if confirm == 1 then
+    vim.cmd 'G reset HEAD~1'
+  end
+end
+
+-- Ensure the function is accessible globally
+_G.confirm_undo_last_commit = confirm_undo_last_commit
+
+map('<leader>gU', ':lua confirm_undo_last_commit()<CR>', '[U]ndo last commit')
+
 -- Utils for getting file paths
 map('<leader>yr', ':let @*=expand("%")<CR>', 'Yank [r]elative file path')
 map('<leader>yp', ':let @*=expand("%:p")<CR>', 'Yank full file [p]ath')
@@ -315,8 +347,7 @@ require('lazy').setup({
         ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
         ['<leader>l'] = { name = '[L]sp', _ = 'which_key_ignore' },
         ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
-        ['<leader>gm'] = { name = 'Resolve [m]erge conflicts', _ = 'which_key_ignore' },
-        ['<leader>gM'] = { name = 'Save [m]erge conflict resolution', _ = 'which_key_ignore' },
+        ['<leader>m'] = { name = '[M]erge', _ = 'which_key_ignore' },
         ['<leader>h'] = { name = 'Git[H]ub', _ = 'which_key_ignore' },
       }
       -- visual mode
@@ -332,7 +363,6 @@ require('lazy').setup({
   -- you do for a plugin at the top level, you can do for a dependency.
   --
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
-
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
@@ -402,16 +432,36 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>sh', function()
+        require('telescope.builtin').help_tags()
+      end, { desc = '[S]earch [H]elp' })
+      vim.keymap.set('n', '<leader>sk', function()
+        require('telescope.builtin').keymaps()
+      end, { desc = '[S]earch [K]eymaps' })
+      vim.keymap.set('n', '<leader>sf', function()
+        require('telescope.builtin').find_files()
+      end, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>ss', function()
+        require('telescope.builtin').builtin()
+      end, { desc = '[S]earch [S]elect Telescope' })
+      vim.keymap.set('n', '<leader>sw', function()
+        require('telescope.builtin').grep_string()
+      end, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('n', '<leader>sg', function()
+        require('telescope.builtin').live_grep()
+      end, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader>sd', function()
+        require('telescope.builtin').diagnostics()
+      end, { desc = '[S]earch [D]iagnostics' })
+      vim.keymap.set('n', '<leader>sr', function()
+        require('telescope.builtin').resume()
+      end, { desc = '[S]earch [R]esume' })
+      vim.keymap.set('n', '<leader>s.', function()
+        require('telescope.builtin').oldfiles()
+      end, { desc = '[S]earch Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader><leader>', function()
+        require('telescope.builtin').buffers()
+      end, { desc = '[ ] Find existing buffers' })
 
       -- Custom
       vim.keymap.set('n', '<leader>e', ':Neotree toggle<cr>', { desc = 'Open filetree' })
@@ -440,7 +490,34 @@ require('lazy').setup({
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
+  { 'kkharji/sqlite.lua' },
+  {
+    'prochri/telescope-all-recent.nvim',
+    -- priority = 10000,
+    codependencies = {
+      'nvim-telescope/telescope.nvim',
+      'kkharji/sqlite.lua',
+      -- optional, if using telescope for vim.ui.select
+      -- 'stevearc/dressing.nvim',
+    },
+    config = function()
+      require('telescope-all-recent').setup {
+        pickers = { -- allows you to overwrite the default settings for each picker
+          buffers = { -- enable man_pages picker. Disable cwd and use frecency sorting.
+            disable = false,
+            use_cwd = true,
+            sorting = 'recent',
+          },
 
+          -- change settings for a telescope extension.
+          -- To find out about extensions, you can use `print(vim.inspect(require'telescope'.extensions))`
+          -- ['extension_name#extension_method'] = {
+          --   -- [...]
+          -- },
+        },
+      }
+    end,
+  },
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -600,7 +677,46 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        pyright = {
+          single_file_support = true,
+          settings = {
+            pyright = {
+              -- disableLanguageServices = false,
+              -- disableOrganizeImports = false
+            },
+            python = {
+              analysis = {
+                autoImportCompletions = true,
+                autoSearchPaths = true,
+                diagnosticMode = 'workspace', -- openFilesOnly, workspace
+                typeCheckingMode = 'basic', -- off, basic, strict
+                useLibraryCodeForTypes = true,
+              },
+            },
+          },
+        },
+
+        -- settings = {
+        --   python = {
+        --     analysis = {
+        --       extraPaths = { '/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages' },
+        --       logLevel = 'Trace',
+        --     },
+        --   },
+        -- },
+        -- on_attach = function(client, bufnr)
+        --   -- Enable logging
+        --   client.notify('workspace/didChangeConfiguration', {
+        --     settings = {
+        --       python = {
+        --         analysis = {
+        --           logLevel = 'Trace', -- Change to 'Information' or 'Trace' for detailed logs
+        --         },
+        --       },
+        --     },
+        --   })
+        -- end,
+        -- },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -642,6 +758,7 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'black',
         'prettier',
+        'eslint',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -984,16 +1101,32 @@ vim.api.nvim_set_keymap('n', '*', '*N', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('x', '#', '#N', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('x', '*', '*N', { noremap = true, silent = true })
 
-vim.api.nvim_create_autocmd('VimEnter', {
-  desc = 'Auto select virtualenv Nvim open',
-  pattern = '*',
+-- Auto commands
+-- Python venv
+-- vim.api.nvim_create_autocmd('VimEnter', {
+--   desc = 'Auto select virtualenv Nvim open',
+--   pattern = '*',
+--   callback = function()
+--     vim.defer_fn(function()
+--       local venv = vim.fn.findfile('requirements.txt', vim.fn.getcwd() .. ';')
+--       if venv ~= '' then
+--         require('venv-selector').retrieve_from_cache()
+--       end
+--     end, 200) -- Delay of 200 milliseconds
+--   end,
+--   once = true,
+-- })
+
+-- Neogit
+-- Define the autocommand to refresh buffers when the Neogit status buffer is closed
+vim.api.nvim_create_augroup('NeogitRefresh', { clear = true })
+vim.api.nvim_create_autocmd('BufWinLeave', {
+  group = 'NeogitRefresh',
+  pattern = 'NeogitStatus',
   callback = function()
-    vim.defer_fn(function()
-      local venv = vim.fn.findfile('requirements.txt', vim.fn.getcwd() .. ';')
-      if venv ~= '' then
-        require('venv-selector').retrieve_from_cache()
-      end
-    end, 200) -- Delay of 200 milliseconds
+    vim.cmd 'checktime'
   end,
-  once = true,
 })
+
+-- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'pyright' })
+-- vim.g.python3_host_prog = '/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/bin/python3.10'

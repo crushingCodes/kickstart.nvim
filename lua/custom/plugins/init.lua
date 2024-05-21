@@ -26,7 +26,19 @@ return {
       'nvim-telescope/telescope.nvim', -- optional
       -- "ibhagwan/fzf-lua",              -- optional
     },
-    config = true,
+    -- config = true,
+    -- Configure the event hooks
+    config = function()
+      hooks = {
+        require('neogit').setup {
+
+          post_status_buffer_close = function()
+            -- Refresh all buffers when the Neogit status buffer is closed
+            vim.cmd 'checktime'
+          end,
+        },
+      }
+    end,
   },
   {
     'pwntester/octo.nvim',
@@ -87,13 +99,14 @@ return {
         local utils = require 'auto-save.utils.data'
 
         print('filetype', vim.bo[buf].filetype)
-        if fn.getbufvar(buf, '&modifiable') == 1 and utils.not_in(fn.getbufvar(buf, '&filetype'), { 'octo', 'sql' }) then
+        if fn.getbufvar(buf, '&modifiable') == 1 and utils.not_in(fn.getbufvar(buf, '&filetype'), { 'octo', 'sql', 'python' }) then
           return true -- met condition(s), can save
         end
         return false -- can't save
       end,
     },
   },
+  { 'nvim-lua/plenary.nvim' },
   {
     'pmizio/typescript-tools.nvim',
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
@@ -148,4 +161,6 @@ return {
   },
   { 'tpope/vim-dadbod' },
   { 'kristijanhusak/vim-dadbod-ui' },
+  { 'kristijanhusak/vim-dadbod-completion' },
+  
 }
