@@ -45,7 +45,6 @@ return {
     requires = {
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope.nvim',
-      -- OR 'ibhagwan/fzf-lua',
       'nvim-tree/nvim-web-devicons',
     },
     opts = {},
@@ -87,7 +86,6 @@ return {
         auto_session_suppress_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
         auto_session_suppress_filetypes = { 'octo', 'sql', 'dbout' },
         pre_save_cmds = { _G.close_all_floating_wins, 'Neotree close', 'DBUIClose' },
-        -- post_restore_cmds = { 'Neotree filesystem show' },
       }
     end,
   },
@@ -161,6 +159,6 @@ return {
   },
   { 'tpope/vim-dadbod' },
   { 'kristijanhusak/vim-dadbod-ui' },
-  { 'kristijanhusak/vim-dadbod-completion' },
-  
+  -- TODO: get this to work
+  -- { 'kristijanhusak/vim-dadbod-completion' },
 }

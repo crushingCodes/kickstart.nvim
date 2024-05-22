@@ -175,7 +175,6 @@ map('<leader>ta', ':ASToggle<CR>', '[a]uto save')
 map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
 map('<leader>hh', ':Octo pr diff<CR>', 'PR diff')
 map('<leader>hc', ':Octo pr create<CR>', 'PR create')
--- map('<leader>w', ':w<CR>', '[w]rite')
 
 -- Format and Save
 vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
@@ -184,24 +183,13 @@ vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,
 
 map('<leader>q', ':q<CR>', '[q]uit')
 
+map('<leader>bd', ':%bd!', '[d]elete all buffers')
+
 -- Merge conflicts
 map('<leader>mm', ':Gdiffsplit!<CR>', '[m]erge conflicts')
 map('<leader>mM', ':Gwrite<CR>', 'Save [M]erge resolution')
 map('<leader>mc', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
 map('<leader>mdp', ':diffput<CR>', 'dp - diffput')
--- Define the merge menu mappings
-local merge_mappings = {
-  name = '+merge',
-  -- Add other useful shortcuts here
-  -- For example:
-  -- do = { ":diffget<CR>", "Diffget" },
-  -- db = { ":diffget BASE<CR>", "Diffget BASE" },
-}
-
--- Register the merge menu mappings with which-key
--- require('which-key').register({
---   m = merge_mappings,
--- }, { prefix = '<leader>' })
 
 -- Function to confirm and undo the last commit
 local function confirm_undo_last_commit()
@@ -249,6 +237,12 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+-- Resizing
+vim.keymap.set('n', '<SC-H>', '<C-w><C->>', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', '<SC-L>', '<C-w><C-<>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<SC-J>', '<C-w><C-->', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<SC-K>', '<C-w><C-+>', { desc = 'Move focus to the upper window' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -346,6 +340,7 @@ require('lazy').setup({
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
         ['<leader>l'] = { name = '[L]sp', _ = 'which_key_ignore' },
+        ['<leader>b'] = { name = '[B]uffers', _ = 'which_key_ignore' },
         ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
         ['<leader>m'] = { name = '[M]erge', _ = 'which_key_ignore' },
         ['<leader>h'] = { name = 'Git[H]ub', _ = 'which_key_ignore' },
@@ -680,10 +675,6 @@ require('lazy').setup({
         pyright = {
           single_file_support = true,
           settings = {
-            pyright = {
-              -- disableLanguageServices = false,
-              -- disableOrganizeImports = false
-            },
             python = {
               analysis = {
                 autoImportCompletions = true,
@@ -691,32 +682,11 @@ require('lazy').setup({
                 diagnosticMode = 'workspace', -- openFilesOnly, workspace
                 typeCheckingMode = 'basic', -- off, basic, strict
                 useLibraryCodeForTypes = true,
+                extraPaths = { '/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages' },
               },
             },
           },
         },
-
-        -- settings = {
-        --   python = {
-        --     analysis = {
-        --       extraPaths = { '/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages' },
-        --       logLevel = 'Trace',
-        --     },
-        --   },
-        -- },
-        -- on_attach = function(client, bufnr)
-        --   -- Enable logging
-        --   client.notify('workspace/didChangeConfiguration', {
-        --     settings = {
-        --       python = {
-        --         analysis = {
-        --           logLevel = 'Trace', -- Change to 'Information' or 'Trace' for detailed logs
-        --         },
-        --       },
-        --     },
-        --   })
-        -- end,
-        -- },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -1103,19 +1073,19 @@ vim.api.nvim_set_keymap('x', '*', '*N', { noremap = true, silent = true })
 
 -- Auto commands
 -- Python venv
--- vim.api.nvim_create_autocmd('VimEnter', {
---   desc = 'Auto select virtualenv Nvim open',
---   pattern = '*',
---   callback = function()
---     vim.defer_fn(function()
---       local venv = vim.fn.findfile('requirements.txt', vim.fn.getcwd() .. ';')
---       if venv ~= '' then
---         require('venv-selector').retrieve_from_cache()
---       end
---     end, 200) -- Delay of 200 milliseconds
---   end,
---   once = true,
--- })
+vim.api.nvim_create_autocmd('VimEnter', {
+  desc = 'Auto select virtualenv Nvim open',
+  pattern = '*',
+  callback = function()
+    vim.defer_fn(function()
+      local venv = vim.fn.findfile('requirements.txt', vim.fn.getcwd() .. ';')
+      if venv ~= '' then
+        require('venv-selector').retrieve_from_cache()
+      end
+    end, 200) -- Delay of 200 milliseconds
+  end,
+  once = true,
+})
 
 -- Neogit
 -- Define the autocommand to refresh buffers when the Neogit status buffer is closed
@@ -1127,6 +1097,3 @@ vim.api.nvim_create_autocmd('BufWinLeave', {
     vim.cmd 'checktime'
   end,
 })
-
--- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'pyright' })
--- vim.g.python3_host_prog = '/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/bin/python3.10'
