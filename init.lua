@@ -201,6 +201,8 @@ map('<leader>hsc', ':Octo search is:pr author:@me repo:' .. octo_utils.get_curre
 map('<leader>hsr', ':Octo search is:pr review-requested:@me repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[R]eview requested')
 map('<leader>hsa', ':Octo search is:pr state:open repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[A]ll open pull requests')
 
+vim.api.nvim_set_keymap('n', '<leader>hss', ':lua require("octo_utils").show_overview()<CR>', { noremap = true, silent = true })
+
 -- Format and Save
 vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
 
@@ -213,10 +215,11 @@ map('<leader>bd', ':bd<CR>', '[d]elete current buffer')
 map('<leader>bD', ':%bd!<CR>', '[d]elete all buffers')
 
 -- Merge conflicts
-map('<leader>mm', ':Gdiffsplit!<CR>', '[m]erge conflicts')
+map('<leader>mm', ':Gdiffsplit!<CR>', 'View [m]erge conflicts')
 map('<leader>mM', ':Gwrite<CR>', 'Save [M]erge resolution')
 map('<leader>mc', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
-map('<leader>m?', ':echo "use dp while cursor is on current or incoming"<CR>', 'dp - diffput')
+map('<leader>mn', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
+-- TODO: next and previous conflict
 
 -- Function to confirm and undo the last commit
 local function confirm_undo_last_commit()
