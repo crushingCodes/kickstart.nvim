@@ -55,27 +55,27 @@ return {
           projects_v2 = true,
         },
       }
-      local whichkey = require 'which-key'
-      local mappings = {
-        h = {
-          name = 'Git[h]ub',
-          ['r'] = { '<cmd>Octo pr reload<cr>', 'Reload PR' },
-          ['l'] = { '<cmd>Octo pr list<cr>', 'PR list' },
-          ['b'] = { '<cmd>Octo pr browser<cr>', 'Open PR in browser' },
-          ['R'] = { '<cmd>Octo review start<cr>', 'Review start' },
-          ['u'] = { '<cmd>Octo pr url<cr>', 'Copy URL to system clipboard' },
-          gf = { '<cmd>Octo file<cr>', 'Go to file' },
-          ['n'] = { '<cmd>Octo changed-file next<cr>', 'Move to previous changed file' },
-          ['p'] = { '<cmd>Octo changed-file prev<cr>', 'Move to next changed file' },
-          ['v'] = { '<cmd>Octo viewed toggle<cr>', 'Toggle viewer viewed state' },
-          o = { '<cmd>Octo<cr>', 'Octo' },
-          C = { '<cmd>Octo pr checkout<cr>', 'Checkout PR' },
-          c = { '<cmd>Octo pr commits<cr>', 'List PR commits' },
-          f = { '<cmd>Octo pr files<cr>', 'List PR changed files' },
-          d = { '<cmd>Octo pr diff<cr>', 'Show PR diff' },
-        },
-      }
-      whichkey.register(mappings, { prefix = '<leader>' })
+      -- local whichkey = require 'which-key'
+      -- local mappings = {
+      --   h = {
+      --     name = 'Git[h]ub',
+      --     ['r'] = { '<cmd>Octo pr reload<cr>', 'Reload PR' },
+      --     ['l'] = { '<cmd>Octo pr list<cr>', 'PR list' },
+      --     ['b'] = { '<cmd>Octo pr browser<cr>', 'Open PR in browser' },
+      --     ['R'] = { '<cmd>Octo review start<cr>', 'Review start' },
+      --     ['u'] = { '<cmd>Octo pr url<cr>', 'Copy URL to system clipboard' },
+      --     gf = { '<cmd>Octo file<cr>', 'Go to file' },
+      --     ['n'] = { '<cmd>Octo changed-file next<cr>', 'Move to previous changed file' },
+      --     ['p'] = { '<cmd>Octo changed-file prev<cr>', 'Move to next changed file' },
+      --     ['v'] = { '<cmd>Octo viewed toggle<cr>', 'Toggle viewer viewed state' },
+      --     o = { '<cmd>Octo<cr>', 'Octo' },
+      --     C = { '<cmd>Octo pr checkout<cr>', 'Checkout PR' },
+      --     c = { '<cmd>Octo pr commits<cr>', 'List PR commits' },
+      --     f = { '<cmd>Octo pr files<cr>', 'List PR changed files' },
+      --     d = { '<cmd>Octo pr diff<cr>', 'Show PR diff' },
+      --   },
+      -- }
+      -- whichkey.register(mappings, { prefix = '<leader>' })
     end,
   },
   {
@@ -161,4 +161,6 @@ return {
   { 'kristijanhusak/vim-dadbod-ui' },
   -- TODO: get this to work
   -- { 'kristijanhusak/vim-dadbod-completion' },
+  { dir = '/Users/gavinboyd/Projects/vim-be-good' },
+  { 'PeterRincker/vim-argumentative' },
 }

@@ -102,7 +102,7 @@ vim.g.have_nerd_font = true
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -173,8 +173,33 @@ end
 
 map('<leader>ta', ':ASToggle<CR>', '[a]uto save')
 map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
-map('<leader>hh', ':Octo pr diff<CR>', 'PR diff')
-map('<leader>hc', ':Octo pr create<CR>', 'PR create')
+
+-- Key mappings for Octo commands
+--
+-- General
+map('<leader>h]c', ':Octo changed-file next<CR>', 'Next changed file')
+map('<leader>h[c', ':Octo changed-file prev<CR>', 'Prev changed file')
+map('<leader>ho', ':Octo<CR>', 'Octo')
+map('<leader>hv', ':Octo view toggle<CR>', 'Toggle viewed')
+map('<leader>hv', ':Octo view toggle<CR>', 'Toggle viewed')
+
+-- Pull requests
+map('<leader>hph', ':Octo pr diff<CR>', 'PR diff')
+map('<leader>hpC', ':Octo pr create<CR>', 'PR create')
+map('<leader>hpc', ':Octo pr changes<CR>', 'PR changes')
+map('<leader>hpd', ':Octo pr diff<CR>', 'PR diff')
+map('<leader>hpb', ':Octo pr browser<CR>', 'PR open browser')
+map('<leader>hpR', ':Octo pr reload<CR>', 'PR reload')
+map('<leader>hpl', ':Octo pr commits<CR>', 'PR commit [l]og')
+map('<leader>hps', ':Octo pr list<CR>', 'PR search')
+map('<leader>hgf', ':Octo file<CR>', 'Goto file')
+map('<leader>hph', ':Octo pr checkout<CR>', 'PR checkout')
+
+-- Status
+local octo_utils = require 'octo_utils'
+map('<leader>hsc', ':Octo search is:pr author:@me repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[C]reated by me')
+map('<leader>hsr', ':Octo search is:pr review-requested:@me repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[R]eview requested')
+map('<leader>hsa', ':Octo search is:pr state:open repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[A]ll open pull requests')
 
 -- Format and Save
 vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
@@ -183,13 +208,15 @@ vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,
 
 map('<leader>q', ':q<CR>', '[q]uit')
 
-map('<leader>bd', ':%bd!', '[d]elete all buffers')
+map('<leader>bo', ':%bd|e#|bd#<CR>', '[d]elete other buffers')
+map('<leader>bd', ':bd<CR>', '[d]elete current buffer')
+map('<leader>bD', ':%bd!<CR>', '[d]elete all buffers')
 
 -- Merge conflicts
 map('<leader>mm', ':Gdiffsplit!<CR>', '[m]erge conflicts')
 map('<leader>mM', ':Gwrite<CR>', 'Save [M]erge resolution')
 map('<leader>mc', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
-map('<leader>mdp', ':diffput<CR>', 'dp - diffput')
+map('<leader>m?', ':echo "use dp while cursor is on current or incoming"<CR>', 'dp - diffput')
 
 -- Function to confirm and undo the last commit
 local function confirm_undo_last_commit()
@@ -344,6 +371,8 @@ require('lazy').setup({
         ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
         ['<leader>m'] = { name = '[M]erge', _ = 'which_key_ignore' },
         ['<leader>h'] = { name = 'Git[H]ub', _ = 'which_key_ignore' },
+        ['<leader>hp'] = { name = '[P]ull requests', _ = 'which_key_ignore' },
+        ['<leader>hs'] = { name = '[S]tatus', _ = 'which_key_ignore' },
       }
       -- visual mode
       require('which-key').register({
