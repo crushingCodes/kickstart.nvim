@@ -167,9 +167,6 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- vim.keymap.set('n', '[q', 'cprev', { desc = 'Go to previous quickfix' })
--- vim.keymap.set('n', ']q', 'cnext', { desc = 'Go to next quickfix' })
-
 local map = function(keys, func, desc)
   vim.keymap.set('n', keys, func, { desc = desc })
 end
@@ -183,78 +180,12 @@ vim.api.nvim_set_keymap('n', '<leader>;w', ':set wrap!<CR>', { noremap = true, s
 map('<leader>gG', ':DiffviewOpen<CR>', '[G]it changes')
 map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
 
--- -- NVIM ide
--- GitWorkspaceOpen = false
--- function ToggleGit()
---   if GitWorkspaceOpen == true then
---     vim.cmd 'Workspace RightPanelClose'
---     GitWorkspaceOpen = false
---   else
---     vim.cmd 'Workspace Changes Focus'
---     GitWorkspaceOpen = true
---   end
--- end
---
--- map('<leader>gg', ToggleGit, '[G]it')
--- PullRequestOpen = false
--- PullRequestSelected = false
--- function TogglePullRequest()
---   if PullRequestSelected == false then
---     vim.cmd 'GHOpenPR'
---     PullRequestOpen = true
---   else
---     if PullRequestOpen == true then
---       vim.cmd 'GHCollapsePR'
---       PullRequestOpen = false
---     else
---       vim.cmd 'GHExpandPR'
---       PullRequestOpen = true
---     end
---   end
--- end
--- map('<leader>hh', TogglePullRequest, 'git[h]ub')
-
 -- Devdocs
 map('<leader>Do', ':DevdocsOpen<CR>', 'Devdocs [O]pen')
 map('<leader>Di', ':DevdocsInstall<CR>', 'Devdocs [I]nstall')
 map('<leader>Du', ':DevdocsUpdateAll<CR>', 'Devdocs [U]pdate All')
 map('<leader>Dg', ':lua Devdocs_grep()<CR>', 'Devdocs [G]rep')
 map('<leader>Dt', ':Telescope tldr<CR>', 'TLDR')
--- vim.api.nvim_set_keymap('n', '<leader>Dg', ':lua Devdocs_grep()<CR>', { noremap = true, silent = true })
-
--- -- Key mappings for Octo commands
--- --
--- -- General
--- map('<leader>h]c', ':Octo changed-file next<CR>', 'Next changed file')
--- map('<leader>h[c', ':Octo changed-file prev<CR>', 'Prev changed file')
--- map('<leader>ho', ':Octo<CR>', 'Octo')
--- map('<leader>hv', ':Octo view toggle<CR>', 'Toggle viewed')
--- map('<leader>hv', ':Octo view toggle<CR>', 'Toggle viewed')
---
--- -- Pull requests
--- map('<leader>hph', ':Octo pr diff<CR>', 'PR diff')
--- map('<leader>hpC', ':Octo pr create<CR>', 'PR create')
--- map('<leader>hpc', ':Octo pr changes<CR>', 'PR changes')
--- map('<leader>hpd', ':Octo pr diff<CR>', 'PR diff')
--- map('<leader>hpb', ':Octo pr browser<CR>', 'PR open browser')
--- map('<leader>hpR', ':Octo pr reload<CR>', 'PR reload')
--- map('<leader>hpl', ':Octo pr commits<CR>', 'PR commit [l]og')
--- map('<leader>hps', ':Octo pr list<CR>', 'PR search')
--- map('<leader>hgf', ':Octo file<CR>', 'Goto file')
--- map('<leader>hph', ':Octo pr checkout<CR>', 'PR checkout')
---
--- -- Reviews
--- map('<leader>hrs', ':Octo review start<CR>', 'Start review')
--- map('<leader>hrr', ':Octo review resume<CR>', 'Resume review')
--- map('<leader>hrq', ':Octo review stop<CR>', 'Stop review')
---
--- -- Status
--- local octo_utils = require 'octo_utils'
--- map('<leader>hsc', ':Octo search is:pr author:@me repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[C]reated by me')
--- map('<leader>hsr', ':Octo search is:pr review-requested:@me repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[R]eview requested')
--- map('<leader>hsa', ':Octo search is:pr state:open repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[A]ll open pull requests')
-
--- vim.api.nvim_set_keymap('n', '<leader>hss', ':lua require("octo_utils").show_overview()<CR>', { noremap = true, silent = true })
 
 -- Format and Save
 vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
@@ -1288,8 +1219,6 @@ vim.api.nvim_exec2(
   {}
 )
 
--- vim.api.nvim_set_keymap('n', '<leader>hh', ':DiffviewPR<CR>', { noremap = true, silent = true })
-
 -- Custom function to close all buffers with a warning if there are unsaved changes
 function Close_all_buffers()
   local unsaved_buffers = {}
@@ -1370,6 +1299,3 @@ vim.api.nvim_set_keymap('n', '<leader>gZ', ':TelescopeDiffStash<CR>', { noremap 
 -- Function to checkout PR and run DiffviewPR
 vim.api.nvim_set_keymap('n', '<leader>hh', ':Telescope gh pull_request<CR>', { noremap = true, silent = true })
 map('<leader>hp', ':DiffviewPR<CR>', 'Preview PR Diff')
-map('<leader>gc', ':G commit<CR>', 'Commit')
-map('<leader>gP', ':G push<CR>', 'Push')
-map('<leader>gp', ':G pull<CR>', 'Push')
