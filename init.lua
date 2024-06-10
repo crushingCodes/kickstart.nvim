@@ -180,8 +180,8 @@ vim.api.nvim_set_keymap('n', '<leader>;m', ':lua vim.bo.modifiable = not vim.bo.
 vim.api.nvim_set_keymap('n', '<leader>;w', ':set wrap!<CR>', { noremap = true, silent = true })
 
 -- Neogit
-map('<leader>gn', ':Neogit<CR>', 'Neo[g]it')
-map('<leader>gg', ':DiffviewOpen<CR>', '[G]it Status')
+map('<leader>gg', ':DiffviewOpen<CR>', '[g]it Status')
+map('<leader>gG', ':Neogit<CR>', 'Neo[G]it')
 
 -- -- NVIM ide
 -- GitWorkspaceOpen = false
@@ -286,7 +286,7 @@ end
 _G.confirm_undo_last_commit = confirm_undo_last_commit
 
 map('<leader>gU', ':lua confirm_undo_last_commit()<CR>', '[U]ndo last commit')
-map('<leader>gh', ':lua require("telescope").extensions.git_file_history.git_file_history()<CR>', 'File History')
+map('<leader>gH', ':lua require("telescope").extensions.git_file_history.git_file_history()<CR>', 'File History')
 
 -- Utils for getting file paths
 map('<leader>yr', ':let @*=expand("%")<CR>', 'Yank [r]elative file path')
@@ -295,9 +295,9 @@ map('<leader>yn', ':let @*=expand("%:t")<CR>', 'Yank file [n]ame')
 map('<leader>yd', ':let @*=expand("%:p:h")<CR>', 'Yank directory [n]ame')
 
 -- map('<leader>Q', ':qa!<CR>', '[Q]uit all')
--- map('<leader>Tt', ':tabnew<CR>|:terminal<CR>', 'New Terminal')
--- map('<leader>Tt', ':tabnew<CR>', 'New Tab')
--- map('<leader>Tq', ':tabclose<CR>', 'Quit Tab')
+map('<leader>Tt', ':tabnew<CR>|:terminal<CR>', 'New Terminal')
+map('<leader>Tt', ':tabnew<CR>', 'New Tab')
+map('<leader>Tq', ':tabclose<CR>', 'Quit Tab')
 
 -- DBUI
 vim.keymap.set('n', '<leader>d', '<cmd>DBUIToggle<cr>', { desc = 'Open Database' })
@@ -1370,3 +1370,6 @@ vim.api.nvim_set_keymap('n', '<leader>gZ', ':TelescopeDiffStash<CR>', { noremap 
 -- Function to checkout PR and run DiffviewPR
 vim.api.nvim_set_keymap('n', '<leader>hh', ':Telescope gh pull_request<CR>', { noremap = true, silent = true })
 map('<leader>hp', ':DiffviewPR<CR>', 'Preview PR Diff')
+map('<leader>gc', ':G commit<CR>', 'Commit')
+map('<leader>gP', ':G push<CR>', 'Push')
+map('<leader>gp', ':G pull<CR>', 'Push')
