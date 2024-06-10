@@ -180,8 +180,8 @@ vim.api.nvim_set_keymap('n', '<leader>;m', ':lua vim.bo.modifiable = not vim.bo.
 vim.api.nvim_set_keymap('n', '<leader>;w', ':set wrap!<CR>', { noremap = true, silent = true })
 
 -- Neogit
-map('<leader>gg', ':DiffviewOpen<CR>', '[g]it Status')
-map('<leader>gG', ':Neogit<CR>', 'Neo[G]it')
+map('<leader>gG', ':DiffviewOpen<CR>', '[G]it changes')
+map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
 
 -- -- NVIM ide
 -- GitWorkspaceOpen = false
