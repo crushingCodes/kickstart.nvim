@@ -25,6 +25,33 @@
 --   frecency.update_entry(picker, file)
 -- end
 
+-- function Get_stashes()
+--   local stashes = vim.fn.systemlist 'git stash list'
+--   local formatted_stashes = {}
+--
+--   for i, stash in ipairs(stashes) do
+--     local name = stash:match 'stash@{%d+}: (.+)'
+--     table.insert(formatted_stashes, { name = name, index = i - 1 })
+--   end
+--
+--   return formatted_stashes
+-- end
+--
+-- function Get_stash_nodes()
+--   local nodes = {}
+--   local stashes = get_stashes()
+--
+--   for _, stash in ipairs(stashes) do
+--     table.insert(nodes, {
+--       name = stash.name,
+--       path = tostring(stash.index),
+--       type = 'file',
+--       id = 'stash_' .. stash.index,
+--     })
+--   end
+--
+--   return nodes
+-- end
 return {
   'nvim-neo-tree/neo-tree.nvim',
   version = '*',
@@ -32,7 +59,7 @@ return {
     'nvim-lua/plenary.nvim',
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
-    dir = '/Users/work/Projects/prfiles',
+    dir = '/Users/work/Projects/plugins/example-source',
   },
   cmd = 'Neotree',
   keys = {
@@ -46,19 +73,28 @@ return {
         'filesystem',
         'buffers',
         'git_status',
-        'prfiles', -- <-- external sources need to be a fully qualified path to the module
+        'example', -- <-- external sources need to be a fully qualified path to the module
+        -- 'prfiles', -- <-- external sources need to be a fully qualified path to the module
         --"my.name.example" <-- Feel free to add to your folder structure to create a namespace,
         -- The name of the source will be the last part, or whatever your module
         -- exports as the `name` field.
+        -- 'stashes',
       },
-      prfiles = {
-        window = {
-          mappings = {
-            ['D'] = 'show_diff',
-          },
-        },
-      },
-
+      example = {},
+      -- prfiles = {
+      --   window = {
+      --     mappings = {
+      --       ['D'] = 'show_diff',
+      --     },
+      --   },
+      -- },
+      -- stashes = {
+      --   follow_current_file = true,
+      --   window = {
+      --     position = 'left',
+      --     width = 40,
+      --   },
+      -- },
       filesystem = {
         use_libuv_file_watcher = true,
         follow_current_file = {

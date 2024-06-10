@@ -180,7 +180,8 @@ vim.api.nvim_set_keymap('n', '<leader>;m', ':lua vim.bo.modifiable = not vim.bo.
 vim.api.nvim_set_keymap('n', '<leader>;w', ':set wrap!<CR>', { noremap = true, silent = true })
 
 -- Neogit
-map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
+map('<leader>gn', ':Neogit<CR>', 'Neo[g]it')
+map('<leader>gg', ':DiffviewOpen<CR>', '[G]it Status')
 
 -- -- NVIM ide
 -- GitWorkspaceOpen = false
@@ -195,23 +196,23 @@ map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
 -- end
 --
 -- map('<leader>gg', ToggleGit, '[G]it')
-PullRequestOpen = false
-PullRequestSelected = false
-function TogglePullRequest()
-  if PullRequestSelected == false then
-    vim.cmd 'GHOpenPR'
-    PullRequestOpen = true
-  else
-    if PullRequestOpen == true then
-      vim.cmd 'GHCollapsePR'
-      PullRequestOpen = false
-    else
-      vim.cmd 'GHExpandPR'
-      PullRequestOpen = true
-    end
-  end
-end
-map('<leader>hh', TogglePullRequest, 'git[h]ub')
+-- PullRequestOpen = false
+-- PullRequestSelected = false
+-- function TogglePullRequest()
+--   if PullRequestSelected == false then
+--     vim.cmd 'GHOpenPR'
+--     PullRequestOpen = true
+--   else
+--     if PullRequestOpen == true then
+--       vim.cmd 'GHCollapsePR'
+--       PullRequestOpen = false
+--     else
+--       vim.cmd 'GHExpandPR'
+--       PullRequestOpen = true
+--     end
+--   end
+-- end
+-- map('<leader>hh', TogglePullRequest, 'git[h]ub')
 
 -- Devdocs
 map('<leader>Do', ':DevdocsOpen<CR>', 'Devdocs [O]pen')
@@ -453,6 +454,8 @@ require('lazy').setup({
     dependencies = {
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope-fzf-native.nvim',
+      -- { 'nvim-telescope/telescope-github.nvim' },
+      { dir = '/Users/work/Projects/plugins/telescope-github.nvim' },
       {
         'isak102/telescope-git-file-history.nvim',
         dependencies = { 'tpope/vim-fugitive' },
@@ -480,6 +483,7 @@ require('lazy').setup({
       -- it can fuzzy find! It's more than just a "file finder", it can search
       -- many different aspects of Neovim, your workspace, LSP, and more!
       --
+      require('telescope').load_extension 'gh'
       -- The easiest way to use Telescope, is to start by doing something like:
       --  :Telescope help_tags
       --
@@ -1210,19 +1214,19 @@ vim.api.nvim_set_keymap('x', '*', '*N', { noremap = true, silent = true })
 
 -- Auto commands
 -- Python venv
-vim.api.nvim_create_autocmd('VimEnter', {
-  desc = 'Auto select virtualenv Nvim open',
-  pattern = '*',
-  callback = function()
-    vim.defer_fn(function()
-      local venv = vim.fn.findfile('requirements.txt', vim.fn.getcwd() .. ';')
-      if venv ~= '' then
-        require('venv-selector').retrieve_from_cache()
-      end
-    end, 200) -- Delay of 200 milliseconds
-  end,
-  once = true,
-})
+-- vim.api.nvim_create_autocmd('VimEnter', {
+--   desc = 'Auto select virtualenv Nvim open',
+--   pattern = '*',
+--   callback = function()
+--     vim.defer_fn(function()
+--       local venv = vim.fn.findfile('requirements.txt', vim.fn.getcwd() .. ';')
+--       if venv ~= '' then
+--         require('venv-selector').retrieve_from_cache()
+--       end
+--     end, 200) -- Delay of 200 milliseconds
+--   end,
+--   once = true,
+-- })
 
 -- Neogit
 -- Define the autocommand to refresh buffers when the Neogit status buffer is closed
@@ -1284,7 +1288,6 @@ vim.api.nvim_exec2(
   {}
 )
 
-map('<leader>hh', ':DiffviewPR<CR>', 'Git[h]ub PR Diff')
 -- vim.api.nvim_set_keymap('n', '<leader>hh', ':DiffviewPR<CR>', { noremap = true, silent = true })
 
 -- Custom function to close all buffers with a warning if there are unsaved changes
@@ -1322,5 +1325,48 @@ function Close_all_buffers()
   end
 end
 
--- Map the function to a key combination, e.g., <leader>qa
+-- Quit all with confirmation
 map('<leader>Q', ':lua Close_all_buffers()<CR>', '[Q]uit all')
+
+-- Create a custom picker for git stashes
+local actions = require 'telescope.actions'
+local action_state = require 'telescope.actions.state'
+local pickers = require 'telescope.pickers'
+local finders = require 'telescope.finders'
+local conf = require('telescope.config').values
+
+local function diff_stash(opts)
+  opts = opts or {}
+  pickers
+    .new(opts, {
+      prompt_title = 'Git Stashes',
+      finder = finders.new_oneshot_job({ 'git', 'stash', 'list' }, opts),
+      sorter = conf.generic_sorter(opts),
+      attach_mappings = function(prompt_bufnr, map)
+        actions.select_default:replace(function()
+          actions.close(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          local stash = selection[1]:match 'stash@{%d+}'
+          if stash then
+            vim.cmd('DiffviewOpen ' .. stash)
+          else
+            print 'No stash selected'
+          end
+        end)
+        return true
+      end,
+    })
+    :find()
+end
+
+-- Create a command to call the custom picker
+vim.api.nvim_create_user_command('TelescopeDiffStash', function()
+  diff_stash(require('telescope.themes').get_dropdown {})
+end, {})
+
+-- Optional: Map the command to a keybinding
+vim.api.nvim_set_keymap('n', '<leader>gZ', ':TelescopeDiffStash<CR>', { noremap = true, silent = true })
+
+-- Function to checkout PR and run DiffviewPR
+vim.api.nvim_set_keymap('n', '<leader>hh', ':Telescope gh pull_request<CR>', { noremap = true, silent = true })
+map('<leader>hp', ':DiffviewPR<CR>', 'Preview PR Diff')
