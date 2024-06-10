@@ -16,7 +16,8 @@ return {
   { 'tpope/vim-surround' },
   { 'tpope/vim-abolish' },
   { 'tpope/vim-repeat' },
-  { 'tpope/vim-obsession' },
+  { 'tpope/vim-unimpaired' },
+  -- { 'tpope/vim-obsession' },
   {
     'NeogitOrg/neogit',
     dependencies = {
@@ -41,51 +42,21 @@ return {
     end,
   },
   {
-    'pwntester/octo.nvim',
-    requires = {
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope.nvim',
-      'nvim-tree/nvim-web-devicons',
-    },
-    opts = {},
-    config = function()
-      require('octo').setup {
-        enable_builtin = true,
-        suppress_missing_scope = {
-          projects_v2 = true,
-        },
-      }
-      -- local whichkey = require 'which-key'
-      -- local mappings = {
-      --   h = {
-      --     name = 'Git[h]ub',
-      --     ['r'] = { '<cmd>Octo pr reload<cr>', 'Reload PR' },
-      --     ['l'] = { '<cmd>Octo pr list<cr>', 'PR list' },
-      --     ['b'] = { '<cmd>Octo pr browser<cr>', 'Open PR in browser' },
-      --     ['R'] = { '<cmd>Octo review start<cr>', 'Review start' },
-      --     ['u'] = { '<cmd>Octo pr url<cr>', 'Copy URL to system clipboard' },
-      --     gf = { '<cmd>Octo file<cr>', 'Go to file' },
-      --     ['n'] = { '<cmd>Octo changed-file next<cr>', 'Move to previous changed file' },
-      --     ['p'] = { '<cmd>Octo changed-file prev<cr>', 'Move to next changed file' },
-      --     ['v'] = { '<cmd>Octo viewed toggle<cr>', 'Toggle viewer viewed state' },
-      --     o = { '<cmd>Octo<cr>', 'Octo' },
-      --     C = { '<cmd>Octo pr checkout<cr>', 'Checkout PR' },
-      --     c = { '<cmd>Octo pr commits<cr>', 'List PR commits' },
-      --     f = { '<cmd>Octo pr files<cr>', 'List PR changed files' },
-      --     d = { '<cmd>Octo pr diff<cr>', 'Show PR diff' },
-      --   },
-      -- }
-      -- whichkey.register(mappings, { prefix = '<leader>' })
-    end,
-  },
-  {
     'rmagatti/auto-session',
     config = function()
       require('auto-session').setup {
         log_level = 'error',
+        -- restore_upcoming_session = false,
         auto_session_suppress_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
+        -- auto_session_allowed_dirs = { '~/git/*' },
         auto_session_suppress_filetypes = { 'octo', 'sql', 'dbout' },
-        pre_save_cmds = { _G.close_all_floating_wins, 'Neotree close', 'DBUIClose' },
+        -- post_restore_cmds = { 'Octo pr reload' },
+        pre_save_cmds = {
+          _G.close_all_floating_wins,
+          'Neotree close',
+          'DBUIClose',
+          'DiffviewClose',
+        },
       }
     end,
   },
@@ -96,7 +67,6 @@ return {
         local fn = vim.fn
         local utils = require 'auto-save.utils.data'
 
-        print('filetype', vim.bo[buf].filetype)
         if fn.getbufvar(buf, '&modifiable') == 1 and utils.not_in(fn.getbufvar(buf, '&filetype'), { 'octo', 'sql', 'python' }) then
           return true -- met condition(s), can save
         end
@@ -163,4 +133,110 @@ return {
   -- { 'kristijanhusak/vim-dadbod-completion' },
   { dir = '/Users/gavinboyd/Projects/vim-be-good' },
   { 'PeterRincker/vim-argumentative' },
+  { 'rizzatti/dash.vim' },
+  {
+    'stevearc/dressing.nvim',
+    opts = {},
+  },
+  { 'junegunn/fzf' },
+  { 'junegunn/fzf.vim' },
+  {
+    'luckasRanarison/nvim-devdocs',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+
+    opts = {
+      --   previewer_cmd = vim.fn.executable 'glow' == 1 and 'glow' or nil,
+      --   cmd_args = { '-s', 'dark', '-w', '80' },
+      --   picker_cmd = true,
+      --   picker_cmd_args = { '-s', 'dark', '-w', '50' },
+      --   float_win = { -- passed to nvim_open_win(), see :h api-floatwin
+      --     relative = 'editor',
+      --     height = 35,
+      --     width = 125,
+      --     border = 'rounded',
+      --   },
+      --   after_open = function()
+      --     -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-\\><C-n>', true, false, true), 'n', true)
+      --   end,
+    },
+  },
+  {
+    'mrjones2014/tldr.nvim',
+    requires = { 'nvim-telescope/telescope.nvim' },
+    config = function()
+      require('tldr').setup {
+        -- the shell command to use
+        tldr_command = 'tldr',
+        -- a string of extra arguments to pass to `tldr`, e.g. tldr_args = '--color always'
+        tldr_args = '',
+      }
+    end,
+  },
+  {
+    'kwakzalver/duckytype.nvim',
+    config = function()
+      require('duckytype').setup()
+    end,
+  },
+  { 'rhysd/rust-doc.vim' },
+  {
+    'danielfalk/smart-open.nvim',
+    branch = '0.2.x',
+    config = function()
+      require('telescope').load_extension 'smart_open'
+    end,
+    dependencies = {
+      'kkharji/sqlite.lua',
+      -- Only required if using match_algorithm fzf
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+      -- Optional.  If installed, native fzy will be used when match_algorithm is fzy
+      { 'nvim-telescope/telescope-fzy-native.nvim' },
+    },
+  },
+  { 'nvimtools/none-ls.nvim' },
+  { 'ldelossa/litee.nvim' },
+  { 'nvim-neotest/neotest-python' },
+  {
+    'nvim-neotest/neotest',
+    dependencies = {
+      'nvim-neotest/nvim-nio',
+      'nvim-lua/plenary.nvim',
+      'antoinemadec/FixCursorHold.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('neotest').setup {
+        adapters = {
+          require 'neotest-python',
+        },
+      }
+    end,
+  },
+  { 'rcarriga/nvim-notify' },
+  {
+    dir = '/Users/work/Projects/example-source',
+  },
+  -- { 'mg979/vim-visual-multi' },
+  -- {
+  --   'smoka7/multicursors.nvim',
+  --   event = 'VeryLazy',
+  --   dependencies = {
+  --     'smoka7/hydra.nvim',
+  --   },
+  --   opts = {},
+  --   cmd = { 'MCstart', 'MCvisual', 'MCclear', 'MCpattern', 'MCvisualPattern', 'MCunderCursor' },
+  --   keys = {
+  --     {
+  --       mode = { 'v', 'n' },
+  --       '<Leader>M',
+  --       '<cmd>MCstart<cr>',
+  --       desc = 'Create a selection for selected text or word under the cursor',
+  --     },
+  --   },
+  -- },
+  { 'sindrets/diffview.nvim' },
 }

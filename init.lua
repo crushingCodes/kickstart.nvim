@@ -102,7 +102,7 @@ vim.g.have_nerd_font = true
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -167,41 +167,93 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- vim.keymap.set('n', '[q', 'cprev', { desc = 'Go to previous quickfix' })
+-- vim.keymap.set('n', ']q', 'cnext', { desc = 'Go to next quickfix' })
+
 local map = function(keys, func, desc)
   vim.keymap.set('n', keys, func, { desc = desc })
 end
 
-map('<leader>ta', ':ASToggle<CR>', '[a]uto save')
+-- Toggles
+vim.api.nvim_set_keymap('n', '<leader>;a', ':ASToggle<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>;m', ':lua vim.bo.modifiable = not vim.bo.modifiable<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>;w', ':set wrap!<CR>', { noremap = true, silent = true })
+
+-- Neogit
 map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
 
--- Key mappings for Octo commands
+-- -- NVIM ide
+-- GitWorkspaceOpen = false
+-- function ToggleGit()
+--   if GitWorkspaceOpen == true then
+--     vim.cmd 'Workspace RightPanelClose'
+--     GitWorkspaceOpen = false
+--   else
+--     vim.cmd 'Workspace Changes Focus'
+--     GitWorkspaceOpen = true
+--   end
+-- end
 --
--- General
-map('<leader>h]c', ':Octo changed-file next<CR>', 'Next changed file')
-map('<leader>h[c', ':Octo changed-file prev<CR>', 'Prev changed file')
-map('<leader>ho', ':Octo<CR>', 'Octo')
-map('<leader>hv', ':Octo view toggle<CR>', 'Toggle viewed')
-map('<leader>hv', ':Octo view toggle<CR>', 'Toggle viewed')
+-- map('<leader>gg', ToggleGit, '[G]it')
+PullRequestOpen = false
+PullRequestSelected = false
+function TogglePullRequest()
+  if PullRequestSelected == false then
+    vim.cmd 'GHOpenPR'
+    PullRequestOpen = true
+  else
+    if PullRequestOpen == true then
+      vim.cmd 'GHCollapsePR'
+      PullRequestOpen = false
+    else
+      vim.cmd 'GHExpandPR'
+      PullRequestOpen = true
+    end
+  end
+end
+map('<leader>hh', TogglePullRequest, 'git[h]ub')
 
--- Pull requests
-map('<leader>hph', ':Octo pr diff<CR>', 'PR diff')
-map('<leader>hpC', ':Octo pr create<CR>', 'PR create')
-map('<leader>hpc', ':Octo pr changes<CR>', 'PR changes')
-map('<leader>hpd', ':Octo pr diff<CR>', 'PR diff')
-map('<leader>hpb', ':Octo pr browser<CR>', 'PR open browser')
-map('<leader>hpR', ':Octo pr reload<CR>', 'PR reload')
-map('<leader>hpl', ':Octo pr commits<CR>', 'PR commit [l]og')
-map('<leader>hps', ':Octo pr list<CR>', 'PR search')
-map('<leader>hgf', ':Octo file<CR>', 'Goto file')
-map('<leader>hph', ':Octo pr checkout<CR>', 'PR checkout')
+-- Devdocs
+map('<leader>Do', ':DevdocsOpen<CR>', 'Devdocs [O]pen')
+map('<leader>Di', ':DevdocsInstall<CR>', 'Devdocs [I]nstall')
+map('<leader>Du', ':DevdocsUpdateAll<CR>', 'Devdocs [U]pdate All')
+map('<leader>Dg', ':lua Devdocs_grep()<CR>', 'Devdocs [G]rep')
+map('<leader>Dt', ':Telescope tldr<CR>', 'TLDR')
+-- vim.api.nvim_set_keymap('n', '<leader>Dg', ':lua Devdocs_grep()<CR>', { noremap = true, silent = true })
 
--- Status
-local octo_utils = require 'octo_utils'
-map('<leader>hsc', ':Octo search is:pr author:@me repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[C]reated by me')
-map('<leader>hsr', ':Octo search is:pr review-requested:@me repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[R]eview requested')
-map('<leader>hsa', ':Octo search is:pr state:open repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[A]ll open pull requests')
+-- -- Key mappings for Octo commands
+-- --
+-- -- General
+-- map('<leader>h]c', ':Octo changed-file next<CR>', 'Next changed file')
+-- map('<leader>h[c', ':Octo changed-file prev<CR>', 'Prev changed file')
+-- map('<leader>ho', ':Octo<CR>', 'Octo')
+-- map('<leader>hv', ':Octo view toggle<CR>', 'Toggle viewed')
+-- map('<leader>hv', ':Octo view toggle<CR>', 'Toggle viewed')
+--
+-- -- Pull requests
+-- map('<leader>hph', ':Octo pr diff<CR>', 'PR diff')
+-- map('<leader>hpC', ':Octo pr create<CR>', 'PR create')
+-- map('<leader>hpc', ':Octo pr changes<CR>', 'PR changes')
+-- map('<leader>hpd', ':Octo pr diff<CR>', 'PR diff')
+-- map('<leader>hpb', ':Octo pr browser<CR>', 'PR open browser')
+-- map('<leader>hpR', ':Octo pr reload<CR>', 'PR reload')
+-- map('<leader>hpl', ':Octo pr commits<CR>', 'PR commit [l]og')
+-- map('<leader>hps', ':Octo pr list<CR>', 'PR search')
+-- map('<leader>hgf', ':Octo file<CR>', 'Goto file')
+-- map('<leader>hph', ':Octo pr checkout<CR>', 'PR checkout')
+--
+-- -- Reviews
+-- map('<leader>hrs', ':Octo review start<CR>', 'Start review')
+-- map('<leader>hrr', ':Octo review resume<CR>', 'Resume review')
+-- map('<leader>hrq', ':Octo review stop<CR>', 'Stop review')
+--
+-- -- Status
+-- local octo_utils = require 'octo_utils'
+-- map('<leader>hsc', ':Octo search is:pr author:@me repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[C]reated by me')
+-- map('<leader>hsr', ':Octo search is:pr review-requested:@me repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[R]eview requested')
+-- map('<leader>hsa', ':Octo search is:pr state:open repo:' .. octo_utils.get_current_repo() .. ' <CR>', '[A]ll open pull requests')
 
-vim.api.nvim_set_keymap('n', '<leader>hss', ':lua require("octo_utils").show_overview()<CR>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<leader>hss', ':lua require("octo_utils").show_overview()<CR>', { noremap = true, silent = true })
 
 -- Format and Save
 vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
@@ -233,6 +285,7 @@ end
 _G.confirm_undo_last_commit = confirm_undo_last_commit
 
 map('<leader>gU', ':lua confirm_undo_last_commit()<CR>', '[U]ndo last commit')
+map('<leader>gh', ':lua require("telescope").extensions.git_file_history.git_file_history()<CR>', 'File History')
 
 -- Utils for getting file paths
 map('<leader>yr', ':let @*=expand("%")<CR>', 'Yank [r]elative file path')
@@ -240,7 +293,10 @@ map('<leader>yp', ':let @*=expand("%:p")<CR>', 'Yank full file [p]ath')
 map('<leader>yn', ':let @*=expand("%:t")<CR>', 'Yank file [n]ame')
 map('<leader>yd', ':let @*=expand("%:p:h")<CR>', 'Yank directory [n]ame')
 
-map('<leader>Q', ':qa<CR>', '[Q]uit all')
+-- map('<leader>Q', ':qa!<CR>', '[Q]uit all')
+-- map('<leader>Tt', ':tabnew<CR>|:terminal<CR>', 'New Terminal')
+-- map('<leader>Tt', ':tabnew<CR>', 'New Tab')
+-- map('<leader>Tq', ':tabclose<CR>', 'Quit Tab')
 
 -- DBUI
 vim.keymap.set('n', '<leader>d', '<cmd>DBUIToggle<cr>', { desc = 'Open Database' })
@@ -365,17 +421,17 @@ require('lazy').setup({
 
       -- Document existing key chains
       require('which-key').register {
-        ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
-        ['<leader>l'] = { name = '[L]sp', _ = 'which_key_ignore' },
-        ['<leader>b'] = { name = '[B]uffers', _ = 'which_key_ignore' },
-        ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
-        ['<leader>m'] = { name = '[M]erge', _ = 'which_key_ignore' },
-        ['<leader>h'] = { name = 'Git[H]ub', _ = 'which_key_ignore' },
-        ['<leader>hp'] = { name = '[P]ull requests', _ = 'which_key_ignore' },
-        ['<leader>hs'] = { name = '[S]tatus', _ = 'which_key_ignore' },
+        ['<leader>c'] = { name = '+[C]ode', _ = 'which_key_ignore' },
+        ['<leader>r'] = { name = '+[R]ename', _ = 'which_key_ignore' },
+        ['<leader>s'] = { name = '+[S]earch', _ = 'which_key_ignore' },
+        ['<leader>;'] = { name = '+[T]oggle', _ = 'which_key_ignore' },
+        ['<leader>l'] = { name = '+[L]sp', _ = 'which_key_ignore' },
+        ['<leader>b'] = { name = '+[B]uffers', _ = 'which_key_ignore' },
+        ['<leader>g'] = { name = '+[G]it', _ = 'which_key_ignore' },
+        ['<leader>m'] = { name = '+[M]erge', _ = 'which_key_ignore' },
+        -- ['<leader>h'] = { name = '+Git[H]ub', _ = 'which_key_ignore' },
+        -- ['<leader>hp'] = { name = '+[P]ull requests', _ = 'which_key_ignore' },
+        -- ['<leader>hs'] = { name = '+[S]tatus', _ = 'which_key_ignore' },
       }
       -- visual mode
       require('which-key').register({
@@ -396,6 +452,11 @@ require('lazy').setup({
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope-fzf-native.nvim',
+      {
+        'isak102/telescope-git-file-history.nvim',
+        dependencies = { 'tpope/vim-fugitive' },
+      },
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
 
@@ -487,7 +548,12 @@ require('lazy').setup({
         require('telescope.builtin').oldfiles()
       end, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', function()
-        require('telescope.builtin').buffers()
+        -- require('telescope.builtin').buffers()
+        -- vim.cmd ':Neotree buffers'
+        --
+        require('telescope').extensions.smart_open.smart_open {
+          match_algorithm = 'fzf',
+        }
       end, { desc = '[ ] Find existing buffers' })
 
       -- Custom
@@ -701,57 +767,96 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-      local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        pyright = {
-          single_file_support = true,
-          settings = {
-            python = {
-              analysis = {
-                autoImportCompletions = true,
-                autoSearchPaths = true,
-                diagnosticMode = 'workspace', -- openFilesOnly, workspace
-                typeCheckingMode = 'basic', -- off, basic, strict
-                useLibraryCodeForTypes = true,
-                extraPaths = { '/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages' },
+      local servers =
+        {
+          -- clangd = {},
+          -- gopls = {},
+          pyright = {
+            single_file_support = true,
+            settings = {
+              python = {
+                analysis = {
+                  autoImportCompletions = true,
+                  autoSearchPaths = true,
+                  diagnosticMode = 'workspace', -- openFilesOnly, workspace
+                  typeCheckingMode = 'basic', -- off, basic, strict
+                  useLibraryCodeForTypes = true,
+                  extraPaths = { '/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages' },
+                },
+              },
+            },
+          },
+          -- rust_analyzer = {},
+          -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+          --
+          -- Some languages (like typescript) have entire language plugins that can be useful:
+          --    https://github.com/pmizio/typescript-tools.nvim
+          --
+          -- But for many setups, the LSP (`tsserver`) will work just fine
+          -- tsserver = {},
+          --
+
+          lua_ls = {
+            -- cmd = {...},
+            -- filetypes = { ...},
+            -- capabilities = {},
+            settings = {
+              Lua = {
+                completion = {
+                  callSnippet = 'Replace',
+                },
+                -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+                -- diagnostics = { disable = { 'missing-fields' } },
+              },
+            },
+          },
+          eslint = {
+
+            settings = {
+              -- codeAction = {
+              --   disableRuleComment = {
+              --     enable = true,
+              --     location = 'separateLine',
+              --   },
+              --   showDocumentation = {
+              --     enable = true,
+              --   },
+              -- },
+              -- codeActionOnSave = {
+              --   enable = false,
+              --   mode = 'all',
+              -- },
+              -- experimental = {
+              --   useFlatConfig = false,
+              -- },
+              -- format = true,
+              -- nodePath = '',
+              -- onIgnoredFiles = 'off',
+              problems = {
+                shortenToSingleLine = true,
+              },
+              -- quiet = false,
+              -- run = 'onType',
+              -- useESLintClass = false,
+              -- validate = 'on',
+              -- workingDirectory = {
+              --   mode = 'location',
+              -- },
+              rulesCustomizations = {
+                -- Customize ESLint rules here
+                { rule = '*', severity = 'warn' },
+                { rule = 'max-lines-per-function', severity = 'off' },
               },
             },
           },
         },
-        -- rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+        -- Ensure the servers and tools above are installed
+        --  To check the current status of installed tools and/or manually install
+        --  other tools, you can run
+        --    :Mason
         --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
-        --
-
-        lua_ls = {
-          -- cmd = {...},
-          -- filetypes = { ...},
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
-              },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
-            },
-          },
-        },
-      }
-
-      -- Ensure the servers and tools above are installed
-      --  To check the current status of installed tools and/or manually install
-      --  other tools, you can run
-      --    :Mason
-      --
-      --  You can press `g?` for help in this menu.
-      require('mason').setup()
+        --  You can press `g?` for help in this menu.
+        require('mason').setup()
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
@@ -1129,3 +1234,93 @@ vim.api.nvim_create_autocmd('BufWinLeave', {
     vim.cmd 'checktime'
   end,
 })
+
+-- set auto reload
+-- https://superuser.com/a/1090762/1573671
+vim.cmd 'set autoread'
+vim.cmd 'au CursorHold * checktime'
+local null_ls = require 'null-ls'
+require('null-ls').setup {
+  sources = {
+    null_ls.builtins.formatting.stylua,
+    null_ls.builtins.completion.spell,
+    null_ls.builtins.formatting.prettier,
+    null_ls.builtins.diagnostics.stylint,
+    null_ls.builtins.formatting.black,
+    -- require 'none-ls.diagnostics.eslint', -- requires none-ls-extras.nvim
+  },
+}
+
+function Yank_test_path()
+  local ts_utils = require 'nvim-treesitter.ts_utils'
+  local bufnr = vim.api.nvim_get_current_buf()
+  local node = ts_utils.get_node_at_cursor()
+
+  while node do
+    local type = node:type()
+    if type == 'function_definition' or type == 'function_declaration' then
+      -- Get the start and end positions of the node
+      local start_row, start_col, end_row, end_col = node:range()
+      -- Extract the text from the buffer
+      local lines = vim.api.nvim_buf_get_lines(bufnr, start_row, end_row + 1, false)
+      local test_name = table.concat(lines, '\n'):sub(start_col + 1, -(end_col + 1))
+      local file_path = vim.api.nvim_buf_get_name(bufnr)
+      local test_path = file_path .. '::' .. test_name
+      vim.fn.setreg('+', test_path)
+      vim.notify('Yanked test path: ' .. test_path, vim.log.levels.INFO)
+      return
+    end
+    node = node:parent()
+  end
+  vim.notify('No test function found at cursor', vim.log.levels.WARN)
+end
+
+vim.api.nvim_set_keymap('n', '<leader>yt', ':lua Yank_test_path()<CR>', { noremap = true, silent = true })
+
+vim.api.nvim_exec2(
+  [[
+  command! DiffviewPR execute 'DiffviewOpen ' . system('git merge-base HEAD ' . system('gh pr view --json baseRefName | jq .baseRefName'))
+]],
+  {}
+)
+
+map('<leader>hh', ':DiffviewPR<CR>', 'Git[h]ub PR Diff')
+-- vim.api.nvim_set_keymap('n', '<leader>hh', ':DiffviewPR<CR>', { noremap = true, silent = true })
+
+-- Custom function to close all buffers with a warning if there are unsaved changes
+function Close_all_buffers()
+  local unsaved_buffers = {}
+
+  -- Iterate through all buffers and check for unsaved changes
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_get_option(bufnr, 'modified') then
+      table.insert(unsaved_buffers, bufnr)
+    end
+  end
+
+  if #unsaved_buffers > 0 then
+    -- Show a dialog with the list of unsaved buffers
+    local unsaved_files = {}
+    for _, bufnr in ipairs(unsaved_buffers) do
+      table.insert(unsaved_files, vim.api.nvim_buf_get_name(bufnr))
+    end
+    local message = 'There are unsaved changes in the following files:\n'
+    message = message .. table.concat(unsaved_files, '\n')
+    message = message .. '\nDo you really want to close all buffers? (y/n)'
+
+    -- Prompt the user for confirmation
+    local answer = vim.fn.input(message .. ' ')
+    if answer:lower() == 'y' then
+      -- Force close all buffers
+      vim.cmd 'qa!'
+    else
+      print 'Cancelled closing buffers.'
+    end
+  else
+    -- No unsaved changes, force close all buffers
+    vim.cmd 'qa!'
+  end
+end
+
+-- Map the function to a key combination, e.g., <leader>qa
+map('<leader>Q', ':lua Close_all_buffers()<CR>', '[Q]uit all')
