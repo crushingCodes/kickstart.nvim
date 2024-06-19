@@ -59,7 +59,7 @@ return {
     'nvim-lua/plenary.nvim',
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
-    dir = '/Users/work/Projects/plugins/example-source',
+    -- dir = '/Users/work/Projects/plugins/example-source',
   },
   cmd = 'Neotree',
   keys = {
@@ -73,14 +73,13 @@ return {
         'filesystem',
         'buffers',
         'git_status',
-        'example', -- <-- external sources need to be a fully qualified path to the module
+        -- 'example', -- <-- external sources need to be a fully qualified path to the module
         -- 'prfiles', -- <-- external sources need to be a fully qualified path to the module
         --"my.name.example" <-- Feel free to add to your folder structure to create a namespace,
         -- The name of the source will be the last part, or whatever your module
         -- exports as the `name` field.
         -- 'stashes',
       },
-      example = {},
       -- prfiles = {
       --   window = {
       --     mappings = {

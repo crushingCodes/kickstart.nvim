@@ -197,6 +197,7 @@ map('<leader>q', ':q<CR>', '[q]uit')
 map('<leader>bo', ':%bd|e#|bd#<CR>', '[d]elete other buffers')
 map('<leader>bd', ':bd<CR>', '[d]elete current buffer')
 map('<leader>bD', ':%bd!<CR>', '[d]elete all buffers')
+map('<leader>bn', ':enew<CR>', '[n]ew buffer')
 
 -- Merge conflicts
 map('<leader>mm', ':Gdiffsplit!<CR>', 'View [m]erge conflicts')
@@ -226,12 +227,16 @@ map('<leader>yn', ':let @*=expand("%:t")<CR>', 'Yank file [n]ame')
 map('<leader>yd', ':let @*=expand("%:p:h")<CR>', 'Yank directory [n]ame')
 
 -- map('<leader>Q', ':qa!<CR>', '[Q]uit all')
-map('<leader>Tt', ':tabnew<CR>|:terminal<CR>', 'New Terminal')
-map('<leader>Tt', ':tabnew<CR>', 'New Tab')
-map('<leader>Tq', ':tabclose<CR>', 'Quit Tab')
+map('<leader>t/', ':tabnew<CR>|:terminal<CR>', 'New Terminal')
+map('<leader>tt', ':tabnew<CR>', 'New Tab')
+map('<leader>tq', ':tabclose<CR>', 'Quit Tab')
 
+function OpenDbInTab()
+  vim.cmd 'tabnew'
+  vim.cmd 'DBUIToggle'
+end
 -- DBUI
-vim.keymap.set('n', '<leader>d', '<cmd>DBUIToggle<cr>', { desc = 'Open Database' })
+vim.keymap.set('n', '<leader>d', '<cmd>lua OpenDbInTab()<cr>', { desc = 'Open Database' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -354,13 +359,14 @@ require('lazy').setup({
       -- Document existing key chains
       require('which-key').register {
         ['<leader>c'] = { name = '+[C]ode', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '+[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '+[S]earch', _ = 'which_key_ignore' },
         ['<leader>;'] = { name = '+[T]oggle', _ = 'which_key_ignore' },
         ['<leader>l'] = { name = '+[L]sp', _ = 'which_key_ignore' },
         ['<leader>b'] = { name = '+[B]uffers', _ = 'which_key_ignore' },
         ['<leader>g'] = { name = '+[G]it', _ = 'which_key_ignore' },
+        ['<leader>r'] = { name = '+[R]est', _ = 'which_key_ignore' },
         ['<leader>m'] = { name = '+[M]erge', _ = 'which_key_ignore' },
+        ['<leader>t'] = { name = '+[t]abs', _ = 'which_key_ignore' },
         -- ['<leader>h'] = { name = '+Git[H]ub', _ = 'which_key_ignore' },
         -- ['<leader>hp'] = { name = '+[P]ull requests', _ = 'which_key_ignore' },
         -- ['<leader>hs'] = { name = '+[S]tatus', _ = 'which_key_ignore' },
@@ -386,7 +392,21 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope-fzf-native.nvim',
       -- { 'nvim-telescope/telescope-github.nvim' },
-      { dir = '/Users/work/Projects/plugins/telescope-github.nvim' },
+      -- { dir = '/Users/work/Projects/plugins/telescope-github.nvim' },
+      { 'crushingCodes/telescope-github.nvim' },
+      {
+        'ahmedkhalf/project.nvim',
+        config = function()
+          require('project_nvim').setup {
+            manual_mode = true,
+            patterns = { '.git', '_darcs', '.hg', '.bzr', '.svn', 'Makefile', 'package.json', 'requirements.txt', 'pyproject.toml', 'manage.py' },
+
+            -- your configuration comes here
+            -- or leave it empty to use the default settings
+            -- refer to the configuration section below
+          }
+        end,
+      },
       {
         'isak102/telescope-git-file-history.nvim',
         dependencies = { 'tpope/vim-fugitive' },
@@ -415,6 +435,8 @@ require('lazy').setup({
       -- many different aspects of Neovim, your workspace, LSP, and more!
       --
       require('telescope').load_extension 'gh'
+      require('telescope').load_extension 'projects'
+      map('<leader>p', ':lua require("telescope").extensions.projects.projects()<CR>', 'Projects')
       -- The easiest way to use Telescope, is to start by doing something like:
       --  :Telescope help_tags
       --
@@ -1031,7 +1053,23 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'python', 'requirements' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'vim',
+        'vimdoc',
+        'python',
+        'requirements',
+        'xml',
+        'http',
+        'json',
+        'graphql',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1210,15 +1248,6 @@ function Yank_test_path()
   vim.notify('No test function found at cursor', vim.log.levels.WARN)
 end
 
-vim.api.nvim_set_keymap('n', '<leader>yt', ':lua Yank_test_path()<CR>', { noremap = true, silent = true })
-
-vim.api.nvim_exec2(
-  [[
-  command! DiffviewPR execute 'DiffviewOpen ' . system('git merge-base HEAD ' . system('gh pr view --json baseRefName | jq .baseRefName'))
-]],
-  {}
-)
-
 -- Custom function to close all buffers with a warning if there are unsaved changes
 function Close_all_buffers()
   local unsaved_buffers = {}
@@ -1299,3 +1328,478 @@ vim.api.nvim_set_keymap('n', '<leader>gZ', ':TelescopeDiffStash<CR>', { noremap 
 -- Function to checkout PR and run DiffviewPR
 vim.api.nvim_set_keymap('n', '<leader>hh', ':Telescope gh pull_request<CR>', { noremap = true, silent = true })
 map('<leader>hp', ':DiffviewPR<CR>', 'Preview PR Diff')
+
+local function get_current_pr_number()
+  local handle = io.popen "gh pr view --json number --jq '.number'"
+  if handle then
+    local result = handle:read '*a'
+    handle:close()
+    return tonumber(result)
+  else
+    return nil
+  end
+end
+
+map('<leader>rr', ':Rest run<CR>', 'Rest run')
+map('<leader>rl', ':Rest run last<CR>', 'Rest run last')
+
+-- local ts_utils = require 'nvim-treesitter.ts_utils'
+--
+-- local function find_manage_py()
+--   local current_dir = vim.fn.getcwd()
+--   local manage_py_dir = vim.fn.finddir('API', current_dir .. ';')
+--   if manage_py_dir == '' then
+--     print 'Could not find API directory containing manage.py'
+--     return nil
+--   end
+--   return manage_py_dir
+-- end
+--
+-- local function get_python_test_module_path()
+--   local bufnr = vim.api.nvim_get_current_buf()
+--   local parser = vim.treesitter.get_parser(bufnr, 'python')
+--   local tree = parser:parse()[1]
+--
+--   local node = ts_utils.get_node_at_cursor()
+--   if not node then
+--     print 'No Treesitter node found under cursor'
+--     return nil
+--   end
+--
+--   -- Traverse up the tree to find the enclosing function and class
+--   local function_name
+--   local class_name
+--
+--   while node do
+--     if node:type() == 'function_definition' then
+--       local name_node = node:field('name')[1]
+--       if name_node then
+--         function_name = ts_utils.get_node_text(name_node, bufnr)[1]
+--       end
+--     elseif node:type() == 'class_definition' then
+--       local name_node = node:field('name')[1]
+--       if name_node then
+--         class_name = ts_utils.get_node_text(name_node, bufnr)[1]
+--       end
+--     end
+--     node = node:parent()
+--   end
+--
+--   if not function_name then
+--     print 'No enclosing function found'
+--     return nil
+--   end
+--
+--   -- Get the relative file path from the current working directory
+--   local file_path = vim.fn.expand '%:p'
+--   local cwd = vim.fn.getcwd()
+--
+--   -- Find the manage.py directory
+--   local manage_py_dir = find_manage_py()
+--   if not manage_py_dir then
+--     return nil
+--   end
+--
+--   -- Get the relative path from the manage.py directory
+--   local relative_path = vim.fn.fnamemodify(file_path, ':.' .. manage_py_dir)
+--
+--   -- Convert file path to module path
+--   local module_path = relative_path:gsub('%.py$', ''):gsub('/', '.')
+--
+--   if class_name then
+--     return module_path .. '::' .. class_name .. '::' .. function_name
+--   else
+--     return module_path .. '::' .. function_name
+--   end
+-- end
+--
+-- local function copy_test_module_path_to_clipboard()
+--   local module_path = get_python_test_module_path()
+--
+--   if not module_path then
+--     return
+--   end
+--
+--   -- Copy the module path to the clipboard
+--   vim.fn.setreg('+', module_path)
+--
+--   -- Print a message to confirm the copy action
+--   print('Copied to clipboard: ' .. module_path)
+-- end
+
+-- Create a Neovim command to copy the test module path to the clipboard
+-- vim.api.nvim_create_user_command('CopyPythonTestUnderCursor', copy_test_module_path_to_clipboard, {})
+
+-- vim.api.nvim_set_keymap('n', '<leader>yt', ':CopyPythonTestUnderCursor<CR>', { noremap = true, silent = true })
+
+-- Function to perform the required actions
+function Neotest_actions()
+  require('neotest').run.run()
+  require('neotest').output_panel.open()
+  require('neotest').summary.open()
+end
+
+vim.api.nvim_set_keymap('n', '<leader>T', ':lua Neotest_actions()<CR>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<leader>;k', ":lua require('custom.plugins.neotest_setup').toggle_keepdb()<CR>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<leader>TT', ':lua Neotest_actions()<CR>', { noremap = true, silent = true })
+-- Keep a variable to track the state of keepdb
+-- local keepdb_enabled = true
+--
+-- -- Function to toggle the keepdb flag
+-- function Toggle_keepdb()
+--   keepdb_enabled = not keepdb_enabled
+--   -- Update the Neotest configuration
+--   require('neotest').setup {
+--     adapters = {
+--       require 'neotest-python' {
+--         args = {
+--           '--interactive',
+--           'False',
+--           keepdb_enabled and '--keepdb',
+--         },
+--       },
+--     },
+--   }
+--   -- Print the current state to the user
+--   print('KeepDB is now ' .. (keepdb_enabled and 'enabled' or 'disabled'))
+-- end
+--
+-- -- Map the toggle function to a shortcut, e.g., <leader>tk
+-- vim.api.nvim_set_keymap('n', '<leader>Td', ':lua Toggle_keepdb()<CR>', { noremap = true, silent = true })
+map('<leader>.', ':DotEnv<CR>', 'Load .env')
+
+-- potential fix to the following:
+-- https://github.com/neovim/neovim/issues/2093
+-- Enable terminal keycode timeout
+-- vim.o.ttimeout = true
+--
+-- -- Set terminal keycode timeout length to 0
+-- vim.o.ttimeoutlen = 0
+--
+-- -- Set matchtime to 0
+-- vim.o.matchtime = 0
+-- -- end of potential fix to the following:
+
+-- TODO:
+-- -- Define a function to append visual selection to a register with a newline character
+-- function AppendVisualToRegister()
+--   -- Yank the visual selection to the "v" register
+--   vim.cmd 'normal! "vy'
+--   -- vim.cmd 'visual! "vy'
+--   -- Get the current content of the "v" register
+--   local current_content = vim.fn.getreg 'v'
+--   -- Get the current visual selection
+--   local visual_selection = vim.fn.getreg '"'
+--   -- Set the "v" register to the current content plus the visual selection and a newline
+--   vim.fn.setreg('v', current_content .. visual_selection .. '\n')
+-- end
+
+-- -- Keybinding for appending visual selection to register
+-- vim.api.nvim_set_keymap('v', '<leader>a', ':lua AppendVisualToRegister()<CR>', { noremap = true, silent = true })
+
+-- -- Function to append a label to each entry in the quickfix list
+-- function Append_label_to_quickfix(label)
+--   -- Get the current quickfix list
+--   local quickfix_list = vim.fn.getqflist()
+--
+--   -- Modify the quickfix list entries to append the label
+--   for _, item in ipairs(quickfix_list) do
+--     item.text = item.text .. ' ' .. label
+--   end
+--
+--   -- Set the modified quickfix list
+--   vim.fn.setqflist({}, 'r', { items = quickfix_list })
+-- end
+--
+-- vim.api.nvim_create_user_command(
+--   'AppendLabelToQuickfix',
+--   function(opts)
+--     Append_label_to_quickfix(opts.args)
+--   end,
+--   { nargs = 1 } -- The command takes one argument (the label)
+-- )
+
+-- Function to append a label to the currently highlighted quickfix list entry
+function Append_label_to_current_qf_item(label)
+  -- Get the current quickfix list
+  local quickfix_list = vim.fn.getqflist()
+
+  -- Get the current cursor position in the quickfix window
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+
+  -- Find the index of the quickfix list entry that corresponds to the current cursor position
+  local current_qf_index = cursor_pos[1]
+
+  -- get the current entry text
+  local entry_text = quickfix_list[current_qf_index].text
+  if entry_text:match(vim.pesc(label)) then
+    quickfix_list[current_qf_index].text = entry_text:gsub(vim.pesc(label), '')
+  else
+    -- Modify the specific entry
+    quickfix_list[current_qf_index].text = quickfix_list[current_qf_index].text .. ' ' .. label
+  end
+
+  -- Set the modified quickfix list
+  vim.fn.setqflist({}, 'r', { items = quickfix_list })
+end
+
+-- Example usage: Append "[Viewed]" to the currently highlighted entry in the quickfix list
+vim.api.nvim_set_keymap('n', '<leader>hv', ':lua Append_label_to_current_qf_item("[Viewed]")<CR>', { noremap = true, silent = true })
+
+-- Function to populate quickfix list with files from a GitHub PR
+function Populate_quickfix_from_pr()
+  -- Run the gh command to get the list of files
+  --
+  local handle = io.popen "gh pr view --json files | jq -r '.files[].path'"
+
+  if handle then
+    local result = handle:read '*a'
+    handle:close()
+
+    -- Split the result into lines
+    local files = {}
+    for line in result:gmatch '[^\r\n]+' do
+      table.insert(files, { filename = line })
+    end
+
+    -- Set the quickfix list
+    vim.fn.setqflist({}, 'r', { title = 'GitHub PR Files', items = files })
+
+    -- Open the quickfix window
+    vim.cmd 'copen'
+  end
+end
+
+-- Example usage: Populate quickfix list with files from PR #123
+-- vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Populate_quickfix_from_pr(123)<CR>', { noremap = true, silent = true })
+
+function GetPRFiles()
+  -- Get the current checked-out PR number
+  local handle_pr = io.popen 'gh pr view --json number --jq ".number"'
+  if handle_pr == nil then
+    return
+  end
+  local pr_number = handle_pr:read '*a'
+  handle_pr:close()
+  pr_number = pr_number:gsub('%s+', '')
+
+  -- Get the owner and repo name
+  local handle_owner = io.popen 'gh repo view --json owner | jq -r ".owner.login"'
+  if handle_owner == nil then
+    return
+  end
+  local owner = handle_owner:read '*a'
+  handle_owner:close()
+  owner = owner:gsub('%s+', '')
+
+  local handle_repo = io.popen 'gh repo view --json name | jq -r ".name"'
+  if handle_repo == nil then
+    return
+  end
+  local repo = handle_repo:read '*a'
+  handle_repo:close()
+  repo = repo:gsub('%s+', '')
+
+  if owner == '' or repo == '' then
+    print 'Error: Could not fetch the owner or repo name.'
+    return
+  end
+
+  local query = [[
+    query ($owner: String!, $repo: String!, $prNumber: Int!) {
+      repository(owner: $owner, name: $repo) {
+        pullRequest(number: $prNumber) {
+          files(first: 100) {
+            nodes {
+              path
+              viewerViewedState
+            }
+          }
+        }
+      }
+    }
+  ]]
+
+  -- Run the gh command to get the list of files and their viewed state
+  local cmd = string.format(
+    'gh api graphql -F query=%s -F owner=%s -F repo=%s -F prNumber=%d',
+    vim.fn.shellescape(query),
+    vim.fn.shellescape(owner),
+    vim.fn.shellescape(repo),
+    tonumber(pr_number)
+  )
+
+  local handle = io.popen(cmd)
+  if handle == nil then
+    return
+  end
+  local result = handle:read '*a'
+  handle:close()
+  if result == '' then
+    print 'Error: GraphQL query returned no data.'
+    return
+  end
+
+  -- Parse the JSON result
+  local json = vim.fn.json_decode(result)
+  if not json or not json.data or not json.data.repository or not json.data.repository.pullRequest or not json.data.repository.pullRequest.files then
+    print 'Error: Unexpected JSON structure.'
+    return
+  end
+
+  return json.data.repository.pullRequest.files.nodes
+end
+-- Function to populate quickfix list with files and their viewed state from a GitHub PR
+function Populate_quickfix_with_viewed_state()
+  local files = GetPRFiles()
+  -- Convert the result to the quickfix list format
+  local qf_list = {}
+  for _, file in ipairs(files) do
+    local viewed_label = (file.viewerViewedState == 'VIEWED') and '[Viewed]' or '[Not Viewed]'
+    local text = string.format('%s || %s', file.path, viewed_label)
+    table.insert(qf_list, { filename = file.path, text = text })
+  end
+
+  -- Set the quickfix list
+  vim.fn.setqflist({}, 'r', { title = 'GitHub PR Files', items = qf_list })
+
+  -- Open the quickfix window
+  vim.cmd 'copen'
+end
+
+-- Example usage: Populate quickfix list with files and their viewed state from the current PR
+vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Populate_quickfix_with_viewed_state()<CR>', { noremap = true, silent = true })
+
+function Get_current_qf_item_path()
+  -- Get the current quickfix list
+  local qf_list = vim.fn.getqflist()
+
+  -- Get the cursor position in the quickfix window
+  local cursor_pos = vim.fn.getpos '.'
+
+  -- print(vim.inspect(cursor_pos))
+  -- The cursor line corresponds to the index in the quickfix list
+  local current_qf_index = cursor_pos[2]
+
+  -- Ensure the index is within the range of the quickfix list
+  if current_qf_index < 1 or current_qf_index > #qf_list then
+    return nil
+  end
+
+  -- Extract the filename from the 'text' field
+  local current_item = qf_list[current_qf_index]
+  -- print(vim.inspect(current_item))
+  local text = current_item.text
+  -- print(text)
+  local filename = text:match '^(.-) ||'
+  return filename
+end
+
+function Toggle_viewed_state()
+  -- Get the filepath of the currently highlighted quickfix list item
+  local file_path = Get_current_qf_item_path()
+  if file_path == nil then
+    print 'Error: Could not fetch the file path of the currently highlighted quickfix list item.'
+    return
+  end
+
+  -- local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
+  -- if handle_pr == nil then
+  --   return
+  -- end
+  -- local pr_number = handle_pr:read '*a'
+  -- handle_pr:close()
+  -- pr_number = pr_number:gsub('%s+', '')
+
+  local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
+  if handle_pr == nil then
+    return
+  end
+
+  local pr_number = handle_pr:read '*a'
+  handle_pr:close()
+  pr_number = pr_number:gsub('%s+', '')
+
+  -- -- Fetch the current state of the file
+  -- local handle_files = io.popen(string.format('gh pr view %s --json files --jq ".files"', pr_number))
+  -- if handle_files == nil then
+  --   return
+  -- end
+  -- local files_result = handle_files:read '*a'
+  -- handle_files:close()
+
+  local files = GetPRFiles()
+
+  if not files then
+    print 'Error: Could not fetch the files.'
+    return
+  end
+  local current_state = 'UNVIEWED'
+  for _, file in ipairs(files) do
+    if file.path == file_path then
+      current_state = file.viewerViewedState
+      break
+    end
+  end
+
+  local query
+  if current_state == 'VIEWED' then
+    query = string.format(
+      [[
+    mutation {
+      unmarkFileAsViewed(input: {path: "%s", pullRequestId: %s}) {
+        pullRequest {
+          files(first:100){
+            nodes {
+              path
+              viewerViewedState
+            }
+          }
+        }
+      }
+    }
+  ]],
+      file_path,
+      pr_number
+    )
+  else
+    query = string.format(
+      [[
+  mutation {
+    markFileAsViewed(input: {path: "%s", pullRequestId: %s}) {
+      pullRequest {
+        files(first:100){
+          nodes {
+            path
+            viewerViewedState
+          }
+        }
+      }
+    }
+  }
+]],
+      file_path,
+      pr_number
+    )
+  end
+
+  -- Adjust the gh api graphql command to pass the input parameter correctly
+  local cmd = string.format('gh api graphql -f query=%s', vim.fn.shellescape(query))
+
+  local handle = io.popen(cmd)
+  if handle == nil then
+    return
+  end
+  local result = handle:read '*a'
+  handle:close()
+
+  if result == '' then
+    print 'Error: GraphQL mutation returned no data.'
+    return
+  end
+
+  -- run this again to refresh it
+  Populate_quickfix_with_viewed_state()
+end
+
+vim.api.nvim_set_keymap('n', '<leader>hv', ':lua Toggle_viewed_state()<CR>', { noremap = true, silent = true })

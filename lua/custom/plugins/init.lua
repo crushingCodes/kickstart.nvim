@@ -200,7 +200,8 @@ return {
   },
   { 'nvimtools/none-ls.nvim' },
   { 'ldelossa/litee.nvim' },
-  { 'nvim-neotest/neotest-python' },
+  -- TODO: move this to private repo
+  -- { dir = '~/Projects/plugins/neotest-python' },
   {
     'nvim-neotest/neotest',
     dependencies = {
@@ -208,15 +209,31 @@ return {
       'nvim-lua/plenary.nvim',
       'antoinemadec/FixCursorHold.nvim',
       'nvim-treesitter/nvim-treesitter',
+      'nvim-neotest/neotest-jest',
+      -- dir = '~/Projects/plugins/neotest-python',
+      -- 'nvim-neotest/neotest-python',
     },
     config = function()
+      -- require('custom.plugins.neotest_setup').setup_neotest()
+
       require('neotest').setup {
         adapters = {
-          require 'neotest-python',
+          -- require 'neotest-python' {
+          --   args = { '--keepdb', '--interactive', 'False' },
+          -- },
+          require 'neotest-jest' {
+            jestCommand = 'npm jest --',
+            jestConfigFile = 'jest.config.ts',
+            -- env = { CI = true },
+            cwd = function(path)
+              return vim.fn.getcwd()
+            end,
+          },
         },
       }
     end,
   },
+  { 'ldelossa/gh.nvim' },
   -- {
   --   'folke/noice.nvim',
   --   event = 'VeryLazy',
@@ -276,5 +293,32 @@ return {
   -- },
   {
     'sindrets/diffview.nvim',
+  },
+  {
+    'vhyrro/luarocks.nvim',
+    priority = 1000,
+    config = true,
+    opts = {
+      rocks = { 'lua-curl', 'nvim-nio', 'mimetypes', 'xml2lua' },
+    },
+  },
+  {
+    'rest-nvim/rest.nvim',
+    ft = 'http',
+    dependencies = { 'luarocks.nvim' },
+    config = function()
+      require('rest-nvim').setup()
+    end,
+  },
+  { 'folke/lazydev.nvim' },
+  {
+    'ellisonleao/dotenv.nvim',
+
+    config = function()
+      require('dotenv').setup {
+        enable_on_load = true, -- will load your .env file upon loading a buffer
+        verbose = false, -- show error notification if .env file is not found and if .env is loaded
+      }
+    end,
   },
 }
