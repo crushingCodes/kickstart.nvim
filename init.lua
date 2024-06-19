@@ -1520,31 +1520,31 @@ map('<leader>.', ':DotEnv<CR>', 'Load .env')
 -- )
 
 -- Function to append a label to the currently highlighted quickfix list entry
-function Append_label_to_current_qf_item(label)
-  -- Get the current quickfix list
-  local quickfix_list = vim.fn.getqflist()
-
-  -- Get the current cursor position in the quickfix window
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-
-  -- Find the index of the quickfix list entry that corresponds to the current cursor position
-  local current_qf_index = cursor_pos[1]
-
-  -- get the current entry text
-  local entry_text = quickfix_list[current_qf_index].text
-  if entry_text:match(vim.pesc(label)) then
-    quickfix_list[current_qf_index].text = entry_text:gsub(vim.pesc(label), '')
-  else
-    -- Modify the specific entry
-    quickfix_list[current_qf_index].text = quickfix_list[current_qf_index].text .. ' ' .. label
-  end
-
-  -- Set the modified quickfix list
-  vim.fn.setqflist({}, 'r', { items = quickfix_list })
-end
-
--- Example usage: Append "[Viewed]" to the currently highlighted entry in the quickfix list
-vim.api.nvim_set_keymap('n', '<leader>hv', ':lua Append_label_to_current_qf_item("[Viewed]")<CR>', { noremap = true, silent = true })
+-- function Append_label_to_current_qf_item(label)
+--   -- Get the current quickfix list
+--   local quickfix_list = vim.fn.getqflist()
+--
+--   -- Get the current cursor position in the quickfix window
+--   local cursor_pos = vim.api.nvim_win_get_cursor(0)
+--
+--   -- Find the index of the quickfix list entry that corresponds to the current cursor position
+--   local current_qf_index = cursor_pos[1]
+--
+--   -- get the current entry text
+--   local entry_text = quickfix_list[current_qf_index].text
+--   if entry_text:match(vim.pesc(label)) then
+--     quickfix_list[current_qf_index].text = entry_text:gsub(vim.pesc(label), '')
+--   else
+--     -- Modify the specific entry
+--     quickfix_list[current_qf_index].text = quickfix_list[current_qf_index].text .. ' ' .. label
+--   end
+--
+--   -- Set the modified quickfix list
+--   vim.fn.setqflist({}, 'r', { items = quickfix_list })
+-- end
+--
+-- -- Example usage: Append "[Viewed]" to the currently highlighted entry in the quickfix list
+-- vim.api.nvim_set_keymap('n', '<leader>hv', ':lua Append_label_to_current_qf_item("[Viewed]")<CR>', { noremap = true, silent = true })
 
 -- Function to populate quickfix list with files from a GitHub PR
 function Populate_quickfix_from_pr()
@@ -1649,26 +1649,31 @@ function GetPRFiles()
 
   return json.data.repository.pullRequest.files.nodes
 end
+
 -- Function to populate quickfix list with files and their viewed state from a GitHub PR
 function Populate_quickfix_with_viewed_state()
   local files = GetPRFiles()
+  -- Sort files by lowercase name
+  table.sort(files, function(a, b)
+    return a.path:lower() < b.path:lower()
+  end)
+
   -- Convert the result to the quickfix list format
   local qf_list = {}
   for _, file in ipairs(files) do
     local viewed_label = (file.viewerViewedState == 'VIEWED') and '[Viewed]' or '[Not Viewed]'
-    local text = string.format('%s || %s', file.path, viewed_label)
-    table.insert(qf_list, { filename = file.path, text = text })
+    table.insert(qf_list, { filename = file.path, text = string.format('%s %s', file.path, viewed_label) })
   end
-
   -- Set the quickfix list
   vim.fn.setqflist({}, 'r', { title = 'GitHub PR Files', items = qf_list })
+end
+
+function Open_quickfix_with_viewed_state()
+  Populate_quickfix_with_viewed_state()
 
   -- Open the quickfix window
   vim.cmd 'copen'
 end
-
--- Example usage: Populate quickfix list with files and their viewed state from the current PR
-vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Populate_quickfix_with_viewed_state()<CR>', { noremap = true, silent = true })
 
 function Get_current_qf_item_path()
   -- Get the current quickfix list
@@ -1677,7 +1682,6 @@ function Get_current_qf_item_path()
   -- Get the cursor position in the quickfix window
   local cursor_pos = vim.fn.getpos '.'
 
-  -- print(vim.inspect(cursor_pos))
   -- The cursor line corresponds to the index in the quickfix list
   local current_qf_index = cursor_pos[2]
 
@@ -1688,19 +1692,67 @@ function Get_current_qf_item_path()
 
   -- Extract the filename from the 'text' field
   local current_item = qf_list[current_qf_index]
-  -- print(vim.inspect(current_item))
   local text = current_item.text
-  -- print(text)
-  local filename = text:match '^(.-) ||'
+  -- local filename = text:match '^(.-) ||'
+  local filename = text:match '^(.-) %[Viewed%]' or text:match '^(.-) %[Not Viewed%]'
+
   return filename
+end
+
+function Get_git_root()
+  local handle = io.popen 'git rev-parse --show-toplevel'
+  if handle == nil then
+    return
+  end
+  local git_root = handle:read '*a'
+  handle:close()
+  return git_root:gsub('%s+', '') -- Trim any whitespace
+end
+
+function Get_relative_git_path()
+  -- Get the git root directory
+  local git_root = Get_git_root()
+  if git_root == '' then
+    print 'Error: Not a git repository.'
+    return nil
+  end
+
+  -- Get the full path of the current buffer
+  local buffer_path = vim.fn.expand '%:p'
+  if buffer_path == '' then
+    print 'Error: No file in the current buffer.'
+    return nil
+  end
+
+  -- Compute the relative path from the git root to the current buffer file
+  local relative_path = buffer_path:sub(#git_root + 2) -- +2 to account for the trailing slash
+
+  return relative_path
+end
+
+function Is_quickfix_window()
+  local win_info = vim.fn.getwininfo(vim.api.nvim_get_current_win())
+  if win_info and win_info[1] and win_info[1].quickfix == 1 then
+    return true
+  end
+  return false
 end
 
 function Toggle_viewed_state()
   -- Get the filepath of the currently highlighted quickfix list item
-  local file_path = Get_current_qf_item_path()
-  if file_path == nil then
-    print 'Error: Could not fetch the file path of the currently highlighted quickfix list item.'
-    return
+  local file_path
+  if Is_quickfix_window() then
+    file_path = Get_current_qf_item_path()
+    if file_path == nil then
+      print 'Error: Could not fetch the file path of the currently active buffer.'
+      return
+    end
+  else
+    file_path = Get_relative_git_path()
+    if file_path == nil then
+      print 'Error: Could not fetch the file path of the currently highlighted quickfix list item.'
+      return
+    end
   end
 
   -- local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
@@ -1802,4 +1854,6 @@ function Toggle_viewed_state()
   Populate_quickfix_with_viewed_state()
 end
 
+-- Example usage: Populate quickfix list with files and their viewed state from the current PR
+vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Open_quickfix_with_viewed_state()<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>hv', ':lua Toggle_viewed_state()<CR>', { noremap = true, silent = true })
