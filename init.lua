@@ -188,8 +188,12 @@ map('<leader>Dg', ':lua Devdocs_grep()<CR>', 'Devdocs [G]rep')
 map('<leader>Dt', ':Telescope tldr<CR>', 'TLDR')
 
 -- Format and Save
-vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
+-- vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
+vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.format()<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
 
+-- Format
+vim.api.nvim_set_keymap('n', '<leader>f', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true, desc = 'Format' })
+local test
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 
 map('<leader>q', ':q<CR>', '[q]uit')
@@ -221,12 +225,11 @@ map('<leader>gU', ':lua confirm_undo_last_commit()<CR>', '[U]ndo last commit')
 map('<leader>gH', ':lua require("telescope").extensions.git_file_history.git_file_history()<CR>', 'File History')
 
 -- Utils for getting file paths
-map('<leader>yr', ':let @*=expand("%")<CR>', 'Yank [r]elative file path')
-map('<leader>yp', ':let @*=expand("%:p")<CR>', 'Yank full file [p]ath')
-map('<leader>yn', ':let @*=expand("%:t")<CR>', 'Yank file [n]ame')
-map('<leader>yd', ':let @*=expand("%:p:h")<CR>', 'Yank directory [n]ame')
+map('<leader>Yr', ':let @*=expand("%")<CR>', 'Yank [r]elative file path')
+map('<leader>Yp', ':let @*=expand("%:p")<CR>', 'Yank full file [p]ath')
+map('<leader>Yn', ':let @*=expand("%:t")<CR>', 'Yank file [n]ame')
+map('<leader>Yd', ':let @*=expand("%:p:h")<CR>', 'Yank directory [n]ame')
 
--- map('<leader>Q', ':qa!<CR>', '[Q]uit all')
 map('<leader>t/', ':tabnew<CR>|:terminal<CR>', 'New Terminal')
 map('<leader>tt', ':tabnew<CR>', 'New Tab')
 map('<leader>tq', ':tabclose<CR>', 'Quit Tab')
@@ -235,6 +238,7 @@ function OpenDbInTab()
   vim.cmd 'tabnew'
   vim.cmd 'DBUIToggle'
 end
+
 -- DBUI
 vim.keymap.set('n', '<leader>d', '<cmd>lua OpenDbInTab()<cr>', { desc = 'Open Database' })
 
@@ -1173,13 +1177,12 @@ vim.api.nvim_set_keymap('x', 'p', 'c<c-r><c-r>0<esc>', { noremap = true, silent 
 -- Visual mode paste from the system clipboard
 vim.api.nvim_set_keymap('x', 'p', '"_d"+P', { noremap = true, silent = true })
 
--- https://stackoverflow.com/a/59029500
--- normal mode include current word in search
-vim.api.nvim_set_keymap('n', '#', '#N', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '*', '*N', { noremap = true, silent = true })
--- visual mode include current selection in search
-vim.api.nvim_set_keymap('x', '#', '#N', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('x', '*', '*N', { noremap = true, silent = true })
+-- -- https://stackoverflow.com/a/59029500
+-- -- normal mode include current word in search
+-- vim.api.nvim_set_keymap('n', '#', '#N', { noremap = true, silent = true }) vim.api.nvim_set_keymap('n', '*', '*N', { noremap = true, silent = true })
+-- -- visual mode include current selection in search
+-- vim.api.nvim_set_keymap('x', '#', '#N', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('x', '*', '*N', { noremap = true, silent = true })
 
 -- Auto commands
 -- Python venv
@@ -1212,6 +1215,7 @@ vim.api.nvim_create_autocmd('BufWinLeave', {
 -- https://superuser.com/a/1090762/1573671
 vim.cmd 'set autoread'
 vim.cmd 'au CursorHold * checktime'
+
 local null_ls = require 'null-ls'
 require('null-ls').setup {
   sources = {
@@ -1224,29 +1228,29 @@ require('null-ls').setup {
   },
 }
 
-function Yank_test_path()
-  local ts_utils = require 'nvim-treesitter.ts_utils'
-  local bufnr = vim.api.nvim_get_current_buf()
-  local node = ts_utils.get_node_at_cursor()
-
-  while node do
-    local type = node:type()
-    if type == 'function_definition' or type == 'function_declaration' then
-      -- Get the start and end positions of the node
-      local start_row, start_col, end_row, end_col = node:range()
-      -- Extract the text from the buffer
-      local lines = vim.api.nvim_buf_get_lines(bufnr, start_row, end_row + 1, false)
-      local test_name = table.concat(lines, '\n'):sub(start_col + 1, -(end_col + 1))
-      local file_path = vim.api.nvim_buf_get_name(bufnr)
-      local test_path = file_path .. '::' .. test_name
-      vim.fn.setreg('+', test_path)
-      vim.notify('Yanked test path: ' .. test_path, vim.log.levels.INFO)
-      return
-    end
-    node = node:parent()
-  end
-  vim.notify('No test function found at cursor', vim.log.levels.WARN)
-end
+-- function Yank_test_path()
+--   local ts_utils = require 'nvim-treesitter.ts_utils'
+--   local bufnr = vim.api.nvim_get_current_buf()
+--   local node = ts_utils.get_node_at_cursor()
+--
+--   while node do
+--     local type = node:type()
+--     if type == 'function_definition' or type == 'function_declaration' then
+--       -- Get the start and end positions of the node
+--       local start_row, start_col, end_row, end_col = node:range()
+--       -- Extract the text from the buffer
+--       local lines = vim.api.nvim_buf_get_lines(bufnr, start_row, end_row + 1, false)
+--       local test_name = table.concat(lines, '\n'):sub(start_col + 1, -(end_col + 1))
+--       local file_path = vim.api.nvim_buf_get_name(bufnr)
+--       local test_path = file_path .. '::' .. test_name
+--       vim.fn.setreg('+', test_path)
+--       vim.notify('Yanked test path: ' .. test_path, vim.log.levels.INFO)
+--       return
+--     end
+--     node = node:parent()
+--   end
+--   vim.notify('No test function found at cursor', vim.log.levels.WARN)
+-- end
 
 -- Custom function to close all buffers with a warning if there are unsaved changes
 function Close_all_buffers()
@@ -1286,58 +1290,58 @@ end
 -- Quit all with confirmation
 map('<leader>Q', ':lua Close_all_buffers()<CR>', '[Q]uit all')
 
--- Create a custom picker for git stashes
-local actions = require 'telescope.actions'
-local action_state = require 'telescope.actions.state'
-local pickers = require 'telescope.pickers'
-local finders = require 'telescope.finders'
-local conf = require('telescope.config').values
-
-local function diff_stash(opts)
-  opts = opts or {}
-  pickers
-    .new(opts, {
-      prompt_title = 'Git Stashes',
-      finder = finders.new_oneshot_job({ 'git', 'stash', 'list' }, opts),
-      sorter = conf.generic_sorter(opts),
-      attach_mappings = function(prompt_bufnr, map)
-        actions.select_default:replace(function()
-          actions.close(prompt_bufnr)
-          local selection = action_state.get_selected_entry()
-          local stash = selection[1]:match 'stash@{%d+}'
-          if stash then
-            vim.cmd('DiffviewOpen ' .. stash)
-          else
-            print 'No stash selected'
-          end
-        end)
-        return true
-      end,
-    })
-    :find()
-end
-
--- Create a command to call the custom picker
-vim.api.nvim_create_user_command('TelescopeDiffStash', function()
-  diff_stash(require('telescope.themes').get_dropdown {})
-end, {})
-
--- Optional: Map the command to a keybinding
-vim.api.nvim_set_keymap('n', '<leader>gZ', ':TelescopeDiffStash<CR>', { noremap = true, silent = true })
-
+-- -- Create a custom picker for git stashes
+-- local actions = require 'telescope.actions'
+-- local action_state = require 'telescope.actions.state'
+-- local pickers = require 'telescope.pickers'
+-- local finders = require 'telescope.finders'
+-- local conf = require('telescope.config').values
+--
+-- local function diff_stash(opts)
+--   opts = opts or {}
+--   pickers
+--     .new(opts, {
+--       prompt_title = 'Git Stashes',
+--       finder = finders.new_oneshot_job({ 'git', 'stash', 'list' }, opts),
+--       sorter = conf.generic_sorter(opts),
+--       attach_mappings = function(prompt_bufnr, map)
+--         actions.select_default:replace(function()
+--           actions.close(prompt_bufnr)
+--           local selection = action_state.get_selected_entry()
+--           local stash = selection[1]:match 'stash@{%d+}'
+--           if stash then
+--             vim.cmd('DiffviewOpen ' .. stash)
+--           else
+--             print 'No stash selected'
+--           end
+--         end)
+--         return true
+--       end,
+--     })
+--     :find()
+-- end
+--
+-- -- Create a command to call the custom picker
+-- vim.api.nvim_create_user_command('TelescopeDiffStash', function()
+--   diff_stash(require('telescope.themes').get_dropdown {})
+-- end, {})
+--
+-- -- Optional: Map the command to a keybinding
+-- vim.api.nvim_set_keymap('n', '<leader>gZ', ':TelescopeDiffStash<CR>', { noremap = true, silent = true })
+--
 -- Function to checkout PR and run DiffviewPR
 vim.api.nvim_set_keymap('n', '<leader>hh', ':Telescope gh pull_request<CR>', { noremap = true, silent = true })
 
-local function get_current_pr_number()
-  local handle = io.popen "gh pr view --json number --jq '.number'"
-  if handle then
-    local result = handle:read '*a'
-    handle:close()
-    return tonumber(result)
-  else
-    return nil
-  end
-end
+-- local function get_current_pr_number()
+--   local handle = io.popen "gh pr view --json number --jq '.number'"
+--   if handle then
+--     local result = handle:read '*a'
+--     handle:close()
+--     return tonumber(result)
+--   else
+--     return nil
+--   end
+-- end
 
 map('<leader>rr', ':Rest run<CR>', 'Rest run')
 map('<leader>rl', ':Rest run last<CR>', 'Rest run last')
@@ -1480,18 +1484,18 @@ map('<leader>.', ':DotEnv<CR>', 'Load .env')
 -- -- end of potential fix to the following:
 
 -- TODO:
--- -- Define a function to append visual selection to a register with a newline character
--- function AppendVisualToRegister()
---   -- Yank the visual selection to the "v" register
---   vim.cmd 'normal! "vy'
---   -- vim.cmd 'visual! "vy'
---   -- Get the current content of the "v" register
---   local current_content = vim.fn.getreg 'v'
---   -- Get the current visual selection
---   local visual_selection = vim.fn.getreg '"'
---   -- Set the "v" register to the current content plus the visual selection and a newline
---   vim.fn.setreg('v', current_content .. visual_selection .. '\n')
--- end
+-- Define a function to append visual selection to a register with a newline character
+function AppendVisualToRegister()
+  -- Yank the visual selection to the "v" register
+  vim.cmd 'normal! "vy'
+  -- vim.cmd 'visual! "vy'
+  -- Get the current content of the "v" register
+  local current_content = vim.fn.getreg 'v'
+  -- Get the current visual selection
+  local visual_selection = vim.fn.getreg '"'
+  -- Set the "v" register to the current content plus the visual selection and a newline
+  vim.fn.setreg('v', current_content .. visual_selection .. '\n')
+end
 
 -- -- Keybinding for appending visual selection to register
 -- vim.api.nvim_set_keymap('v', '<leader>a', ':lua AppendVisualToRegister()<CR>', { noremap = true, silent = true })
@@ -1712,14 +1716,14 @@ function Get_relative_git_path()
   -- Get the git root directory
   local git_root = Get_git_root()
   if git_root == '' then
-    print 'Error: Not a git repository.'
+    -- print 'Error: Not a git repository.'
     return nil
   end
 
   -- Get the full path of the current buffer
   local buffer_path = vim.fn.expand '%:p'
   if buffer_path == '' then
-    print 'Error: No file in the current buffer.'
+    -- print 'Error: No file in the current buffer.'
     return nil
   end
 
@@ -1743,13 +1747,13 @@ function Toggle_viewed_state()
   if Is_quickfix_window() then
     file_path = Get_current_qf_item_path()
     if file_path == nil then
-      print 'Error: Could not fetch the file path of the currently active buffer.'
+      -- print 'Error: Could not fetch the file path of the currently active buffer.'
       return
     end
   else
     file_path = Get_relative_git_path()
     if file_path == nil then
-      print 'Error: Could not fetch the file path of the currently highlighted quickfix list item.'
+      -- print 'Error: Could not fetch the file path of the currently highlighted quickfix list item.'
       return
     end
   end
@@ -1889,4 +1893,7 @@ function OpenDiffView()
   vim.cmd 'DiffviewPR'
   Open_quickfix_with_viewed_state()
 end
+
 map('<leader>hp', ':lua OpenDiffView()<CR>', 'Preview PR Diff')
+
+-- vim.cmd [[ autocmd User visual_multi_mappings nmap <buffer> <leader>y "+y ]]
