@@ -293,6 +293,18 @@ return {
   -- },
   {
     'sindrets/diffview.nvim',
+    -- config = function()
+    --   icons = {
+    --     folder_closed = function()
+    --       print 'hello closed'
+    --       return '' .. ' My Custom Icon'
+    --     end,
+    --     folder_open = function()
+    --       print 'hello open'
+    --       return '' .. ' My Custom Icon'
+    --     end,
+    --   }
+    -- end,
   },
   {
     'vhyrro/luarocks.nvim',

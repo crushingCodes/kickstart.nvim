@@ -1857,3 +1857,31 @@ end
 -- Example usage: Populate quickfix list with files and their viewed state from the current PR
 vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Open_quickfix_with_viewed_state()<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>hv', ':lua Toggle_viewed_state()<CR>', { noremap = true, silent = true })
+
+function Highlight_active_file()
+  local active_file = Get_relative_git_path()
+  if not active_file then
+    return
+  end
+
+  local qf_list = vim.fn.getqflist()
+  for i, entry in ipairs(qf_list) do
+    -- print('filename', text)
+    local filename = entry.text:match '^(.-) %[Viewed%]' or entry.text:match '^(.-) %[Not Viewed%]'
+    if filename == active_file then
+      vim.fn.setqflist({}, 'r', { idx = i })
+
+      -- vim.cmd(string.format('call setqflist([], "r", {"items": [%s], "idx": %d})', vim.inspect { entry }, i))
+      vim.cmd 'normal! zz' -- Center the highlighted entry
+      break
+    end
+  end
+end
+
+-- Autocommand to update the highlight when the active file in Diffview changes
+vim.cmd [[
+  augroup DiffviewQuickfixHighlight
+    autocmd!
+    autocmd BufEnter * lua Highlight_active_file()
+  augroup END
+]]
