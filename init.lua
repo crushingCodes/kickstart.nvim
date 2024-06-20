@@ -1327,7 +1327,6 @@ vim.api.nvim_set_keymap('n', '<leader>gZ', ':TelescopeDiffStash<CR>', { noremap 
 
 -- Function to checkout PR and run DiffviewPR
 vim.api.nvim_set_keymap('n', '<leader>hh', ':Telescope gh pull_request<CR>', { noremap = true, silent = true })
-map('<leader>hp', ':DiffviewPR<CR>', 'Preview PR Diff')
 
 local function get_current_pr_number()
   local handle = io.popen "gh pr view --json number --jq '.number'"
@@ -1885,3 +1884,9 @@ vim.cmd [[
     autocmd BufEnter * lua Highlight_active_file()
   augroup END
 ]]
+
+function OpenDiffView()
+  vim.cmd 'DiffviewPR'
+  Open_quickfix_with_viewed_state()
+end
+map('<leader>hp', ':lua OpenDiffView()<CR>', 'Preview PR Diff')
