@@ -22,7 +22,7 @@ return {
     'NeogitOrg/neogit',
     dependencies = {
       'nvim-lua/plenary.nvim', -- required
-      -- 'sindrets/diffview.nvim', -- optional - Diff integration
+      'sindrets/diffview.nvim', -- optional - Diff integration
       -- Only one of these is needed, not both.
       'nvim-telescope/telescope.nvim', -- optional
       -- "ibhagwan/fzf-lua",              -- optional
@@ -293,6 +293,14 @@ return {
   -- },
   {
     'sindrets/diffview.nvim',
+    -- dir = '~/Projects/plugins/diffview.nvim',
+    -- config = function()
+    --   -- require('diffview').setup {
+    --
+    --   -- require 'diffview_2'
+    --   -- require 'diffview_pr'
+    -- end,
+    -- dir = '~/Projects/plugins/diffview.nvim',
     -- config = function()
     --   icons = {
     --     folder_closed = function()
@@ -333,5 +341,10 @@ return {
       }
     end,
   },
-  -- { 'mg979/vim-visual-multi' },
+  { 'mg979/vim-visual-multi' },
+  -- {
+  --   'ecthelionvi/NeoComposer.nvim',
+  --   dependencies = { 'kkharji/sqlite.lua' },
+  --   opts = {},
+  -- },
 }

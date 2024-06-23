@@ -514,6 +514,7 @@ require('lazy').setup({
         --
         require('telescope').extensions.smart_open.smart_open {
           match_algorithm = 'fzf',
+          cwd_only = true,
         }
       end, { desc = '[ ] Find existing buffers' })
 
@@ -1576,7 +1577,7 @@ end
 -- Example usage: Populate quickfix list with files from PR #123
 -- vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Populate_quickfix_from_pr(123)<CR>', { noremap = true, silent = true })
 
-function GetPRFiles()
+function Get_Pr_Files()
   -- Get the current checked-out PR number
   local handle_pr = io.popen 'gh pr view --json number --jq ".number"'
   if handle_pr == nil then
@@ -1655,7 +1656,7 @@ end
 
 -- Function to populate quickfix list with files and their viewed state from a GitHub PR
 function Populate_quickfix_with_viewed_state()
-  local files = GetPRFiles()
+  local files = Get_Pr_Files()
   -- Sort files by lowercase name
   table.sort(files, function(a, b)
     return a.path:lower() < b.path:lower()
@@ -1783,7 +1784,7 @@ function Toggle_viewed_state()
   -- local files_result = handle_files:read '*a'
   -- handle_files:close()
 
-  local files = GetPRFiles()
+  local files = Get_Pr_Files()
 
   if not files then
     print 'Error: Could not fetch the files.'
@@ -1858,42 +1859,45 @@ function Toggle_viewed_state()
 end
 
 -- Example usage: Populate quickfix list with files and their viewed state from the current PR
-vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Open_quickfix_with_viewed_state()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>hv', ':lua Toggle_viewed_state()<CR>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Open_quickfix_with_viewed_state()<CR>', { noremap = true, silent = true })
 
-function Highlight_active_file()
-  local active_file = Get_relative_git_path()
-  if not active_file then
-    return
-  end
+local diffview = require 'diffview'
+diffview.setup {
+  keymaps = {
+    view = {
+      {
+        'n',
+        '<leader>hv',
+        function()
+          local lib = require 'diffview.lib'
+          local view = lib.get_current_view()
+          if view ~= nil then
+            local file = view:infer_cur_file()
 
-  local qf_list = vim.fn.getqflist()
-  for i, entry in ipairs(qf_list) do
-    -- print('filename', text)
-    local filename = entry.text:match '^(.-) %[Viewed%]' or entry.text:match '^(.-) %[Not Viewed%]'
-    if filename == active_file then
-      vim.fn.setqflist({}, 'r', { idx = i })
+            print('file', file.path)
+          end
+        end,
+        { desc = 'Toggle viewed' },
+      },
+    },
+    file_panel = {
+      {
+        'n',
+        '<leader>hv',
+        function()
+          local lib = require 'diffview.lib'
+          local view = lib.get_current_view()
+          if view ~= nil then
+            local file = view:infer_cur_file()
 
-      -- vim.cmd(string.format('call setqflist([], "r", {"items": [%s], "idx": %d})', vim.inspect { entry }, i))
-      vim.cmd 'normal! zz' -- Center the highlighted entry
-      break
-    end
-  end
-end
+            print('file', file.path)
+          end
 
--- Autocommand to update the highlight when the active file in Diffview changes
-vim.cmd [[
-  augroup DiffviewQuickfixHighlight
-    autocmd!
-    autocmd BufEnter * lua Highlight_active_file()
-  augroup END
-]]
-
-function OpenDiffView()
-  vim.cmd 'DiffviewPR'
-  Open_quickfix_with_viewed_state()
-end
-
-map('<leader>hp', ':lua OpenDiffView()<CR>', 'Preview PR Diff')
-
--- vim.cmd [[ autocmd User visual_multi_mappings nmap <buffer> <leader>y "+y ]]
+          -- print 'bar'
+        end,
+        { desc = 'Toggle viewed' },
+      },
+    },
+  },
+}
+require 'diffview_custom'
