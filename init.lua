@@ -1742,126 +1742,129 @@ function Is_quickfix_window()
   return false
 end
 
-function Toggle_viewed_state()
-  -- Get the filepath of the currently highlighted quickfix list item
-  local file_path
-  if Is_quickfix_window() then
-    file_path = Get_current_qf_item_path()
-    if file_path == nil then
-      -- print 'Error: Could not fetch the file path of the currently active buffer.'
-      return
-    end
-  else
-    file_path = Get_relative_git_path()
-    if file_path == nil then
-      -- print 'Error: Could not fetch the file path of the currently highlighted quickfix list item.'
-      return
-    end
-  end
-
-  -- local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
-  -- if handle_pr == nil then
-  --   return
-  -- end
-  -- local pr_number = handle_pr:read '*a'
-  -- handle_pr:close()
-  -- pr_number = pr_number:gsub('%s+', '')
-
-  local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
-  if handle_pr == nil then
-    return
-  end
-
-  local pr_number = handle_pr:read '*a'
-  handle_pr:close()
-  pr_number = pr_number:gsub('%s+', '')
-
-  -- -- Fetch the current state of the file
-  -- local handle_files = io.popen(string.format('gh pr view %s --json files --jq ".files"', pr_number))
-  -- if handle_files == nil then
-  --   return
-  -- end
-  -- local files_result = handle_files:read '*a'
-  -- handle_files:close()
-
-  local files = Get_Pr_Files()
-
-  if not files then
-    print 'Error: Could not fetch the files.'
-    return
-  end
-  local current_state = 'UNVIEWED'
-  for _, file in ipairs(files) do
-    if file.path == file_path then
-      current_state = file.viewerViewedState
-      break
-    end
-  end
-
-  local query
-  if current_state == 'VIEWED' then
-    query = string.format(
-      [[
-    mutation {
-      unmarkFileAsViewed(input: {path: "%s", pullRequestId: %s}) {
-        pullRequest {
-          files(first:100){
-            nodes {
-              path
-              viewerViewedState
-            }
-          }
-        }
-      }
-    }
-  ]],
-      file_path,
-      pr_number
-    )
-  else
-    query = string.format(
-      [[
-  mutation {
-    markFileAsViewed(input: {path: "%s", pullRequestId: %s}) {
-      pullRequest {
-        files(first:100){
-          nodes {
-            path
-            viewerViewedState
-          }
-        }
-      }
-    }
-  }
-]],
-      file_path,
-      pr_number
-    )
-  end
-
-  -- Adjust the gh api graphql command to pass the input parameter correctly
-  local cmd = string.format('gh api graphql -f query=%s', vim.fn.shellescape(query))
-
-  local handle = io.popen(cmd)
-  if handle == nil then
-    return
-  end
-  local result = handle:read '*a'
-  handle:close()
-
-  if result == '' then
-    print 'Error: GraphQL mutation returned no data.'
-    return
-  end
-
-  -- run this again to refresh it
-  Populate_quickfix_with_viewed_state()
-end
+-- function Toggle_viewed_state()
+--   -- Get the filepath of the currently highlighted quickfix list item
+--   local file_path
+--   if Is_quickfix_window() then
+--     file_path = Get_current_qf_item_path()
+--     if file_path == nil then
+--       -- print 'Error: Could not fetch the file path of the currently active buffer.'
+--       return
+--     end
+--   else
+--     file_path = Get_relative_git_path()
+--     if file_path == nil then
+--       -- print 'Error: Could not fetch the file path of the currently highlighted quickfix list item.'
+--       return
+--     end
+--   end
+--
+--   -- local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
+--   -- if handle_pr == nil then
+--   --   return
+--   -- end
+--   -- local pr_number = handle_pr:read '*a'
+--   -- handle_pr:close()
+--   -- pr_number = pr_number:gsub('%s+', '')
+--
+--   local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
+--   if handle_pr == nil then
+--     return
+--   end
+--
+--   local pr_number = handle_pr:read '*a'
+--   handle_pr:close()
+--   pr_number = pr_number:gsub('%s+', '')
+--
+--   -- -- Fetch the current state of the file
+--   -- local handle_files = io.popen(string.format('gh pr view %s --json files --jq ".files"', pr_number))
+--   -- if handle_files == nil then
+--   --   return
+--   -- end
+--   -- local files_result = handle_files:read '*a'
+--   -- handle_files:close()
+--
+--   local files = Get_Pr_Files()
+--
+--   if not files then
+--     print 'Error: Could not fetch the files.'
+--     return
+--   end
+--   local current_state = 'UNVIEWED'
+--   for _, file in ipairs(files) do
+--     if file.path == file_path then
+--       current_state = file.viewerViewedState
+--       break
+--     end
+--   end
+--
+--   local query
+--   if current_state == 'VIEWED' then
+--     query = string.format(
+--       [[
+--     mutation {
+--       unmarkFileAsViewed(input: {path: "%s", pullRequestId: %s}) {
+--         pullRequest {
+--           files(first:100){
+--             nodes {
+--               path
+--               viewerViewedState
+--             }
+--           }
+--         }
+--       }
+--     }
+--   ]],
+--       file_path,
+--       pr_number
+--     )
+--   else
+--     query = string.format(
+--       [[
+--   mutation {
+--     markFileAsViewed(input: {path: "%s", pullRequestId: %s}) {
+--       pullRequest {
+--         files(first:100){
+--           nodes {
+--             path
+--             viewerViewedState
+--           }
+--         }
+--       }
+--     }
+--   }
+-- ]],
+--       file_path,
+--       pr_number
+--     )
+--   end
+--
+--   -- Adjust the gh api graphql command to pass the input parameter correctly
+--   local cmd = string.format('gh api graphql -f query=%s', vim.fn.shellescape(query))
+--
+--   local handle = io.popen(cmd)
+--   if handle == nil then
+--     return
+--   end
+--   local result = handle:read '*a'
+--   handle:close()
+--
+--   if result == '' then
+--     print 'Error: GraphQL mutation returned no data.'
+--     return
+--   end
+--
+--   -- run this again to refresh it
+--   Populate_quickfix_with_viewed_state()
+-- end
 
 -- Example usage: Populate quickfix list with files and their viewed state from the current PR
 -- vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Open_quickfix_with_viewed_state()<CR>', { noremap = true, silent = true })
 
+local diffview_custom = require 'diffview_custom'
+
 local diffview = require 'diffview'
+local lib = require 'diffview.lib'
 diffview.setup {
   keymaps = {
     view = {
@@ -1869,13 +1872,25 @@ diffview.setup {
         'n',
         '<leader>hv',
         function()
-          local lib = require 'diffview.lib'
-          local view = lib.get_current_view()
-          if view ~= nil then
-            local file = view:infer_cur_file()
-
-            print('file', file.path)
-          end
+          diffview_custom.Toggle_viewed()
+          -- local lib = require 'diffview.lib'
+          -- local view = lib.get_current_view()
+          -- if view ~= nil then
+          --   local file = view:infer_cur_file()
+          --
+          --   -- print('file', file.path)
+          --   -- print('file viewed', file.viewed)
+          --
+          --   diffview_custom.Toggle_viewed_state(file.path, file.viewed)
+          --   -- local original = file.basename
+          --   -- file.basename = 'updating'
+          --   -- view.update_needed = true
+          --   -- vim.cmd 'DiffviewRefresh'
+          --   -- file.basename = original
+          --   -- view.update_needed = true
+          --   -- vim.cmd 'DiffviewRefresh'
+          --   -- view.render()
+          -- end
         end,
         { desc = 'Toggle viewed' },
       },
@@ -1885,13 +1900,28 @@ diffview.setup {
         'n',
         '<leader>hv',
         function()
-          local lib = require 'diffview.lib'
-          local view = lib.get_current_view()
-          if view ~= nil then
-            local file = view:infer_cur_file()
-
-            print('file', file.path)
-          end
+          diffview_custom.Toggle_viewed()
+          -- local lib = require 'diffview.lib'
+          -- local view = lib.get_current_view()
+          -- if view ~= nil then
+          --   local file = view:infer_cur_file()
+          --
+          --   -- print('file', file.path)
+          --   -- print('file viewed', file.viewed)
+          --   diffview_custom.Toggle_viewed_state(file.path, file.viewed)
+          --   -- print(vim.inspect(view))
+          --   local original = file.basename
+          --   file.basename = 'updating'
+          --   view.update_needed = true
+          --   vim.cmd 'DiffviewRefresh'
+          --   -- file.basename = original
+          --   -- view.update_needed = true
+          --   -- vim.cmd 'DiffviewRefresh'
+          --   -- view:render()
+          --   -- lib:get_current_view():render()
+          --
+          --   -- view.
+          -- end
 
           -- print 'bar'
         end,
@@ -1900,4 +1930,28 @@ diffview.setup {
     },
   },
 }
-require 'diffview_custom'
+
+require('obsidian').setup {
+  workspaces = {
+    --   -- {
+    --   --   name = 'personal',
+    --   --   path = '~/vaults/personal',
+    --   -- },
+    {
+      name = 'DevVault',
+      path = '/Users/work/DevVault',
+    },
+  },
+  picker = {
+    -- Set your preferred picker. Can be one of 'telescope.nvim', 'fzf-lua', or 'mini.pick'.
+    name = 'telescope.nvim',
+    -- Optional, configure key mappings for the picker. These are the defaults.
+    -- Not all pickers support all mappings.
+    mappings = {
+      -- Create a new note from your query.
+      new = '<C-x>',
+      -- Insert a link to the selected note.
+      insert_link = '<C-l>',
+    },
+  },
+}
