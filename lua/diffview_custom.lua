@@ -4,7 +4,7 @@ function Get_base_ref()
     return
   end
 
-  local base_ref = handle_pr:read('*a'):gsub('"', ''):gsub('%s+', '') -- Remove quotes and extra whitespace or newline characters
+  local base_ref = handle_pr:read('*a'):gsub('"', ''):gsub('%s+', '')
   handle_pr:close()
   local cmd = 'git merge-base HEAD ' .. base_ref
   local handle = io.popen(cmd)
@@ -12,7 +12,7 @@ function Get_base_ref()
     return
   end
 
-  local merge_base = handle:read('*a'):gsub('%s+', '') -- Remove any extra whitespace or newline characters
+  local merge_base = handle:read('*a'):gsub('%s+', '')
 
   handle:close()
   return merge_base
@@ -26,21 +26,6 @@ local oop = require 'diffview.oop'
 local original_node_module = require 'diffview.ui.models.file_tree.node'
 
 function Toggle_viewed_state(file_path, viewed)
-  -- Get the filepath of the currently highlighted quickfix list item
-  -- local file_path = Get_current_qf_item_path()
-  -- if file_path == nil then
-  --   print 'Error: Could not fetch the file path of the currently highlighted quickfix list item.'
-  --   return
-  -- end
-
-  -- local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
-  -- if handle_pr == nil then
-  --   return
-  -- end
-  -- local pr_number = handle_pr:read '*a'
-  -- handle_pr:close()
-  -- pr_number = pr_number:gsub('%s+', '')
-
   local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
   if handle_pr == nil then
     return
@@ -50,28 +35,6 @@ function Toggle_viewed_state(file_path, viewed)
   handle_pr:close()
   pr_number = pr_number:gsub('%s+', '')
 
-  -- Fetch the current state of the file
-  -- local handle_files = io.popen(string.format('gh pr view %s --json files --jq ".files"', pr_number))
-  -- if handle_files == nil then
-  --   return
-  -- end
-  -- local files_result = handle_files:read '*a'
-  -- handle_files:close()
-
-  -- local files = GetPRFiles()
-  --
-  -- if not files then
-  --   print 'Error: Could not fetch the files.'
-  --   return
-  -- end
-  -- local current_state = 'UNVIEWED'
-  -- for _, file in ipairs(files) do
-  --   if file.path == file_path then
-  --     current_state = file.viewerViewedState
-  --     break
-  --   end
-  -- end
-  --
   local query
   if viewed then
     query = string.format(
@@ -112,7 +75,6 @@ function Toggle_viewed_state(file_path, viewed)
       pr_number
     )
   end
-  --   -- Adjust the gh api graphql command to pass the input parameter correctly
   local cmd = string.format('gh api graphql -f query=%s', vim.fn.shellescape(query))
 
   local handle = io.popen(cmd)
@@ -126,9 +88,6 @@ function Toggle_viewed_state(file_path, viewed)
     print 'Error: GraphQL mutation returned no data.'
     return
   end
-  -- refresh the statuses
-  -- M.file_statuses = Get_Pr_Files()
-  -- local diffview = require 'diffview'
 end
 
 function Get_Pr_Files()
@@ -233,7 +192,6 @@ function CustomNode:init(name, data)
     if data.basename ~= nil and not data.basename:match('^' .. CHECKED_ICON) and not data.basename:match('^' .. UNCHECKED_ICON) then
       for _, file in ipairs(M.file_statuses) do
         if file.path == data.path then
-          print(vim.inspect(file))
           if file.viewerViewedState == 'VIEWED' then
             data.viewed = true
             data.original_basename = data.basename
@@ -259,31 +217,23 @@ function _G.set_use_custom_label(value)
   _G.use_custom_label = value
 end
 
-function Toggle_viewed()
+function M.Toggle_viewed()
   local lib = require 'diffview.lib'
   local view = lib.get_current_view()
   if view ~= nil then
     local file = view:infer_cur_file()
 
-    -- print('file', file.path)
-    -- print('file viewed', file.viewed)
     Toggle_viewed_state(file.path, file.viewed)
-    -- print(vim.inspect(view))
-    -- local original = file.basename
-    -- file.basename = 'updating'
     if file.viewed then
       file.basename = Add_label(file.original_basename, false)
+      file.viewed = false
     else
       file.basename = Add_label(file.original_basename, true)
+      file.viewed = true
     end
-
-    -- view.update_needed = true
     vim.cmd 'DiffviewRefresh'
-
-    -- view.
   end
 end
-M.Toggle_viewed = Toggle_viewed
 
 -- Ensure the module is loaded correctly
 package.loaded['diffview.ui.models.file_tree.node'] = original_node_module
@@ -300,12 +250,9 @@ vim.api.nvim_exec2(
 ]],
   {}
 )
-function M.refresh()
-  package.loaded['diffview.ui.models.file_tree.node'] = nil
-  package.loaded['diffview.ui.models.file_tree.node'] = original_node_module
-end
 
 function Open_Diffview_PR()
+  -- pull origin to get the latest changes
   vim.cmd 'G pull -q'
 
   local base = Get_base_ref()
