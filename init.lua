@@ -231,8 +231,8 @@ map('<leader>Yn', ':let @*=expand("%:t")<CR>', 'Yank file [n]ame')
 map('<leader>Yd', ':let @*=expand("%:p:h")<CR>', 'Yank directory [n]ame')
 
 map('<leader>t/', ':tabnew<CR>|:terminal<CR>', 'New Terminal')
-map('<leader>tt', ':tabnew<CR>', 'New Tab')
-map('<leader>tq', ':tabclose<CR>', 'Quit Tab')
+map('<leader>tn', ':tabnew<CR>', '[N]ew Tab')
+map('<leader>tq', ':tabclose<CR>', '[Q]uit Tab')
 
 function OpenDbInTab()
   vim.cmd 'tabnew'
@@ -720,6 +720,10 @@ require('lazy').setup({
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
+      capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      }
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --
@@ -995,7 +999,6 @@ require('lazy').setup({
       }
     end,
   },
-
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -1011,6 +1014,15 @@ require('lazy').setup({
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
+    end,
+    config = function()
+      require('tokyonight').setup {
+        on_highlights = function(highlights, colors)
+          highlights.GitSignsAdd = { fg = colors.green, bg = colors.none, bold = true }
+          highlights.GitSignsChange = { fg = colors.orange, bg = colors.none, bold = true }
+          highlights.GitSignsDelete = { fg = colors.red, bg = colors.none, bold = true }
+        end,
+      }
     end,
   },
 
@@ -1955,3 +1967,14 @@ require('obsidian').setup {
     },
   },
 }
+
+-- Code folding
+vim.o.foldcolumn = '1' -- '0' is not bad
+vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+
+-- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
+vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
+vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+require('ufo').setup()

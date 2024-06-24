@@ -1,24 +1,23 @@
-function Get_base_ref()
-  local handle_pr = io.popen 'gh pr view --json baseRefName | jq ".baseRefName"'
-  if handle_pr == nil then
-    return
-  end
+local M = {}
 
-  local base_ref = handle_pr:read('*a'):gsub('"', ''):gsub('%s+', '')
-  handle_pr:close()
-  local cmd = 'git merge-base HEAD ' .. base_ref
+-- execute command and clean the resulting string
+function Get_cmd_result(cmd)
   local handle = io.popen(cmd)
   if handle == nil then
     return
   end
-
-  local merge_base = handle:read('*a'):gsub('%s+', '')
-
+  local result = handle:read('*a'):gsub('"', ''):gsub('%s+', '')
   handle:close()
-  return merge_base
+  return result
 end
 
-local M = {}
+-- get the base commit hash for the active gh pr
+function Get_base_ref()
+  local base_ref_name = Get_cmd_result 'gh pr view --json baseRefName | jq ".baseRefName"'
+  local current_branch = Get_cmd_result 'git branch --show-current'
+  local cmd = 'git merge-base ' .. base_ref_name .. ' ' .. current_branch
+  return Get_cmd_result(cmd)
+end
 
 package.loaded['diffview.ui.models.file_tree.node'] = nil
 
@@ -237,12 +236,6 @@ end
 
 -- Ensure the module is loaded correctly
 package.loaded['diffview.ui.models.file_tree.node'] = original_node_module
-vim.api.nvim_exec2(
-  [[
-  command! -nargs=* DiffviewOpenWithLabel lua _G.set_use_custom_label(true); require('diffview').open(<f-args>)
-]],
-  {}
-)
 
 vim.api.nvim_exec2(
   [[
@@ -259,7 +252,7 @@ function Open_Diffview_PR()
   M.file_statuses = Get_Pr_Files()
   _G.set_use_custom_label(true)
   local diffview = require 'diffview'
-  diffview.open { base }
+  diffview.open { base, 'HEAD' }
 end
 
 vim.keymap.set('n', '<leader>hp', Open_Diffview_PR, { desc = 'Preview PR Diff' })
