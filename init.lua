@@ -1,5 +1,5 @@
 --[[
-
+-
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -368,6 +368,7 @@ require('lazy').setup({
         ['<leader>l'] = { name = '+[L]sp', _ = 'which_key_ignore' },
         ['<leader>b'] = { name = '+[B]uffers', _ = 'which_key_ignore' },
         ['<leader>g'] = { name = '+[G]it', _ = 'which_key_ignore' },
+        -- ['<leader>n'] = { name = '+[N]otes', _ = 'which_key_ignore' },
         ['<leader>r'] = { name = '+[R]est', _ = 'which_key_ignore' },
         ['<leader>m'] = { name = '+[M]erge', _ = 'which_key_ignore' },
         ['<leader>t'] = { name = '+[t]abs', _ = 'which_key_ignore' },
@@ -559,6 +560,11 @@ require('lazy').setup({
       require('telescope-all-recent').setup {
         pickers = { -- allows you to overwrite the default settings for each picker
           buffers = { -- enable man_pages picker. Disable cwd and use frecency sorting.
+            disable = false,
+            use_cwd = true,
+            sorting = 'recent',
+          },
+          find_files = { -- enable man_pages picker. Disable cwd and use frecency sorting.
             disable = false,
             use_cwd = true,
             sorting = 'recent',
@@ -1943,31 +1949,6 @@ diffview.setup {
   },
 }
 
-require('obsidian').setup {
-  workspaces = {
-    --   -- {
-    --   --   name = 'personal',
-    --   --   path = '~/vaults/personal',
-    --   -- },
-    {
-      name = 'DevVault',
-      path = '/Users/work/DevVault',
-    },
-  },
-  picker = {
-    -- Set your preferred picker. Can be one of 'telescope.nvim', 'fzf-lua', or 'mini.pick'.
-    name = 'telescope.nvim',
-    -- Optional, configure key mappings for the picker. These are the defaults.
-    -- Not all pickers support all mappings.
-    mappings = {
-      -- Create a new note from your query.
-      new = '<C-x>',
-      -- Insert a link to the selected note.
-      insert_link = '<C-l>',
-    },
-  },
-}
-
 -- Code folding
 vim.o.foldcolumn = '1' -- '0' is not bad
 vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
@@ -1978,3 +1959,33 @@ vim.o.foldenable = true
 vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
 vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
 require('ufo').setup()
+
+-- ~/DevVault
+-- Telescope grep with the following cwd
+
+function Search_notes()
+  vim.cmd 'Telescope live_grep cwd=~/DevVault'
+end
+function Create_note()
+  local user_input = vim.fn.input 'Enter title: '
+  vim.cmd('e ~/DevVault/' .. user_input .. '.md')
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { '# ' .. user_input })
+  vim.cmd ':w'
+end
+function Recent_notes()
+  vim.cmd 'lua require("telescope.builtin").find_files({cwd="~/DevVault/"})'
+end
+-- vim.keymap.set('n', '<leader>ns', Search_notes, { desc = '[S]earch' })
+-- vim.keymap.set('n', '<leader>nn', Create_note, { desc = '[N]ew' })
+-- vim.keymap.set('n', '<leader>nr', Recent_notes, { desc = '[R]ecent' })
+
+local wk = require 'which-key'
+wk.register {
+  ['<leader>n'] = {
+    name = '+[N]otes',
+    s = { Search_notes, 'Search' },
+    n = { Create_note, 'New' },
+    r = { Recent_notes, 'Recent' },
+  },
+}

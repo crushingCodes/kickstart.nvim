@@ -269,9 +269,9 @@ return {
   --     }
   --   end,
   -- },
-  {
-    dir = '/Users/work/Projects/example-source',
-  },
+  -- {
+  --   dir = '/Users/work/Projects/example-source',
+  -- },
   -- { 'mg979/vim-visual-multi' },
   -- {
   --   'smoka7/multicursors.nvim',
@@ -293,26 +293,6 @@ return {
   -- },
   {
     'sindrets/diffview.nvim',
-    -- dir = '~/Projects/plugins/diffview.nvim',
-    -- config = function()
-    --   -- require('diffview').setup {
-    --
-    --   -- require 'diffview_2'
-    --   -- require 'diffview_pr'
-    -- end,
-    -- dir = '~/Projects/plugins/diffview.nvim',
-    -- config = function()
-    --   icons = {
-    --     folder_closed = function()
-    --       print 'hello closed'
-    --       return '' .. ' My Custom Icon'
-    --     end,
-    --     folder_open = function()
-    --       print 'hello open'
-    --       return '' .. ' My Custom Icon'
-    --     end,
-    --   }
-    -- end,
   },
   {
     'vhyrro/luarocks.nvim',
@@ -342,38 +322,38 @@ return {
     end,
   },
   { 'mg979/vim-visual-multi' },
-  {
-    'ecthelionvi/NeoComposer.nvim',
-    dependencies = { 'kkharji/sqlite.lua' },
-    opts = {},
-  },
-  {
-    'epwalsh/obsidian.nvim',
-    version = '*', -- recommended, use latest release instead of latest commit
-    lazy = true,
-    ft = 'markdown',
-    -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
-    -- event = {
-    --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
-    --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/**.md"
-    --   "BufReadPre path/to/my-vault/**.md",
-    --   "BufNewFile path/to/my-vault/**.md",
-    -- },
-    dependencies = {
-      -- Required.
-      'nvim-lua/plenary.nvim',
-
-      -- see below for full list of optional dependencies 👇
-    },
-    -- opts = {
-    --   workspaces = {
-    --     {
-    --       name = 'DevVault',
-    --       path = '~/DevVault',
-    --     },
-    --   },
-    -- },
-  },
+  -- {
+  --   'ecthelionvi/NeoComposer.nvim',
+  --   dependencies = { 'kkharji/sqlite.lua' },
+  --   opts = {},
+  -- },
+  -- {
+  --   'epwalsh/obsidian.nvim',
+  --   version = '*', -- recommended, use latest release instead of latest commit
+  --   lazy = true,
+  --   ft = 'markdown',
+  --   -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
+  --   -- event = {
+  --   --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
+  --   --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/**.md"
+  --   --   "BufReadPre path/to/my-vault/**.md",
+  --   --   "BufNewFile path/to/my-vault/**.md",
+  --   -- },
+  --   dependencies = {
+  --     -- Required.
+  --     'nvim-lua/plenary.nvim',
+  --
+  --     -- see below for full list of optional dependencies 👇
+  --   },
+  --   -- opts = {
+  --   --   workspaces = {
+  --   --     {
+  --   --       name = 'DevVault',
+  --   --       path = '~/DevVault',
+  --   --     },
+  --   --   },
+  --   -- },
+  -- },
   { 'kevinhwang91/promise-async' },
   { 'kevinhwang91/nvim-ufo', requires = 'kevinhwang91/promise-async' },
 }
