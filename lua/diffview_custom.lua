@@ -244,7 +244,7 @@ vim.api.nvim_exec2(
   {}
 )
 
-function Open_Diffview_PR()
+function _G.Open_Diffview_PR()
   -- pull origin to get the latest changes
   vim.cmd 'G pull -q'
 
@@ -255,5 +255,5 @@ function Open_Diffview_PR()
   diffview.open { base, 'HEAD' }
 end
 
-vim.keymap.set('n', '<leader>hp', Open_Diffview_PR, { desc = 'Preview PR Diff' })
+vim.keymap.set('n', '<leader>hp', _G.Open_Diffview_PR, { desc = 'Preview PR Diff' })
 return M

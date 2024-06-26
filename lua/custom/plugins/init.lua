@@ -3,14 +3,6 @@
 --
 --
 
-function _G.close_all_floating_wins()
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    local config = vim.api.nvim_win_get_config(win)
-    if config.relative ~= '' then
-      vim.api.nvim_win_close(win, false)
-    end
-  end
-end
 -- See the kickstart.nvim README for more information
 return {
   { 'tpope/vim-surround' },
@@ -52,10 +44,9 @@ return {
         auto_session_suppress_filetypes = { 'octo', 'sql', 'dbout' },
         -- post_restore_cmds = { 'Octo pr reload' },
         pre_save_cmds = {
-          _G.close_all_floating_wins,
-          'Neotree close',
-          'DBUIClose',
-          'DiffviewClose',
+          -- 'Neotree close',
+          -- 'DBUIClose',
+          -- 'DiffviewClose',
         },
       }
     end,
@@ -272,25 +263,6 @@ return {
   -- {
   --   dir = '/Users/work/Projects/example-source',
   -- },
-  -- { 'mg979/vim-visual-multi' },
-  -- {
-  --   'smoka7/multicursors.nvim',
-  --   event = 'VeryLazy',
-  --   dependencies = {
-  --     'smoka7/hydra.nvim',
-  --   },
-  --   opts = {},
-  --   cmd = { 'MCstart', 'MCvisual', 'MCclear', 'MCpattern', 'MCvisualPattern', 'MCunderCursor' },
-  --   keys = {
-  --     {
-  --       mode = { 'v', 'n' },
-  --       '<Leader>M',
-  --       '<cmd>MCstart<cr>',
-  --       desc = 'Create a selection for selected text or word under the cursor',
-  --     },
-  --   },
-  --
-  -- },
   {
     'sindrets/diffview.nvim',
   },
@@ -313,7 +285,6 @@ return {
   { 'folke/lazydev.nvim' },
   {
     'ellisonleao/dotenv.nvim',
-
     config = function()
       require('dotenv').setup {
         enable_on_load = true, -- will load your .env file upon loading a buffer
@@ -322,38 +293,7 @@ return {
     end,
   },
   { 'mg979/vim-visual-multi' },
-  -- {
-  --   'ecthelionvi/NeoComposer.nvim',
-  --   dependencies = { 'kkharji/sqlite.lua' },
-  --   opts = {},
-  -- },
-  -- {
-  --   'epwalsh/obsidian.nvim',
-  --   version = '*', -- recommended, use latest release instead of latest commit
-  --   lazy = true,
-  --   ft = 'markdown',
-  --   -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
-  --   -- event = {
-  --   --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
-  --   --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/**.md"
-  --   --   "BufReadPre path/to/my-vault/**.md",
-  --   --   "BufNewFile path/to/my-vault/**.md",
-  --   -- },
-  --   dependencies = {
-  --     -- Required.
-  --     'nvim-lua/plenary.nvim',
-  --
-  --     -- see below for full list of optional dependencies 👇
-  --   },
-  --   -- opts = {
-  --   --   workspaces = {
-  --   --     {
-  --   --       name = 'DevVault',
-  --   --       path = '~/DevVault',
-  --   --     },
-  --   --   },
-  --   -- },
-  -- },
   { 'kevinhwang91/promise-async' },
   { 'kevinhwang91/nvim-ufo', requires = 'kevinhwang91/promise-async' },
+  { 'takac/vim-hardtime' },
 }

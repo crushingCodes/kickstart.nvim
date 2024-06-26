@@ -102,7 +102,7 @@ vim.g.have_nerd_font = true
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
-vim.opt.relativenumber = false
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -175,6 +175,8 @@ end
 vim.api.nvim_set_keymap('n', '<leader>;a', ':ASToggle<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>;m', ':lua vim.bo.modifiable = not vim.bo.modifiable<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>;w', ':set wrap!<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>;r', ':set relativenumber!<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>;h', ':HardTimeToggle<CR>', { noremap = true, silent = true })
 
 -- Neogit
 map('<leader>gG', ':DiffviewOpen<CR>', '[G]it changes')
@@ -197,10 +199,13 @@ local test
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 
 map('<leader>q', ':q<CR>', '[q]uit')
-
+function Delete_all_buffers()
+  vim.cmd '%bd!'
+  vim.cmd 'SessionSave'
+end
 map('<leader>bo', ':%bd|e#|bd#<CR>', '[d]elete other buffers')
 map('<leader>bd', ':bd<CR>', '[d]elete current buffer')
-map('<leader>bD', ':%bd!<CR>', '[d]elete all buffers')
+map('<leader>bD', Delete_all_buffers, '[d]elete all buffers')
 map('<leader>bn', ':enew<CR>', '[n]ew buffer')
 
 -- Merge conflicts
@@ -397,8 +402,8 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope-fzf-native.nvim',
       -- { 'nvim-telescope/telescope-github.nvim' },
-      -- { dir = '/Users/work/Projects/plugins/telescope-github.nvim' },
-      { 'crushingCodes/telescope-github.nvim' },
+      { dir = '/Users/work/Projects/plugins/telescope-github.nvim' },
+      -- { 'crushingCodes/telescope-github.nvim' },
       {
         'ahmedkhalf/project.nvim',
         config = function()
@@ -564,11 +569,11 @@ require('lazy').setup({
             use_cwd = true,
             sorting = 'recent',
           },
-          find_files = { -- enable man_pages picker. Disable cwd and use frecency sorting.
-            disable = false,
-            use_cwd = true,
-            sorting = 'recent',
-          },
+          -- find_files = { -- enable man_pages picker. Disable cwd and use frecency sorting.
+          --   disable = false,
+          --   use_cwd = true,
+          --   sorting = 'recent',
+          -- },
 
           -- change settings for a telescope extension.
           -- To find out about extensions, you can use `print(vim.inspect(require'telescope'.extensions))`
@@ -1051,7 +1056,7 @@ require('lazy').setup({
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      -- require('mini.surround').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -1196,29 +1201,6 @@ vim.api.nvim_set_keymap('x', 'p', 'c<c-r><c-r>0<esc>', { noremap = true, silent 
 -- Visual mode paste from the system clipboard
 vim.api.nvim_set_keymap('x', 'p', '"_d"+P', { noremap = true, silent = true })
 
--- -- https://stackoverflow.com/a/59029500
--- -- normal mode include current word in search
--- vim.api.nvim_set_keymap('n', '#', '#N', { noremap = true, silent = true }) vim.api.nvim_set_keymap('n', '*', '*N', { noremap = true, silent = true })
--- -- visual mode include current selection in search
--- vim.api.nvim_set_keymap('x', '#', '#N', { noremap = true, silent = true })
--- vim.api.nvim_set_keymap('x', '*', '*N', { noremap = true, silent = true })
-
--- Auto commands
--- Python venv
--- vim.api.nvim_create_autocmd('VimEnter', {
---   desc = 'Auto select virtualenv Nvim open',
---   pattern = '*',
---   callback = function()
---     vim.defer_fn(function()
---       local venv = vim.fn.findfile('requirements.txt', vim.fn.getcwd() .. ';')
---       if venv ~= '' then
---         require('venv-selector').retrieve_from_cache()
---       end
---     end, 200) -- Delay of 200 milliseconds
---   end,
---   once = true,
--- })
-
 -- Neogit
 -- Define the autocommand to refresh buffers when the Neogit status buffer is closed
 vim.api.nvim_create_augroup('NeogitRefresh', { clear = true })
@@ -1246,30 +1228,6 @@ require('null-ls').setup {
     -- require 'none-ls.diagnostics.eslint', -- requires none-ls-extras.nvim
   },
 }
-
--- function Yank_test_path()
---   local ts_utils = require 'nvim-treesitter.ts_utils'
---   local bufnr = vim.api.nvim_get_current_buf()
---   local node = ts_utils.get_node_at_cursor()
---
---   while node do
---     local type = node:type()
---     if type == 'function_definition' or type == 'function_declaration' then
---       -- Get the start and end positions of the node
---       local start_row, start_col, end_row, end_col = node:range()
---       -- Extract the text from the buffer
---       local lines = vim.api.nvim_buf_get_lines(bufnr, start_row, end_row + 1, false)
---       local test_name = table.concat(lines, '\n'):sub(start_col + 1, -(end_col + 1))
---       local file_path = vim.api.nvim_buf_get_name(bufnr)
---       local test_path = file_path .. '::' .. test_name
---       vim.fn.setreg('+', test_path)
---       vim.notify('Yanked test path: ' .. test_path, vim.log.levels.INFO)
---       return
---     end
---     node = node:parent()
---   end
---   vim.notify('No test function found at cursor', vim.log.levels.WARN)
--- end
 
 -- Custom function to close all buffers with a warning if there are unsaved changes
 function Close_all_buffers()
@@ -1309,150 +1267,11 @@ end
 -- Quit all with confirmation
 map('<leader>Q', ':lua Close_all_buffers()<CR>', '[Q]uit all')
 
--- -- Create a custom picker for git stashes
--- local actions = require 'telescope.actions'
--- local action_state = require 'telescope.actions.state'
--- local pickers = require 'telescope.pickers'
--- local finders = require 'telescope.finders'
--- local conf = require('telescope.config').values
---
--- local function diff_stash(opts)
---   opts = opts or {}
---   pickers
---     .new(opts, {
---       prompt_title = 'Git Stashes',
---       finder = finders.new_oneshot_job({ 'git', 'stash', 'list' }, opts),
---       sorter = conf.generic_sorter(opts),
---       attach_mappings = function(prompt_bufnr, map)
---         actions.select_default:replace(function()
---           actions.close(prompt_bufnr)
---           local selection = action_state.get_selected_entry()
---           local stash = selection[1]:match 'stash@{%d+}'
---           if stash then
---             vim.cmd('DiffviewOpen ' .. stash)
---           else
---             print 'No stash selected'
---           end
---         end)
---         return true
---       end,
---     })
---     :find()
--- end
---
--- -- Create a command to call the custom picker
--- vim.api.nvim_create_user_command('TelescopeDiffStash', function()
---   diff_stash(require('telescope.themes').get_dropdown {})
--- end, {})
---
--- -- Optional: Map the command to a keybinding
--- vim.api.nvim_set_keymap('n', '<leader>gZ', ':TelescopeDiffStash<CR>', { noremap = true, silent = true })
---
 -- Function to checkout PR and run DiffviewPR
 vim.api.nvim_set_keymap('n', '<leader>hh', ':Telescope gh pull_request<CR>', { noremap = true, silent = true })
 
--- local function get_current_pr_number()
---   local handle = io.popen "gh pr view --json number --jq '.number'"
---   if handle then
---     local result = handle:read '*a'
---     handle:close()
---     return tonumber(result)
---   else
---     return nil
---   end
--- end
-
 map('<leader>rr', ':Rest run<CR>', 'Rest run')
 map('<leader>rl', ':Rest run last<CR>', 'Rest run last')
-
--- local ts_utils = require 'nvim-treesitter.ts_utils'
---
--- local function find_manage_py()
---   local current_dir = vim.fn.getcwd()
---   local manage_py_dir = vim.fn.finddir('API', current_dir .. ';')
---   if manage_py_dir == '' then
---     print 'Could not find API directory containing manage.py'
---     return nil
---   end
---   return manage_py_dir
--- end
---
--- local function get_python_test_module_path()
---   local bufnr = vim.api.nvim_get_current_buf()
---   local parser = vim.treesitter.get_parser(bufnr, 'python')
---   local tree = parser:parse()[1]
---
---   local node = ts_utils.get_node_at_cursor()
---   if not node then
---     print 'No Treesitter node found under cursor'
---     return nil
---   end
---
---   -- Traverse up the tree to find the enclosing function and class
---   local function_name
---   local class_name
---
---   while node do
---     if node:type() == 'function_definition' then
---       local name_node = node:field('name')[1]
---       if name_node then
---         function_name = ts_utils.get_node_text(name_node, bufnr)[1]
---       end
---     elseif node:type() == 'class_definition' then
---       local name_node = node:field('name')[1]
---       if name_node then
---         class_name = ts_utils.get_node_text(name_node, bufnr)[1]
---       end
---     end
---     node = node:parent()
---   end
---
---   if not function_name then
---     print 'No enclosing function found'
---     return nil
---   end
---
---   -- Get the relative file path from the current working directory
---   local file_path = vim.fn.expand '%:p'
---   local cwd = vim.fn.getcwd()
---
---   -- Find the manage.py directory
---   local manage_py_dir = find_manage_py()
---   if not manage_py_dir then
---     return nil
---   end
---
---   -- Get the relative path from the manage.py directory
---   local relative_path = vim.fn.fnamemodify(file_path, ':.' .. manage_py_dir)
---
---   -- Convert file path to module path
---   local module_path = relative_path:gsub('%.py$', ''):gsub('/', '.')
---
---   if class_name then
---     return module_path .. '::' .. class_name .. '::' .. function_name
---   else
---     return module_path .. '::' .. function_name
---   end
--- end
---
--- local function copy_test_module_path_to_clipboard()
---   local module_path = get_python_test_module_path()
---
---   if not module_path then
---     return
---   end
---
---   -- Copy the module path to the clipboard
---   vim.fn.setreg('+', module_path)
---
---   -- Print a message to confirm the copy action
---   print('Copied to clipboard: ' .. module_path)
--- end
-
--- Create a Neovim command to copy the test module path to the clipboard
--- vim.api.nvim_create_user_command('CopyPythonTestUnderCursor', copy_test_module_path_to_clipboard, {})
-
--- vim.api.nvim_set_keymap('n', '<leader>yt', ':CopyPythonTestUnderCursor<CR>', { noremap = true, silent = true })
 
 -- Function to perform the required actions
 function Neotest_actions()
@@ -1462,427 +1281,11 @@ function Neotest_actions()
 end
 
 vim.api.nvim_set_keymap('n', '<leader>T', ':lua Neotest_actions()<CR>', { noremap = true, silent = true })
--- vim.api.nvim_set_keymap('n', '<leader>;k', ":lua require('custom.plugins.neotest_setup').toggle_keepdb()<CR>", { noremap = true, silent = true })
--- vim.api.nvim_set_keymap('n', '<leader>TT', ':lua Neotest_actions()<CR>', { noremap = true, silent = true })
--- Keep a variable to track the state of keepdb
--- local keepdb_enabled = true
---
--- -- Function to toggle the keepdb flag
--- function Toggle_keepdb()
---   keepdb_enabled = not keepdb_enabled
---   -- Update the Neotest configuration
---   require('neotest').setup {
---     adapters = {
---       require 'neotest-python' {
---         args = {
---           '--interactive',
---           'False',
---           keepdb_enabled and '--keepdb',
---         },
---       },
---     },
---   }
---   -- Print the current state to the user
---   print('KeepDB is now ' .. (keepdb_enabled and 'enabled' or 'disabled'))
--- end
---
--- -- Map the toggle function to a shortcut, e.g., <leader>tk
--- vim.api.nvim_set_keymap('n', '<leader>Td', ':lua Toggle_keepdb()<CR>', { noremap = true, silent = true })
 map('<leader>.', ':DotEnv<CR>', 'Load .env')
-
--- potential fix to the following:
--- https://github.com/neovim/neovim/issues/2093
--- Enable terminal keycode timeout
--- vim.o.ttimeout = true
---
--- -- Set terminal keycode timeout length to 0
--- vim.o.ttimeoutlen = 0
---
--- -- Set matchtime to 0
--- vim.o.matchtime = 0
--- -- end of potential fix to the following:
-
--- TODO:
--- Define a function to append visual selection to a register with a newline character
-function AppendVisualToRegister()
-  -- Yank the visual selection to the "v" register
-  vim.cmd 'normal! "vy'
-  -- vim.cmd 'visual! "vy'
-  -- Get the current content of the "v" register
-  local current_content = vim.fn.getreg 'v'
-  -- Get the current visual selection
-  local visual_selection = vim.fn.getreg '"'
-  -- Set the "v" register to the current content plus the visual selection and a newline
-  vim.fn.setreg('v', current_content .. visual_selection .. '\n')
-end
-
--- -- Keybinding for appending visual selection to register
--- vim.api.nvim_set_keymap('v', '<leader>a', ':lua AppendVisualToRegister()<CR>', { noremap = true, silent = true })
-
--- -- Function to append a label to each entry in the quickfix list
--- function Append_label_to_quickfix(label)
---   -- Get the current quickfix list
---   local quickfix_list = vim.fn.getqflist()
---
---   -- Modify the quickfix list entries to append the label
---   for _, item in ipairs(quickfix_list) do
---     item.text = item.text .. ' ' .. label
---   end
---
---   -- Set the modified quickfix list
---   vim.fn.setqflist({}, 'r', { items = quickfix_list })
--- end
---
--- vim.api.nvim_create_user_command(
---   'AppendLabelToQuickfix',
---   function(opts)
---     Append_label_to_quickfix(opts.args)
---   end,
---   { nargs = 1 } -- The command takes one argument (the label)
--- )
-
--- Function to append a label to the currently highlighted quickfix list entry
--- function Append_label_to_current_qf_item(label)
---   -- Get the current quickfix list
---   local quickfix_list = vim.fn.getqflist()
---
---   -- Get the current cursor position in the quickfix window
---   local cursor_pos = vim.api.nvim_win_get_cursor(0)
---
---   -- Find the index of the quickfix list entry that corresponds to the current cursor position
---   local current_qf_index = cursor_pos[1]
---
---   -- get the current entry text
---   local entry_text = quickfix_list[current_qf_index].text
---   if entry_text:match(vim.pesc(label)) then
---     quickfix_list[current_qf_index].text = entry_text:gsub(vim.pesc(label), '')
---   else
---     -- Modify the specific entry
---     quickfix_list[current_qf_index].text = quickfix_list[current_qf_index].text .. ' ' .. label
---   end
---
---   -- Set the modified quickfix list
---   vim.fn.setqflist({}, 'r', { items = quickfix_list })
--- end
---
--- -- Example usage: Append "[Viewed]" to the currently highlighted entry in the quickfix list
--- vim.api.nvim_set_keymap('n', '<leader>hv', ':lua Append_label_to_current_qf_item("[Viewed]")<CR>', { noremap = true, silent = true })
-
--- Function to populate quickfix list with files from a GitHub PR
-function Populate_quickfix_from_pr()
-  -- Run the gh command to get the list of files
-  --
-  local handle = io.popen "gh pr view --json files | jq -r '.files[].path'"
-
-  if handle then
-    local result = handle:read '*a'
-    handle:close()
-
-    -- Split the result into lines
-    local files = {}
-    for line in result:gmatch '[^\r\n]+' do
-      table.insert(files, { filename = line })
-    end
-
-    -- Set the quickfix list
-    vim.fn.setqflist({}, 'r', { title = 'GitHub PR Files', items = files })
-
-    -- Open the quickfix window
-    vim.cmd 'copen'
-  end
-end
-
--- Example usage: Populate quickfix list with files from PR #123
--- vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Populate_quickfix_from_pr(123)<CR>', { noremap = true, silent = true })
-
-function Get_Pr_Files()
-  -- Get the current checked-out PR number
-  local handle_pr = io.popen 'gh pr view --json number --jq ".number"'
-  if handle_pr == nil then
-    return
-  end
-  local pr_number = handle_pr:read '*a'
-  handle_pr:close()
-  pr_number = pr_number:gsub('%s+', '')
-
-  -- Get the owner and repo name
-  local handle_owner = io.popen 'gh repo view --json owner | jq -r ".owner.login"'
-  if handle_owner == nil then
-    return
-  end
-  local owner = handle_owner:read '*a'
-  handle_owner:close()
-  owner = owner:gsub('%s+', '')
-
-  local handle_repo = io.popen 'gh repo view --json name | jq -r ".name"'
-  if handle_repo == nil then
-    return
-  end
-  local repo = handle_repo:read '*a'
-  handle_repo:close()
-  repo = repo:gsub('%s+', '')
-
-  if owner == '' or repo == '' then
-    print 'Error: Could not fetch the owner or repo name.'
-    return
-  end
-
-  local query = [[
-    query ($owner: String!, $repo: String!, $prNumber: Int!) {
-      repository(owner: $owner, name: $repo) {
-        pullRequest(number: $prNumber) {
-          files(first: 100) {
-            nodes {
-              path
-              viewerViewedState
-            }
-          }
-        }
-      }
-    }
-  ]]
-
-  -- Run the gh command to get the list of files and their viewed state
-  local cmd = string.format(
-    'gh api graphql -F query=%s -F owner=%s -F repo=%s -F prNumber=%d',
-    vim.fn.shellescape(query),
-    vim.fn.shellescape(owner),
-    vim.fn.shellescape(repo),
-    tonumber(pr_number)
-  )
-
-  local handle = io.popen(cmd)
-  if handle == nil then
-    return
-  end
-  local result = handle:read '*a'
-  handle:close()
-  if result == '' then
-    print 'Error: GraphQL query returned no data.'
-    return
-  end
-
-  -- Parse the JSON result
-  local json = vim.fn.json_decode(result)
-  if not json or not json.data or not json.data.repository or not json.data.repository.pullRequest or not json.data.repository.pullRequest.files then
-    print 'Error: Unexpected JSON structure.'
-    return
-  end
-
-  return json.data.repository.pullRequest.files.nodes
-end
-
--- Function to populate quickfix list with files and their viewed state from a GitHub PR
-function Populate_quickfix_with_viewed_state()
-  local files = Get_Pr_Files()
-  -- Sort files by lowercase name
-  table.sort(files, function(a, b)
-    return a.path:lower() < b.path:lower()
-  end)
-
-  -- Convert the result to the quickfix list format
-  local qf_list = {}
-  for _, file in ipairs(files) do
-    local viewed_label = (file.viewerViewedState == 'VIEWED') and '[Viewed]' or '[Not Viewed]'
-    table.insert(qf_list, { filename = file.path, text = string.format('%s %s', file.path, viewed_label) })
-  end
-  -- Set the quickfix list
-  vim.fn.setqflist({}, 'r', { title = 'GitHub PR Files', items = qf_list })
-end
-
-function Open_quickfix_with_viewed_state()
-  Populate_quickfix_with_viewed_state()
-
-  -- Open the quickfix window
-  vim.cmd 'copen'
-end
-
-function Get_current_qf_item_path()
-  -- Get the current quickfix list
-  local qf_list = vim.fn.getqflist()
-
-  -- Get the cursor position in the quickfix window
-  local cursor_pos = vim.fn.getpos '.'
-
-  -- The cursor line corresponds to the index in the quickfix list
-  local current_qf_index = cursor_pos[2]
-
-  -- Ensure the index is within the range of the quickfix list
-  if current_qf_index < 1 or current_qf_index > #qf_list then
-    return nil
-  end
-
-  -- Extract the filename from the 'text' field
-  local current_item = qf_list[current_qf_index]
-  local text = current_item.text
-  -- local filename = text:match '^(.-) ||'
-  local filename = text:match '^(.-) %[Viewed%]' or text:match '^(.-) %[Not Viewed%]'
-
-  return filename
-end
-
-function Get_git_root()
-  local handle = io.popen 'git rev-parse --show-toplevel'
-  if handle == nil then
-    return
-  end
-  local git_root = handle:read '*a'
-  handle:close()
-  return git_root:gsub('%s+', '') -- Trim any whitespace
-end
-
-function Get_relative_git_path()
-  -- Get the git root directory
-  local git_root = Get_git_root()
-  if git_root == '' then
-    -- print 'Error: Not a git repository.'
-    return nil
-  end
-
-  -- Get the full path of the current buffer
-  local buffer_path = vim.fn.expand '%:p'
-  if buffer_path == '' then
-    -- print 'Error: No file in the current buffer.'
-    return nil
-  end
-
-  -- Compute the relative path from the git root to the current buffer file
-  local relative_path = buffer_path:sub(#git_root + 2) -- +2 to account for the trailing slash
-
-  return relative_path
-end
-
-function Is_quickfix_window()
-  local win_info = vim.fn.getwininfo(vim.api.nvim_get_current_win())
-  if win_info and win_info[1] and win_info[1].quickfix == 1 then
-    return true
-  end
-  return false
-end
-
--- function Toggle_viewed_state()
---   -- Get the filepath of the currently highlighted quickfix list item
---   local file_path
---   if Is_quickfix_window() then
---     file_path = Get_current_qf_item_path()
---     if file_path == nil then
---       -- print 'Error: Could not fetch the file path of the currently active buffer.'
---       return
---     end
---   else
---     file_path = Get_relative_git_path()
---     if file_path == nil then
---       -- print 'Error: Could not fetch the file path of the currently highlighted quickfix list item.'
---       return
---     end
---   end
---
---   -- local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
---   -- if handle_pr == nil then
---   --   return
---   -- end
---   -- local pr_number = handle_pr:read '*a'
---   -- handle_pr:close()
---   -- pr_number = pr_number:gsub('%s+', '')
---
---   local handle_pr = io.popen 'gh pr view --json id | jq ".id"'
---   if handle_pr == nil then
---     return
---   end
---
---   local pr_number = handle_pr:read '*a'
---   handle_pr:close()
---   pr_number = pr_number:gsub('%s+', '')
---
---   -- -- Fetch the current state of the file
---   -- local handle_files = io.popen(string.format('gh pr view %s --json files --jq ".files"', pr_number))
---   -- if handle_files == nil then
---   --   return
---   -- end
---   -- local files_result = handle_files:read '*a'
---   -- handle_files:close()
---
---   local files = Get_Pr_Files()
---
---   if not files then
---     print 'Error: Could not fetch the files.'
---     return
---   end
---   local current_state = 'UNVIEWED'
---   for _, file in ipairs(files) do
---     if file.path == file_path then
---       current_state = file.viewerViewedState
---       break
---     end
---   end
---
---   local query
---   if current_state == 'VIEWED' then
---     query = string.format(
---       [[
---     mutation {
---       unmarkFileAsViewed(input: {path: "%s", pullRequestId: %s}) {
---         pullRequest {
---           files(first:100){
---             nodes {
---               path
---               viewerViewedState
---             }
---           }
---         }
---       }
---     }
---   ]],
---       file_path,
---       pr_number
---     )
---   else
---     query = string.format(
---       [[
---   mutation {
---     markFileAsViewed(input: {path: "%s", pullRequestId: %s}) {
---       pullRequest {
---         files(first:100){
---           nodes {
---             path
---             viewerViewedState
---           }
---         }
---       }
---     }
---   }
--- ]],
---       file_path,
---       pr_number
---     )
---   end
---
---   -- Adjust the gh api graphql command to pass the input parameter correctly
---   local cmd = string.format('gh api graphql -f query=%s', vim.fn.shellescape(query))
---
---   local handle = io.popen(cmd)
---   if handle == nil then
---     return
---   end
---   local result = handle:read '*a'
---   handle:close()
---
---   if result == '' then
---     print 'Error: GraphQL mutation returned no data.'
---     return
---   end
---
---   -- run this again to refresh it
---   Populate_quickfix_with_viewed_state()
--- end
-
--- Example usage: Populate quickfix list with files and their viewed state from the current PR
--- vim.api.nvim_set_keymap('n', '<leader>hq', ':lua Open_quickfix_with_viewed_state()<CR>', { noremap = true, silent = true })
 
 local diffview_custom = require 'diffview_custom'
 
 local diffview = require 'diffview'
-local lib = require 'diffview.lib'
 diffview.setup {
   keymaps = {
     view = {
@@ -1891,24 +1294,6 @@ diffview.setup {
         '<leader>hv',
         function()
           diffview_custom.Toggle_viewed()
-          -- local lib = require 'diffview.lib'
-          -- local view = lib.get_current_view()
-          -- if view ~= nil then
-          --   local file = view:infer_cur_file()
-          --
-          --   -- print('file', file.path)
-          --   -- print('file viewed', file.viewed)
-          --
-          --   diffview_custom.Toggle_viewed_state(file.path, file.viewed)
-          --   -- local original = file.basename
-          --   -- file.basename = 'updating'
-          --   -- view.update_needed = true
-          --   -- vim.cmd 'DiffviewRefresh'
-          --   -- file.basename = original
-          --   -- view.update_needed = true
-          --   -- vim.cmd 'DiffviewRefresh'
-          --   -- view.render()
-          -- end
         end,
         { desc = 'Toggle viewed' },
       },
@@ -1919,35 +1304,13 @@ diffview.setup {
         '<leader>hv',
         function()
           diffview_custom.Toggle_viewed()
-          -- local lib = require 'diffview.lib'
-          -- local view = lib.get_current_view()
-          -- if view ~= nil then
-          --   local file = view:infer_cur_file()
-          --
-          --   -- print('file', file.path)
-          --   -- print('file viewed', file.viewed)
-          --   diffview_custom.Toggle_viewed_state(file.path, file.viewed)
-          --   -- print(vim.inspect(view))
-          --   local original = file.basename
-          --   file.basename = 'updating'
-          --   view.update_needed = true
-          --   vim.cmd 'DiffviewRefresh'
-          --   -- file.basename = original
-          --   -- view.update_needed = true
-          --   -- vim.cmd 'DiffviewRefresh'
-          --   -- view:render()
-          --   -- lib:get_current_view():render()
-          --
-          --   -- view.
-          -- end
-
-          -- print 'bar'
         end,
         { desc = 'Toggle viewed' },
       },
     },
   },
 }
+vim.api.nvim_create_autocmd('User', { pattern = 'TelescopePROpenPR', callback = _G.Open_Diffview_PR })
 
 -- Code folding
 vim.o.foldcolumn = '1' -- '0' is not bad
@@ -1955,9 +1318,6 @@ vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decr
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
--- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
-vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
-vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
 require('ufo').setup()
 
 -- ~/DevVault
@@ -1966,26 +1326,76 @@ require('ufo').setup()
 function Search_notes()
   vim.cmd 'Telescope live_grep cwd=~/DevVault'
 end
-function Create_note()
-  local user_input = vim.fn.input 'Enter title: '
-  vim.cmd('e ~/DevVault/' .. user_input .. '.md')
-  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-  vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { '# ' .. user_input })
-  vim.cmd ':w'
+
+function Add_to_recent_files(file, cwd)
+  local frecency = require 'telescope-all-recent.frecency'
+  local picker = { name = 'find_files', cwd = cwd }
+  frecency.update_entry(picker, file)
 end
+
+function Create_note()
+  local title = vim.fn.input 'Enter title: '
+  local file = title .. '.md'
+  local cwd = '~/DevVault'
+  local file_path = cwd .. '/' .. file
+  vim.cmd('e ' .. file_path)
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { '# ' .. title })
+  vim.cmd ':w'
+  local cwd_full_path = vim.fn.expand(cwd)
+  -- run this a few times to ensure its treated as the most recent
+  Add_to_recent_files(file, cwd_full_path)
+  Add_to_recent_files(file, cwd_full_path)
+  Add_to_recent_files(file, cwd_full_path)
+end
+
 function Recent_notes()
   vim.cmd 'lua require("telescope.builtin").find_files({cwd="~/DevVault/"})'
 end
--- vim.keymap.set('n', '<leader>ns', Search_notes, { desc = '[S]earch' })
--- vim.keymap.set('n', '<leader>nn', Create_note, { desc = '[N]ew' })
--- vim.keymap.set('n', '<leader>nr', Recent_notes, { desc = '[R]ecent' })
 
 local wk = require 'which-key'
+function _G.close_all_floating_wins()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local config = vim.api.nvim_win_get_config(win)
+    if config.relative ~= '' then
+      vim.api.nvim_win_close(win, false)
+    end
+  end
+end
+
+-- cleanup on exit nvim
+vim.cmd [[
+  augroup dbui_cleanup
+    autocmd!
+    autocmd VimLeavePre * lua _G.close_all_floating_wins()
+    autocmd VimLeavePre * DBUIClose
+    autocmd VimLeavePre * Neotree close
+    autocmd VimLeavePre * DBUIClose
+    autocmd VimLeavePre * DiffviewClose
+  augroup END
+]]
+vim.cmd 'autocmd BufEnter * HardTimeOn'
+-- adds the Cfilter to allow filtering quickfix list results
+vim.cmd 'packadd cfilter'
+
+vim.cmd 'let g:hardtime_default_on = 1'
+vim.cmd 'let g:hardtime_ignore_quickfix = 1'
+vim.cmd 'let g:hardtime_showmsg = 1'
+
+function Open_notes_workspace_Tab()
+  vim.cmd 'tabnew'
+  local new_cwd = '~/DevVault'
+  local cmd = 'lcd ' .. new_cwd
+  vim.cmd(cmd)
+  vim.cmd 'Neotree dir=./'
+end
+
 wk.register {
   ['<leader>n'] = {
     name = '+[N]otes',
     s = { Search_notes, 'Search' },
     n = { Create_note, 'New' },
     r = { Recent_notes, 'Recent' },
+    t = { Open_notes_workspace_Tab, 'Workspace [T]ab' },
   },
 }
