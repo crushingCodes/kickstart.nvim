@@ -296,4 +296,15 @@ return {
   { 'kevinhwang91/promise-async' },
   { 'kevinhwang91/nvim-ufo', requires = 'kevinhwang91/promise-async' },
   { 'takac/vim-hardtime' },
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+  },
+  {
+    'chrisgrieser/nvim-various-textobjs',
+    lazy = false,
+    opts = { useDefaultKeymaps = true },
+  },
+  { 'obreitwi/vim-sort-folds' },
+  { 'nvim-treesitter/nvim-treesitter-context' },
 }

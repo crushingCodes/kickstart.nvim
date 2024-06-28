@@ -181,6 +181,7 @@ vim.api.nvim_set_keymap('n', '<leader>;h', ':HardTimeToggle<CR>', { noremap = tr
 -- Neogit
 map('<leader>gG', ':DiffviewOpen<CR>', '[G]it changes')
 map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
+map('<leader>gS', ':Gwrite<CR>', 'Add/[S)tage current buffer')
 
 -- Devdocs
 map('<leader>Do', ':DevdocsOpen<CR>', 'Devdocs [O]pen')
@@ -402,8 +403,8 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope-fzf-native.nvim',
       -- { 'nvim-telescope/telescope-github.nvim' },
-      { dir = '/Users/work/Projects/plugins/telescope-github.nvim' },
-      -- { 'crushingCodes/telescope-github.nvim' },
+      -- { dir = '/Users/work/Projects/plugins/telescope-github.nvim' },
+      { 'crushingCodes/telescope-github.nvim' },
       {
         'ahmedkhalf/project.nvim',
         config = function()
@@ -1062,6 +1063,7 @@ require('lazy').setup({
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
       local statusline = require 'mini.statusline'
+      require('mini.animate').setup()
       -- set use_icons to true if you have a Nerd Font
       statusline.setup { use_icons = vim.g.have_nerd_font }
 
@@ -1097,6 +1099,73 @@ require('lazy').setup({
         'http',
         'json',
         'graphql',
+      },
+
+      textobjects = {
+        select = {
+          enable = true,
+          -- Automatically jump forward to textobj, similar to targets.vim
+          lookahead = true,
+          keymaps = {
+            -- Built-in captures.
+            ['af'] = '@function.outer',
+            ['if'] = '@function.inner',
+            ['ac'] = '@class.outer',
+            -- You can optionally set descriptions to the mappings (used in the desc parameter of
+            -- nvim_buf_set_keymap) which plugins like which-key display
+            ['ic'] = { query = '@class.inner', desc = 'Select inner part of a class region' },
+          },
+          -- You can choose the select mode (default is charwise 'v')
+          --
+          -- Can also be a function which gets passed a table with the keys
+          -- * query_string: eg '@function.inner'
+          -- * method: eg 'v' or 'o'
+          -- and should return the mode ('v', 'V', or '<c-v>') or a table
+          -- mapping query_strings to modes.
+          selection_modes = {
+            ['@parameter.outer'] = 'v', -- charwise
+            ['@function.outer'] = 'V', -- linewise
+            ['@class.outer'] = '<c-v>', -- blockwise
+          },
+        },
+      },
+      move = {
+        enable = true,
+        set_jumps = true, -- whether to set jumps in the jumplist
+        goto_next_start = {
+          [']m'] = '@function.outer',
+          [']]'] = { query = '@class.outer', desc = 'Next class start' },
+          --
+          -- You can use regex matching (i.e. lua pattern) and/or pass a list in a "query" key to group multiple queires.
+          [']o'] = '@loop.*',
+          -- ["]o"] = { query = { "@loop.inner", "@loop.outer" } }
+          --
+          -- You can pass a query group to use query from `queries/<lang>/<query_group>.scm file in your runtime path.
+          -- Below example nvim-treesitter's `locals.scm` and `folds.scm`. They also provide highlights.scm and indent.scm.
+          [']s'] = { query = '@scope', query_group = 'locals', desc = 'Next scope' },
+          [']z'] = { query = '@fold', query_group = 'folds', desc = 'Next fold' },
+        },
+        goto_next_end = {
+          [']M'] = '@function.outer',
+          [']['] = '@class.outer',
+        },
+        goto_previous_start = {
+          ['[m'] = '@function.outer',
+          ['[['] = '@class.outer',
+        },
+        goto_previous_end = {
+          ['[M'] = '@function.outer',
+          ['[]'] = '@class.outer',
+        },
+        -- Below will go to either the start or the end, whichever is closer.
+        -- Use if you want more granular movements
+        -- Make it even more gradual by adding multiple queries and regex.
+        goto_next = {
+          [']d'] = '@conditional.outer',
+        },
+        goto_previous = {
+          ['[d'] = '@conditional.outer',
+        },
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
@@ -1374,7 +1443,7 @@ vim.cmd [[
     autocmd VimLeavePre * DiffviewClose
   augroup END
 ]]
-vim.cmd 'autocmd BufEnter * HardTimeOn'
+-- vim.cmd 'autocmd BufEnter * HardTimeOn'
 -- adds the Cfilter to allow filtering quickfix list results
 vim.cmd 'packadd cfilter'
 
@@ -1399,3 +1468,22 @@ wk.register {
     t = { Open_notes_workspace_Tab, 'Workspace [T]ab' },
   },
 }
+vim.keymap.set('n', 'dsi', function()
+  -- select outer indentation
+  require('various-textobjs').indentation('outer', 'outer')
+
+  -- plugin only switches to visual mode when a textobj has been found
+  local indentationFound = vim.fn.mode():find 'V'
+  if not indentationFound then
+    return
+  end
+
+  -- dedent indentation
+  vim.cmd.normal { '<', bang = true }
+
+  -- delete surrounding lines
+  local endBorderLn = vim.api.nvim_buf_get_mark(0, '>')[1]
+  local startBorderLn = vim.api.nvim_buf_get_mark(0, '<')[1]
+  vim.cmd(tostring(endBorderLn) .. ' delete') -- delete end first so line index is not shifted
+  vim.cmd(tostring(startBorderLn) .. ' delete')
+end, { desc = 'Delete Surrounding Indentation' })
