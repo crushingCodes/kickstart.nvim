@@ -127,13 +127,20 @@ return {
       -- Your DBUI configuration
       --
       vim.g.db_ui_use_nerd_fonts = 1
-      -- vim.g.db_ui_force_echo_notifications = 0
-      -- g:db_ui_use_nvim_notify
+
+      vim.g.db_ui_force_echo_notifications = 0
+      vim.g.db_ui_use_nvim_notify = 0
       -- ensure the side bar prevents too much indentation
       vim.api.nvim_create_autocmd('FileType', {
         pattern = 'dbui',
         callback = function()
           vim.opt_local.shiftwidth = 2
+        end,
+      })
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'dbui',
+        callback = function()
+          vim.opt_local.cmdheight = 2
         end,
       })
     end,
