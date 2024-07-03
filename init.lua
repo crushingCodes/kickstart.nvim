@@ -180,7 +180,7 @@ vim.api.nvim_set_keymap('n', '<leader>;h', ':HardTimeToggle<CR>', { noremap = tr
 
 -- Neogit
 map('<leader>gG', ':DiffviewOpen<CR>', '[G]it changes')
-map('<leader>gg', ':Neogit<CR>', 'Neo[g]it')
+map('<leader>gg', ':G<CR>', '[G]it Fugitive')
 map('<leader>gS', ':Gwrite<CR>', 'Add/[S)tage current buffer')
 
 -- Devdocs
@@ -204,6 +204,7 @@ function Delete_all_buffers()
   vim.cmd '%bd!'
   vim.cmd 'SessionSave'
 end
+
 map('<leader>bo', ':%bd|e#|bd#<CR>', '[d]elete other buffers')
 map('<leader>bd', ':bd<CR>', '[d]elete current buffer')
 map('<leader>bD', Delete_all_buffers, '[d]elete all buffers')
@@ -374,13 +375,9 @@ require('lazy').setup({
         ['<leader>l'] = { name = '+[L]sp', _ = 'which_key_ignore' },
         ['<leader>b'] = { name = '+[B]uffers', _ = 'which_key_ignore' },
         ['<leader>g'] = { name = '+[G]it', _ = 'which_key_ignore' },
-        -- ['<leader>n'] = { name = '+[N]otes', _ = 'which_key_ignore' },
         ['<leader>r'] = { name = '+[R]est', _ = 'which_key_ignore' },
         ['<leader>m'] = { name = '+[M]erge', _ = 'which_key_ignore' },
         ['<leader>t'] = { name = '+[t]abs', _ = 'which_key_ignore' },
-        -- ['<leader>h'] = { name = '+Git[H]ub', _ = 'which_key_ignore' },
-        -- ['<leader>hp'] = { name = '+[P]ull requests', _ = 'which_key_ignore' },
-        -- ['<leader>hs'] = { name = '+[S]tatus', _ = 'which_key_ignore' },
       }
       -- visual mode
       require('which-key').register({
@@ -862,43 +859,43 @@ require('lazy').setup({
     end,
   },
 
-  { -- Autoformat
-    'stevearc/conform.nvim',
-    lazy = false,
-    keys = {
-      {
-        '<leader>w',
-        function()
-          require('conform').format { async = true, lsp_fallback = true }
-          vim.cmd 'w'
-        end,
-        mode = '',
-        desc = '[F]ormat buffer',
-      },
-    },
-    opts = {
-      notify_on_error = false,
-      -- format_on_save = function(bufnr)
-      --   -- Disable "format_on_save lsp_fallback" for languages that don't
-      --   -- have a well standardized coding style. You can add additional
-      --   -- languages here or re-enable it for the disabled ones.
-      --   local disable_filetypes = { c = true, cpp = true }
-      --   return {
-      --     timeout_ms = 1000,
-      --     lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-      --   }
-      -- end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
-      },
-    },
-  },
+  -- { -- Autoformat
+  --   'stevearc/conform.nvim',
+  --   lazy = false,
+  --   keys = {
+  --     {
+  --       '<leader>w',
+  --       function()
+  --         require('conform').format { async = true, lsp_fallback = true }
+  --         vim.cmd 'w'
+  --       end,
+  --       mode = '',
+  --       desc = '[F]ormat buffer',
+  --     },
+  --   },
+  --   opts = {
+  --     notify_on_error = false,
+  --     -- format_on_save = function(bufnr)
+  --     --   -- Disable "format_on_save lsp_fallback" for languages that don't
+  --     --   -- have a well standardized coding style. You can add additional
+  --     --   -- languages here or re-enable it for the disabled ones.
+  --     --   local disable_filetypes = { c = true, cpp = true }
+  --     --   return {
+  --     --     timeout_ms = 1000,
+  --     --     lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+  --     --   }
+  --     -- end,
+  --     formatters_by_ft = {
+  --       lua = { 'stylua' },
+  --       -- Conform can also run multiple formatters sequentially
+  --       -- python = { "isort", "black" },
+  --       --
+  --       -- You can use a sub-list to tell conform to run *until* a formatter
+  --       -- is found.
+  --       -- javascript = { { "prettierd", "prettier" } },
+  --     },
+  --   },
+  -- },
 
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -1009,6 +1006,12 @@ require('lazy').setup({
           { name = 'path' },
         },
       }
+      cmp.setup.filetype({ 'sql' }, {
+        sources = {
+          { name = 'vim-dadbod-completion' },
+          { name = 'buffer' },
+        },
+      })
     end,
   },
   { -- You can easily change to a different colorscheme.
@@ -1456,7 +1459,7 @@ function Open_notes_workspace_Tab()
   local new_cwd = '~/DevVault'
   local cmd = 'lcd ' .. new_cwd
   vim.cmd(cmd)
-  vim.cmd 'Neotree dir=./'
+  -- vim.cmd 'Neotree dir=./'
 end
 
 wk.register {
@@ -1465,7 +1468,7 @@ wk.register {
     s = { Search_notes, 'Search' },
     n = { Create_note, 'New' },
     r = { Recent_notes, 'Recent' },
-    t = { Open_notes_workspace_Tab, 'Workspace [T]ab' },
+    w = { Open_notes_workspace_Tab, '[W]orkspace Tab' },
   },
 }
 vim.keymap.set('n', 'dsi', function()

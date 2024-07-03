@@ -120,6 +120,7 @@ return {
     'tpope/vim-fugitive',
   },
   { 'tpope/vim-dadbod' },
+  { 'kristijanhusak/vim-dadbod-completion' },
   { 'kristijanhusak/vim-dadbod-ui' },
   -- TODO: get this to work
   -- { 'kristijanhusak/vim-dadbod-completion' },
@@ -305,6 +306,11 @@ return {
     lazy = false,
     opts = { useDefaultKeymaps = true },
   },
-  { 'obreitwi/vim-sort-folds' },
+  {
+    'obreitwi/vim-sort-folds',
+    config = function()
+      -- require('vimsortfolds').setup()
+    end,
+  },
   { 'nvim-treesitter/nvim-treesitter-context' },
 }
