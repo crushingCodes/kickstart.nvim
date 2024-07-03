@@ -121,7 +121,23 @@ return {
   },
   { 'tpope/vim-dadbod' },
   { 'kristijanhusak/vim-dadbod-completion' },
-  { 'kristijanhusak/vim-dadbod-ui' },
+  {
+    'kristijanhusak/vim-dadbod-ui',
+    init = function()
+      -- Your DBUI configuration
+      --
+      vim.g.db_ui_use_nerd_fonts = 1
+      -- vim.g.db_ui_force_echo_notifications = 0
+      -- g:db_ui_use_nvim_notify
+      -- ensure the side bar prevents too much indentation
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'dbui',
+        callback = function()
+          vim.opt_local.shiftwidth = 2
+        end,
+      })
+    end,
+  },
   -- TODO: get this to work
   -- { 'kristijanhusak/vim-dadbod-completion' },
   { dir = '/Users/gavinboyd/Projects/vim-be-good' },
