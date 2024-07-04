@@ -183,6 +183,10 @@ map('<leader>gG', ':DiffviewOpen<CR>', '[G]it changes')
 map('<leader>gg', ':G<CR>', '[G]it Fugitive')
 map('<leader>gS', ':Gwrite<CR>', 'Add/[S)tage current buffer')
 
+map('<leader>gB', function()
+  vim.cmd ' Telescope git_branches'
+end, 'Git branches')
+
 -- Devdocs
 map('<leader>Do', ':DevdocsOpen<CR>', 'Devdocs [O]pen')
 map('<leader>Di', ':DevdocsInstall<CR>', 'Devdocs [I]nstall')
@@ -1384,13 +1388,17 @@ diffview.setup {
 }
 vim.api.nvim_create_autocmd('User', { pattern = 'TelescopePROpenPR', callback = _G.Open_Diffview_PR })
 
--- Code folding
-vim.o.foldcolumn = '1' -- '0' is not bad
-vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-vim.o.foldlevelstart = 99
+-- -- Code folding
+-- https://www.jackfranklin.co.uk/blog/code-folding-in-vim-neovim/
 vim.o.foldenable = true
-
-require('ufo').setup()
+vim.o.foldcolumn = '1'
+vim.o.foldmethod = 'expr'
+vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.o.foldtext = ''
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 1
+vim.o.foldnestmax = 4
+vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 
 -- ~/DevVault
 -- Telescope grep with the following cwd
