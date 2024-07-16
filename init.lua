@@ -203,7 +203,7 @@ vim.api.nvim_set_keymap('n', '<leader>f', ':lua vim.lsp.buf.format()<CR>', { nor
 local test
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 
-map('<leader>q', ':q<CR>', '[q]uit')
+-- map('<leader>q', ':q<CR>', '[q]uit')
 function Delete_all_buffers()
   vim.cmd '%bd!'
   vim.cmd 'SessionSave'
@@ -1301,6 +1301,8 @@ require('null-ls').setup {
     null_ls.builtins.formatting.prettier,
     null_ls.builtins.diagnostics.stylint,
     null_ls.builtins.formatting.black,
+    -- null_ls.builtins.formatting.gofumpt,
+    -- null_ls.builtins.formatting.goimports_reviser,
     -- require 'none-ls.diagnostics.eslint', -- requires none-ls-extras.nvim
   },
 }
@@ -1396,7 +1398,7 @@ vim.o.foldmethod = 'expr'
 vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.o.foldtext = ''
 vim.o.foldlevel = 99
-vim.o.foldlevelstart = 1
+-- vim.o.foldlevelstart = 1
 vim.o.foldnestmax = 4
 vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 
@@ -1499,7 +1501,3 @@ vim.keymap.set('n', 'dsi', function()
   vim.cmd(tostring(startBorderLn) .. ' delete')
 end, { desc = 'Delete Surrounding Indentation' })
 
-map('z0', ':set foldlevel=0<CR>', 'Fold level 0')
-map('z1', ':set foldlevel=1<CR>', 'Fold level 1')
-map('z2', ':set foldlevel=2<CR>', 'Fold level 2')
-map('z3', ':set foldlevel=3<CR>', 'Fold level 3')

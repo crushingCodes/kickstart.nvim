@@ -130,6 +130,7 @@ return {
 
       vim.g.db_ui_force_echo_notifications = 0
       vim.g.db_ui_use_nvim_notify = 0
+
       -- ensure the side bar prevents too much indentation
       vim.api.nvim_create_autocmd('FileType', {
         pattern = 'dbui',
@@ -281,7 +282,14 @@ return {
   --         inc_rename = false, -- enables an input dialog for inc-rename.nvim
   --         lsp_doc_border = false, -- add a border to hover docs and signature help
   --       },
+  --       routes = {
+  --         {
+  --           view = 'notify',
+  --           filter = { event = 'msg_showmode' },
+  --         },
+  --       },
   --     }
+  --     require('telescope').load_extension 'noice'
   --   end,
   -- },
   -- {
@@ -290,22 +298,22 @@ return {
   {
     'sindrets/diffview.nvim',
   },
-  {
-    'vhyrro/luarocks.nvim',
-    priority = 1000,
-    config = true,
-    opts = {
-      rocks = { 'lua-curl', 'nvim-nio', 'mimetypes', 'xml2lua' },
-    },
-  },
-  {
-    'rest-nvim/rest.nvim',
-    ft = 'http',
-    dependencies = { 'luarocks.nvim' },
-    config = function()
-      require('rest-nvim').setup()
-    end,
-  },
+  -- {
+  --   'vhyrro/luarocks.nvim',
+  --   priority = 1000,
+  --   config = true,
+  --   opts = {
+  --     rocks = { 'lua-curl', 'nvim-nio', 'mimetypes', 'xml2lua' },
+  --   },
+  -- },
+  -- {
+  --   'rest-nvim/rest.nvim',
+  --   ft = 'http',
+  --   dependencies = { 'luarocks.nvim' },
+  --   config = function()
+  --     require('rest-nvim').setup()
+  --   end,
+  -- },
   { 'folke/lazydev.nvim' },
   {
     'ellisonleao/dotenv.nvim',
@@ -317,63 +325,6 @@ return {
     end,
   },
   { 'mg979/vim-visual-multi' },
-  -- { 'kevinhwang91/promise-async' },
-  -- {
-  --   'kevinhwang91/nvim-ufo',
-  --   requires = 'kevinhwang91/promise-async',
-  --   config = function()
-  --     vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
-  --     vim.o.foldcolumn = '1' -- '0' is not bad
-  --     vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-  --     vim.o.foldlevelstart = 99
-  --     vim.o.foldenable = true
-  --     local handler = function(virtText, lnum, endLnum, width, truncate)
-  --       local newVirtText = {}
-  --       local suffix = (' 󰁂 %d '):format(endLnum - lnum)
-  --       local sufWidth = vim.fn.strdisplaywidth(suffix)
-  --       local targetWidth = width - sufWidth
-  --       local curWidth = 0
-  --       for _, chunk in ipairs(virtText) do
-  --         local chunkText = chunk[1]
-  --         local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-  --         if targetWidth > curWidth + chunkWidth then
-  --           table.insert(newVirtText, chunk)
-  --         else
-  --           chunkText = truncate(chunkText, targetWidth - curWidth)
-  --           local hlGroup = chunk[2]
-  --           table.insert(newVirtText, { chunkText, hlGroup })
-  --           chunkWidth = vim.fn.strdisplaywidth(chunkText)
-  --           -- str width returned from truncate() may less than 2nd argument, need padding
-  --           if curWidth + chunkWidth < targetWidth then
-  --             suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
-  --           end
-  --           break
-  --         end
-  --         curWidth = curWidth + chunkWidth
-  --       end
-  --       table.insert(newVirtText, { suffix, 'MoreMsg' })
-  --       return newVirtText
-  --     end
-  --     require('ufo').setup {
-  --
-  --       fold_virt_text_handler = handler,
-  --     }
-  --     --       vim.keymap.set('n', 'zr', require('ufo').op)
-  --     -- vim.keymap.set('n', 'zm', require('ufo').closeAllFolds)
-  --     vim.keymap.set('n', 'zr', require('ufo').openFoldsExceptKinds)
-  --     vim.keymap.set('n', 'zm', require('ufo').closeFoldsWith) -- closeAllFolds == closeFoldsWith(0)
-  --     vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
-  --     vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
-  --   end,
-  -- },
-  {
-    'lukas-reineke/indent-blankline.nvim',
-    main = 'ibl',
-    opts = {},
-    config = function()
-      require('ibl').setup()
-    end,
-  },
   { 'takac/vim-hardtime' },
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
@@ -391,4 +342,60 @@ return {
   --   end,
   -- },
   { 'nvim-treesitter/nvim-treesitter-context' },
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    opts = {},
+    config = function()
+      require('ibl').setup()
+    end,
+  },
+  -- {
+  --   'ray-x/go.nvim',
+  --   dependencies = { -- optional packages
+  --     'ray-x/guihua.lua',
+  --     'neovim/nvim-lspconfig',
+  --     'nvim-treesitter/nvim-treesitter',
+  --   },
+  --   config = function()
+  --     require('go').setup()
+  --   end,
+  --   event = { 'CmdlineEnter' },
+  --   ft = { 'go', 'gomod' },
+  --   build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
+  -- },
+  {
+    'javiorfo/nvim-ship',
+    lazy = true,
+    ft = 'ship',
+    cmd = { 'ShipCreate', 'ShipCreateEnv' },
+    dependencies = {
+      'javiorfo/nvim-spinetta',
+      'javiorfo/nvim-popcorn',
+      'hrsh7th/nvim-cmp', -- nvim-cmp is optional
+    },
+    opts = {
+      -- Not necessary. Only if you want to change the setup.
+      -- The following are the default values
+
+      request = {
+        timeout = 30,
+        autosave = true,
+      },
+      response = {
+        show_headers = 'all',
+        window_type = 'h',
+        size = 20,
+        redraw = true,
+      },
+      output = {
+        save = false,
+        override = true,
+        folder = 'output',
+      },
+      internal = {
+        log_debug = false,
+      },
+    },
+  },
 }
