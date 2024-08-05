@@ -10,29 +10,29 @@ return {
   { 'tpope/vim-repeat' },
   { 'tpope/vim-unimpaired' },
   -- { 'tpope/vim-obsession' },
-  {
-    'NeogitOrg/neogit',
-    dependencies = {
-      'nvim-lua/plenary.nvim', -- required
-      'sindrets/diffview.nvim', -- optional - Diff integration
-      -- Only one of these is needed, not both.
-      'nvim-telescope/telescope.nvim', -- optional
-      -- "ibhagwan/fzf-lua",              -- optional
-    },
-    -- config = true,
-    -- Configure the event hooks
-    config = function()
-      hooks = {
-        require('neogit').setup {
-
-          post_status_buffer_close = function()
-            -- Refresh all buffers when the Neogit status buffer is closed
-            vim.cmd 'checktime'
-          end,
-        },
-      }
-    end,
-  },
+  -- {
+  --   'NeogitOrg/neogit',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim', -- required
+  --     'sindrets/diffview.nvim', -- optional - Diff integration
+  --     -- Only one of these is needed, not both.
+  --     'nvim-telescope/telescope.nvim', -- optional
+  --     -- "ibhagwan/fzf-lua",              -- optional
+  --   },
+  --   -- config = true,
+  --   -- Configure the event hooks
+  --   -- config = function()
+  --   --   hooks = {
+  --   --     require('neogit').setup {
+  --   --
+  --   --       post_status_buffer_close = function()
+  --   --         -- Refresh all buffers when the Neogit status buffer is closed
+  --   --         vim.cmd 'checktime'
+  --   --       end,
+  --   --     },
+  --   --   }
+  --   -- end,
+  -- },
   {
     'rmagatti/auto-session',
     config = function()
@@ -72,6 +72,7 @@ return {
     config = function()
       require('typescript-tools').setup {
         settings = {
+          separate_diagnostic_server = false,
           expose_as_code_action = {
             'add_missing_imports',
             'remove_unused_imports',
@@ -92,13 +93,13 @@ return {
       vim.keymap.set('n', '<leader>li', require('lspimport').import, { noremap = true, desc = 'Python import' })
     end,
   },
-  {
-    'MeanderingProgrammer/py-requirements.nvim',
-    dependencies = { 'nvim-lua/plenary.nvim' },
-    config = function()
-      require('py-requirements').setup {}
-    end,
-  },
+  -- {
+  --   'MeanderingProgrammer/py-requirements.nvim',
+  --   dependencies = { 'nvim-lua/plenary.nvim' },
+  --   config = function()
+  --     require('py-requirements').setup {}
+  --   end,
+  -- },
   {
     'linux-cultist/venv-selector.nvim',
     dependencies = { 'neovim/nvim-lspconfig', 'nvim-telescope/telescope.nvim', 'mfussenegger/nvim-dap-python' },
@@ -146,60 +147,60 @@ return {
       })
     end,
   },
-  -- TODO: get this to work
-  -- { 'kristijanhusak/vim-dadbod-completion' },
   { dir = '/Users/gavinboyd/Projects/vim-be-good' },
+  { dir = '/Users/personal/Projects/vim-be-good' },
   { 'PeterRincker/vim-argumentative' },
-  { 'rizzatti/dash.vim' },
+  -- { 'rizzatti/dash.vim' },
   {
     'stevearc/dressing.nvim',
     opts = {},
   },
   { 'junegunn/fzf' },
   { 'junegunn/fzf.vim' },
-  {
-    'luckasRanarison/nvim-devdocs',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope.nvim',
-      'nvim-treesitter/nvim-treesitter',
-    },
-
-    opts = {
-      --   previewer_cmd = vim.fn.executable 'glow' == 1 and 'glow' or nil,
-      --   cmd_args = { '-s', 'dark', '-w', '80' },
-      --   picker_cmd = true,
-      --   picker_cmd_args = { '-s', 'dark', '-w', '50' },
-      --   float_win = { -- passed to nvim_open_win(), see :h api-floatwin
-      --     relative = 'editor',
-      --     height = 35,
-      --     width = 125,
-      --     border = 'rounded',
-      --   },
-      --   after_open = function()
-      --     -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-\\><C-n>', true, false, true), 'n', true)
-      --   end,
-    },
-  },
-  {
-    'mrjones2014/tldr.nvim',
-    requires = { 'nvim-telescope/telescope.nvim' },
-    config = function()
-      require('tldr').setup {
-        -- the shell command to use
-        tldr_command = 'tldr',
-        -- a string of extra arguments to pass to `tldr`, e.g. tldr_args = '--color always'
-        tldr_args = '',
-      }
-    end,
-  },
-  {
-    'kwakzalver/duckytype.nvim',
-    config = function()
-      require('duckytype').setup()
-    end,
-  },
-  { 'rhysd/rust-doc.vim' },
+  -- {
+  --   'luckasRanarison/nvim-devdocs',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'nvim-telescope/telescope.nvim',
+  --     'nvim-treesitter/nvim-treesitter',
+  --   },
+  --
+  --   opts = {
+  --     --   previewer_cmd = vim.fn.executable 'glow' == 1 and 'glow' or nil,
+  --     --   cmd_args = { '-s', 'dark', '-w', '80' },
+  --     --   picker_cmd = true,
+  --     --   picker_cmd_args = { '-s', 'dark', '-w', '50' },
+  --     --   float_win = { -- passed to nvim_open_win(), see :h api-floatwin
+  --     --     relative = 'editor',
+  --     --     height = 35,
+  --     --     width = 125,
+  --     --     border = 'rounded',
+  --     --   },
+  --     --   after_open = function()
+  --     --     -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-\\><C-n>', true, false, true), 'n', true)
+  --     --   end,
+  --   },
+  -- },
+  -- {
+  --   'mrjones2014/tldr.nvim',
+  --   requires = { 'nvim-telescope/telescope.nvim' },
+  --   config = function()
+  --     require('tldr').setup {
+  --       -- the shell command to use
+  --       tldr_command = 'tldr',
+  --       -- a string of extra arguments to pass to `tldr`, e.g. tldr_args = '--color always'
+  --       tldr_args = '',
+  --     }
+  --   end,
+  -- },
+  -- TODO: check what duckytype does
+  -- {
+  --   'kwakzalver/duckytype.nvim',
+  --   config = function()
+  --     require('duckytype').setup()
+  --   end,
+  -- },
+  -- { 'rhysd/rust-doc.vim' },
   {
     'danielfalk/smart-open.nvim',
     branch = '0.2.x',
@@ -215,41 +216,41 @@ return {
     },
   },
   { 'nvimtools/none-ls.nvim' },
-  { 'ldelossa/litee.nvim' },
+  -- { 'ldelossa/litee.nvim' },
   -- TODO: move this to private repo
   -- { dir = '~/Projects/plugins/neotest-python' },
-  {
-    'nvim-neotest/neotest',
-    dependencies = {
-      'nvim-neotest/nvim-nio',
-      'nvim-lua/plenary.nvim',
-      'antoinemadec/FixCursorHold.nvim',
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-neotest/neotest-jest',
-      -- dir = '~/Projects/plugins/neotest-python',
-      -- 'nvim-neotest/neotest-python',
-    },
-    config = function()
-      -- require('custom.plugins.neotest_setup').setup_neotest()
-
-      require('neotest').setup {
-        adapters = {
-          -- require 'neotest-python' {
-          --   args = { '--keepdb', '--interactive', 'False' },
-          -- },
-          require 'neotest-jest' {
-            jestCommand = 'npm jest --',
-            jestConfigFile = 'jest.config.ts',
-            -- env = { CI = true },
-            cwd = function(path)
-              return vim.fn.getcwd()
-            end,
-          },
-        },
-      }
-    end,
-  },
-  { 'ldelossa/gh.nvim' },
+  -- {
+  --   'nvim-neotest/neotest',
+  --   dependencies = {
+  --     'nvim-neotest/nvim-nio',
+  --     'nvim-lua/plenary.nvim',
+  --     'antoinemadec/FixCursorHold.nvim',
+  --     'nvim-treesitter/nvim-treesitter',
+  --     'nvim-neotest/neotest-jest',
+  --     -- dir = '~/Projects/plugins/neotest-python',
+  --     -- 'nvim-neotest/neotest-python',
+  --   },
+  --   config = function()
+  --     -- require('custom.plugins.neotest_setup').setup_neotest()
+  --
+  --     require('neotest').setup {
+  --       adapters = {
+  --         -- require 'neotest-python' {
+  --         --   args = { '--keepdb', '--interactive', 'False' },
+  --         -- },
+  --         require 'neotest-jest' {
+  --           jestCommand = 'npm jest --',
+  --           jestConfigFile = 'jest.config.ts',
+  --           -- env = { CI = true },
+  --           cwd = function(path)
+  --             return vim.fn.getcwd()
+  --           end,
+  --         },
+  --       },
+  --     }
+  --   end,
+  -- },
+  -- { 'ldelossa/gh.nvim' },
   -- {
   --   'folke/noice.nvim',
   --   event = 'VeryLazy',
@@ -314,7 +315,7 @@ return {
   --     require('rest-nvim').setup()
   --   end,
   -- },
-  { 'folke/lazydev.nvim' },
+  -- { 'folke/lazydev.nvim' },
   {
     'ellisonleao/dotenv.nvim',
     config = function()
@@ -324,8 +325,8 @@ return {
       }
     end,
   },
-  { 'mg979/vim-visual-multi' },
-  { 'takac/vim-hardtime' },
+  -- { 'mg979/vim-visual-multi' },
+  -- { 'takac/vim-hardtime' },
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
@@ -377,14 +378,18 @@ return {
     opts = {
       -- Not necessary. Only if you want to change the setup.
       -- The following are the default values
-
+      -- view = {
+      --   autocomplete = false,
+      -- },
       request = {
         timeout = 30,
         autosave = true,
+        insecure = false,
       },
       response = {
         show_headers = 'all',
         window_type = 'h',
+        --    border_type = require'popcorn.borders'.double_border, -- Only applied for 'p' window_type
         size = 20,
         redraw = true,
       },
@@ -396,6 +401,20 @@ return {
       internal = {
         log_debug = false,
       },
+    },
+  },
+  {
+    'folke/flash.nvim',
+    event = 'VeryLazy',
+    ---@type Flash.Config
+    opts = {},
+    -- stylua: ignore
+    keys = {
+      { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
+      { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
+      { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
+      { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
     },
   },
 }

@@ -173,7 +173,8 @@ end
 
 -- Toggles
 vim.api.nvim_set_keymap('n', '<leader>;a', ':ASToggle<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>;m', ':lua vim.bo.modifiable = not vim.bo.modifiable<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>;m', ':lua vim.bo.modifiable = not vim.bo.modifiable<CR>',
+  { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>;w', ':set wrap!<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>;r', ':set relativenumber!<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>;h', ':HardTimeToggle<CR>', { noremap = true, silent = true })
@@ -182,10 +183,9 @@ vim.api.nvim_set_keymap('n', '<leader>;h', ':HardTimeToggle<CR>', { noremap = tr
 map('<leader>gG', ':DiffviewOpen<CR>', '[G]it changes')
 map('<leader>gg', ':G<CR>', '[G]it Fugitive')
 map('<leader>gS', ':Gwrite<CR>', 'Add/[S)tage current buffer')
+map('<leader>gb', ':Gwrite<CR>', 'Add/[S)tage current buffer')
 
-map('<leader>gB', function()
-  vim.cmd ' Telescope git_branches'
-end, 'Git branches')
+map('<leader>gb', ':G branch --sort=-committerdate<CR>', 'Git [b]ranches')
 
 -- Devdocs
 map('<leader>Do', ':DevdocsOpen<CR>', 'Devdocs [O]pen')
@@ -196,10 +196,12 @@ map('<leader>Dt', ':Telescope tldr<CR>', 'TLDR')
 
 -- Format and Save
 -- vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
-vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.format()<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
+vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.format()<CR>:w<CR>',
+  { noremap = true, silent = true, desc = 'Format & Write' })
 
 -- Format
-vim.api.nvim_set_keymap('n', '<leader>f', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true, desc = 'Format' })
+vim.api.nvim_set_keymap('n', '<leader>f', ':lua vim.lsp.buf.format()<CR>',
+  { noremap = true, silent = true, desc = 'Format' })
 local test
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 
@@ -365,7 +367,7 @@ require('lazy').setup({
   -- after the plugin has been loaded:
   --  config = function() ... end
 
-  { -- Useful plugin to show you pending keybinds.
+  {                     -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     config = function() -- This is the function that runs, AFTER loading
@@ -439,7 +441,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -565,7 +567,7 @@ require('lazy').setup({
     },
     config = function()
       require('telescope-all-recent').setup {
-        pickers = { -- allows you to overwrite the default settings for each picker
+        pickers = {   -- allows you to overwrite the default settings for each picker
           buffers = { -- enable man_pages picker. Disable cwd and use frecency sorting.
             disable = false,
             use_cwd = true,
@@ -596,11 +598,11 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim',       opts = {} },
 
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
-      { 'folke/neodev.nvim', opts = {} },
+      { 'folke/neodev.nvim',       opts = {} },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -747,95 +749,95 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers =
-        {
-          -- clangd = {},
-          -- gopls = {},
-          pyright = {
-            single_file_support = true,
-            settings = {
-              python = {
-                analysis = {
-                  autoImportCompletions = true,
-                  autoSearchPaths = true,
-                  diagnosticMode = 'workspace', -- openFilesOnly, workspace
-                  typeCheckingMode = 'basic', -- off, basic, strict
-                  useLibraryCodeForTypes = true,
-                  extraPaths = { '/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages' },
+          {
+            -- clangd = {},
+            -- gopls = {},
+            pyright = {
+              single_file_support = true,
+              settings = {
+                python = {
+                  analysis = {
+                    autoImportCompletions = true,
+                    autoSearchPaths = true,
+                    diagnosticMode = 'workspace', -- openFilesOnly, workspace
+                    typeCheckingMode = 'basic', -- off, basic, strict
+                    useLibraryCodeForTypes = true,
+                    extraPaths = { '/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages' },
+                  },
+                },
+              },
+            },
+            -- rust_analyzer = {},
+            -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+            --
+            -- Some languages (like typescript) have entire language plugins that can be useful:
+            --    https://github.com/pmizio/typescript-tools.nvim
+            --
+            -- But for many setups, the LSP (`tsserver`) will work just fine
+            -- tsserver = {},
+            --
+
+            lua_ls = {
+              -- cmd = {...},
+              -- filetypes = { ...},
+              -- capabilities = {},
+              settings = {
+                Lua = {
+                  completion = {
+                    callSnippet = 'Replace',
+                  },
+                  -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+                  -- diagnostics = { disable = { 'missing-fields' } },
+                },
+              },
+            },
+            eslint = {
+
+              settings = {
+                -- codeAction = {
+                --   disableRuleComment = {
+                --     enable = true,
+                --     location = 'separateLine',
+                --   },
+                --   showDocumentation = {
+                --     enable = true,
+                --   },
+                -- },
+                -- codeActionOnSave = {
+                --   enable = false,
+                --   mode = 'all',
+                -- },
+                -- experimental = {
+                --   useFlatConfig = false,
+                -- },
+                -- format = true,
+                -- nodePath = '',
+                -- onIgnoredFiles = 'off',
+                problems = {
+                  shortenToSingleLine = true,
+                },
+                -- quiet = false,
+                -- run = 'onType',
+                -- useESLintClass = false,
+                -- validate = 'on',
+                -- workingDirectory = {
+                --   mode = 'location',
+                -- },
+                rulesCustomizations = {
+                  -- Customize ESLint rules here
+                  { rule = '*',                      severity = 'warn' },
+                  { rule = 'max-lines-per-function', severity = 'off' },
                 },
               },
             },
           },
-          -- rust_analyzer = {},
-          -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+          -- Ensure the servers and tools above are installed
+          --  To check the current status of installed tools and/or manually install
+          --  other tools, you can run
+          --    :Mason
           --
-          -- Some languages (like typescript) have entire language plugins that can be useful:
-          --    https://github.com/pmizio/typescript-tools.nvim
-          --
-          -- But for many setups, the LSP (`tsserver`) will work just fine
-          -- tsserver = {},
-          --
-
-          lua_ls = {
-            -- cmd = {...},
-            -- filetypes = { ...},
-            -- capabilities = {},
-            settings = {
-              Lua = {
-                completion = {
-                  callSnippet = 'Replace',
-                },
-                -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-                -- diagnostics = { disable = { 'missing-fields' } },
-              },
-            },
-          },
-          eslint = {
-
-            settings = {
-              -- codeAction = {
-              --   disableRuleComment = {
-              --     enable = true,
-              --     location = 'separateLine',
-              --   },
-              --   showDocumentation = {
-              --     enable = true,
-              --   },
-              -- },
-              -- codeActionOnSave = {
-              --   enable = false,
-              --   mode = 'all',
-              -- },
-              -- experimental = {
-              --   useFlatConfig = false,
-              -- },
-              -- format = true,
-              -- nodePath = '',
-              -- onIgnoredFiles = 'off',
-              problems = {
-                shortenToSingleLine = true,
-              },
-              -- quiet = false,
-              -- run = 'onType',
-              -- useESLintClass = false,
-              -- validate = 'on',
-              -- workingDirectory = {
-              --   mode = 'location',
-              -- },
-              rulesCustomizations = {
-                -- Customize ESLint rules here
-                { rule = '*', severity = 'warn' },
-                { rule = 'max-lines-per-function', severity = 'off' },
-              },
-            },
-          },
-        },
-        -- Ensure the servers and tools above are installed
-        --  To check the current status of installed tools and/or manually install
-        --  other tools, you can run
-        --    :Mason
-        --
-        --  You can press `g?` for help in this menu.
-        require('mason').setup()
+          --  You can press `g?` for help in this menu.
+          require('mason').setup()
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
@@ -1070,7 +1072,7 @@ require('lazy').setup({
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
       local statusline = require 'mini.statusline'
-      require('mini.animate').setup()
+      -- require('mini.animate').setup()
       -- set use_icons to true if you have a Nerd Font
       statusline.setup { use_icons = vim.g.have_nerd_font }
 
@@ -1131,7 +1133,7 @@ require('lazy').setup({
           -- mapping query_strings to modes.
           selection_modes = {
             ['@parameter.outer'] = 'v', -- charwise
-            ['@function.outer'] = 'V', -- linewise
+            ['@function.outer'] = 'V',  -- linewise
             ['@class.outer'] = '<c-v>', -- blockwise
           },
         },
@@ -1266,7 +1268,7 @@ vim.api.nvim_create_autocmd('BufRead', {
   end,
 })
 
-vim.treesitter.language.register('markdown', 'octo')
+-- vim.treesitter.language.register('markdown', 'octo')
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
@@ -1343,13 +1345,13 @@ function Close_all_buffers()
 end
 
 -- Quit all with confirmation
-map('<leader>Q', ':lua Close_all_buffers()<CR>', '[Q]uit all')
+-- map('<leader>Q', ':lua Close_all_buffers()<CR>', '[Q]uit all')
 
 -- Function to checkout PR and run DiffviewPR
 vim.api.nvim_set_keymap('n', '<leader>hh', ':Telescope gh pull_request<CR>', { noremap = true, silent = true })
 
-map('<leader>rr', ':Rest run<CR>', 'Rest run')
-map('<leader>rl', ':Rest run last<CR>', 'Rest run last')
+-- map('<leader>rr', ':Rest run<CR>', 'Rest run')
+-- map('<leader>rl', ':Rest run last<CR>', 'Rest run last')
 
 -- Function to perform the required actions
 function Neotest_actions()
@@ -1481,6 +1483,18 @@ wk.register {
     w = { Open_notes_workspace_Tab, '[W]orkspace Tab' },
   },
 }
+
+-- map('<leader>rr', ':Rest run<CR>', 'Rest run')
+-- map('<leader>rl', ':Rest run last<CR>', 'Rest run last')
+-- wk.register {
+--   ['<leader>r'] = {
+--     name = 'Ship',
+--     -- TODO: make it create a folder for ship and do global ignore
+--     -- c = { vim.cmd('ShipCreate', 'Ship Create') },
+--     -- r = { vim.cmd('ShipCreate', 'Ship') },
+--   },
+-- }
+
 vim.keymap.set('n', 'dsi', function()
   -- select outer indentation
   require('various-textobjs').indentation('outer', 'outer')
@@ -1500,4 +1514,3 @@ vim.keymap.set('n', 'dsi', function()
   vim.cmd(tostring(endBorderLn) .. ' delete') -- delete end first so line index is not shifted
   vim.cmd(tostring(startBorderLn) .. ' delete')
 end, { desc = 'Delete Surrounding Indentation' })
-
