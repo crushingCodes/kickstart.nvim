@@ -1324,7 +1324,7 @@ require('null-ls').setup {
     null_ls.builtins.completion.spell,
     null_ls.builtins.formatting.prettier,
     null_ls.builtins.diagnostics.stylint,
-    -- null_ls.builtins.formatting.black,
+    null_ls.builtins.formatting.black,
     -- null_ls.builtins.formatting.gofumpt,
     -- null_ls.builtins.formatting.goimports_reviser,
     -- require 'none-ls.diagnostics.eslint', -- requires none-ls-extras.nvim
@@ -1536,3 +1536,5 @@ vim.keymap.set('n', 'dsi', function()
   vim.cmd(tostring(endBorderLn) .. ' delete') -- delete end first so line index is not shifted
   vim.cmd(tostring(startBorderLn) .. ' delete')
 end, { desc = 'Delete Surrounding Indentation' })
+
+vim.g.python3_host_prog = vim.fn.expand '$HOME/.local/venv/nvim/bin/python'
