@@ -9,7 +9,7 @@ return {
   { 'tpope/vim-abolish' },
   { 'tpope/vim-repeat' },
   { 'tpope/vim-unimpaired' },
-  -- { 'tpope/vim-obsession' },
+  { 'tpope/vim-obsession' },
   -- {
   --   'NeogitOrg/neogit',
   --   dependencies = {
@@ -33,24 +33,37 @@ return {
   --   --   }
   --   -- end,
   -- },
-  {
-    'rmagatti/auto-session',
-    config = function()
-      require('auto-session').setup {
-        log_level = 'error',
-        -- restore_upcoming_session = false,
-        auto_session_suppress_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
-        -- auto_session_allowed_dirs = { '~/git/*' },
-        auto_session_suppress_filetypes = { 'octo', 'sql', 'dbout' },
-        -- post_restore_cmds = { 'Octo pr reload' },
-        pre_save_cmds = {
-          -- 'Neotree close',
-          -- 'DBUIClose',
-          -- 'DiffviewClose',
-        },
-      }
-    end,
-  },
+  -- {
+  --   'rmagatti/auto-session',
+  --   opts = {
+  --     auto_session_enabled = false,
+  --     auto_session_root_dir = vim.fn.stdpath 'data' .. '/sessions/',
+  --     auto_save_enabled = true,
+  --     auto_restore_enabled = true,
+  --     auto_session_suppress_dirs = nil,
+  --     auto_session_allowed_dirs = nil,
+  --     auto_session_create_enabled = true,
+  --     auto_session_enable_last_session = false,
+  --     auto_session_use_git_branch = false,
+  --     auto_restore_lazy_delay_enabled = true,
+  --     log_level = 'error',
+  --   },
+  --   config = function()
+  --     require('auto-session').setup {
+  --       log_level = 'error',
+  --       -- restore_upcoming_session = false,
+  --       auto_session_suppress_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
+  --       -- auto_session_allowed_dirs = { '~/git/*' },
+  --       auto_session_suppress_filetypes = { 'octo', 'sql', 'dbout' },
+  --       -- post_restore_cmds = { 'Octo pr reload' },
+  --       pre_save_cmds = {
+  --         -- 'Neotree close',
+  --         -- 'DBUIClose',
+  --         -- 'DiffviewClose',
+  --       },
+  --     }
+  --   end,
+  -- },
   {
     'pocco81/auto-save.nvim',
     opts = {
@@ -336,13 +349,13 @@ return {
     lazy = false,
     opts = { useDefaultKeymaps = true },
   },
-  -- {
-  --   'obreitwi/vim-sort-folds',
-  --   config = function()
-  --     -- require('vimsortfolds').setup()
-  --   end,
-  -- },
-  { 'nvim-treesitter/nvim-treesitter-context' },
+  {
+    'obreitwi/vim-sort-folds',
+    config = function()
+      -- require('vimsortfolds').setup()
+    end,
+  },
+  -- { 'nvim-treesitter/nvim-treesitter-context' },
   {
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',
@@ -403,18 +416,42 @@ return {
       },
     },
   },
+  -- {
+  --   'folke/flash.nvim',
+  --   event = 'VeryLazy',
+  --   ---@type Flash.Config
+  --   opts = {},
+  --   -- stylua: ignore
+  --   keys = {
+  --     { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
+  --     { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
+  --     { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
+  --     { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+  --     { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
+  --   },
+  -- },
   {
-    'folke/flash.nvim',
-    event = 'VeryLazy',
-    ---@type Flash.Config
-    opts = {},
-    -- stylua: ignore
-    keys = {
-      { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
-      { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
-      { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
-      { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-      { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
+    'mikesmithgh/kitty-scrollback.nvim',
+    enabled = true,
+    lazy = true,
+    cmd = { 'KittyScrollbackGenerateKittens', 'KittyScrollbackCheckHealth' },
+    event = { 'User KittyScrollbackLaunch' },
+    -- version = '*', -- latest stable version, may have breaking changes if major version changed
+    -- version = '^5.0.0', -- pin major version, include fixes and features that do not have breaking changes
+    config = function()
+      require('kitty-scrollback').setup()
+    end,
+  },
+  {
+    {
+      'antosha417/nvim-lsp-file-operations',
+      dependencies = {
+        'nvim-lua/plenary.nvim',
+        'nvim-neo-tree/neo-tree.nvim',
+      },
+      config = function()
+        require('lsp-file-operations').setup()
+      end,
     },
   },
 }
