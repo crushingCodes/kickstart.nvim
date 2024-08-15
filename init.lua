@@ -220,6 +220,12 @@ map('<leader>mc', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
 map('<leader>mn', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
 -- TODO: next and previous conflict
 
+-- if vim.fn.filereadable 'Session.vim' == 1 then
+--   -- vim.cmd 'source Session.vim'
+-- else
+--   -- vim.api.nvim_create_autocmd('VimEnter', { pattern = '*', command = 'Obsession' })
+-- end
+
 map('<leader>SS', ':Obsess<CR>', 'Create [S]ession')
 map('<leader>SL', ':source Session.vim<CR>', '[L]oad Session')
 map('<leader>SD', ':Obsess!<CR>', '[D]elete Session')
@@ -1316,7 +1322,7 @@ require('null-ls').setup {
   sources = {
     null_ls.builtins.formatting.stylua,
     null_ls.builtins.completion.spell,
-    -- null_ls.builtins.formatting.prettier,
+    null_ls.builtins.formatting.prettier,
     null_ls.builtins.diagnostics.stylint,
     -- null_ls.builtins.formatting.black,
     -- null_ls.builtins.formatting.gofumpt,
