@@ -1029,17 +1029,24 @@ require('lazy').setup({
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
         sources = {
-          { name = 'nvim_lsp' },
+          { name = 'nvim_lsp', priority = 1000 },
           { name = 'luasnip' },
-          { name = 'path' },
+          { name = 'path', priority = 800 },
         },
       }
       cmp.setup.filetype({ 'sql' }, {
         sources = {
-          { name = 'vim-dadbod-completion' },
-          { name = 'buffer' },
+          { name = 'vim-dadbod-completion', priority = 900 },
+          -- { name = 'buffer' },
+          { name = 'buffer', max_item_count = 5, priority = 1 }, -- Reduce the number of suggestions
         },
       })
+      local lspkind = require 'lspkind'
+      cmp.setup {
+        formatting = {
+          format = lspkind.cmp_format(),
+        },
+      }
     end,
   },
   { -- You can easily change to a different colorscheme.
@@ -1325,6 +1332,7 @@ require('null-ls').setup {
     null_ls.builtins.formatting.prettier,
     null_ls.builtins.diagnostics.stylint,
     null_ls.builtins.formatting.black,
+    null_ls.builtins.formatting.gdformat,
     -- null_ls.builtins.formatting.gofumpt,
     -- null_ls.builtins.formatting.goimports_reviser,
     -- require 'none-ls.diagnostics.eslint', -- requires none-ls-extras.nvim

@@ -10,6 +10,7 @@ return {
   { 'tpope/vim-repeat' },
   { 'tpope/vim-unimpaired' },
   { 'tpope/vim-obsession' },
+  { 'tpope/vim-sleuth' },
   -- {
   --   'NeogitOrg/neogit',
   --   dependencies = {
@@ -479,4 +480,5 @@ return {
       }
     end,
   },
+  { 'onsails/lspkind.nvim' },
 }
