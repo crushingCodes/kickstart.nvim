@@ -1625,3 +1625,6 @@ wk.add { '<leader>Di', ':DevdocsInstall<CR>', desc = 'Devdocs [I]nstall' }
 wk.add { '<leader>Du', ':DevdocsUpdateAll<CR>', desc = 'Devdocs [U]pdate All' }
 wk.add { '<leader>Dg', ':lua Devdocs_grep()<CR>', desc = 'Devdocs [G]rep' }
 wk.add { '<leader>Dt', ':Telescope tldr<CR>', desc = 'TLDR' }
+
+-- add easier map to goto the middle of the line
+vim.api.nvim_set_keymap('n', 'gm', ":call cursor(0, virtcol('$')/2)<CR>", { noremap = true, silent = true })
