@@ -184,6 +184,7 @@ map('<leader>gg', ':G<CR>', '[G]it Fugitive')
 map('<leader>gS', ':Gwrite<CR>', 'Add/[S)tage current buffer')
 
 map('<leader>gb', ':G branch --sort=-committerdate<CR>', 'Git [b]ranches')
+map('<leader>gB', ':G blame <CR>', 'Git [b]lame')
 
 -- Devdocs
 map('<leader>Do', ':DevdocsOpen<CR>', 'Devdocs [O]pen')

@@ -12,29 +12,6 @@ return {
   { 'tpope/vim-obsession' },
   { 'tpope/vim-sleuth' },
   -- {
-  --   'NeogitOrg/neogit',
-  --   dependencies = {
-  --     'nvim-lua/plenary.nvim', -- required
-  --     'sindrets/diffview.nvim', -- optional - Diff integration
-  --     -- Only one of these is needed, not both.
-  --     'nvim-telescope/telescope.nvim', -- optional
-  --     -- "ibhagwan/fzf-lua",              -- optional
-  --   },
-  --   -- config = true,
-  --   -- Configure the event hooks
-  --   -- config = function()
-  --   --   hooks = {
-  --   --     require('neogit').setup {
-  --   --
-  --   --       post_status_buffer_close = function()
-  --   --         -- Refresh all buffers when the Neogit status buffer is closed
-  --   --         vim.cmd 'checktime'
-  --   --       end,
-  --   --     },
-  --   --   }
-  --   -- end,
-  -- },
-  -- {
   --   'rmagatti/auto-session',
   --   opts = {
   --     auto_session_enabled = false,
@@ -84,8 +61,7 @@ return {
     'pmizio/typescript-tools.nvim',
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     config = function()
-      local api = require 'typescript-tools.api'
-
+      -- local api = require 'typescript-tools.api'
       require('typescript-tools').setup {
         settings = {
           handlers = {
@@ -507,19 +483,19 @@ return {
   },
   { 'onsails/lspkind.nvim' },
   { 'habamax/vim-godot', event = 'VimEnter' },
-  -- Lazy
-  -- {
-  --   'olimorris/onedarkpro.nvim',
-  --   priority = 1000, -- Ensure it loads first
-  --   config = function()
-  --     -- somewhere in your config:
-  --     vim.cmd 'colorscheme onedark_dark'
-  --     require('onedarkpro').setup {
-  --       on_highlights = function(highlights, colors)
-  --         highlights.GitSignsAdd = { fg = colors.green, bg = colors.none, bold = true }
-  --         highlights.GitSignsChange = { fg = colors.orange, bg = colors.none, bold = true }
-  --         highlights.GitSignsDelete = { fg = colors.red, bg = colors.none, bold = true }
-  --       end,
-  --     }
-  --   end,
+  {
+    'utilyre/barbecue.nvim',
+    name = 'barbecue',
+    version = '*',
+    dependencies = {
+      'SmiteshP/nvim-navic',
+      'nvim-tree/nvim-web-devicons', -- optional dependency
+    },
+    opts = {
+      -- configurations go here
+    },
+    config = function()
+      require('barbecue').setup()
+    end,
+  },
 }
