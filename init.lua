@@ -917,6 +917,7 @@ require('lazy').setup({
         'black',
         'prettier',
         'eslint',
+        'typescript-language-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
