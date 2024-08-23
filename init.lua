@@ -178,21 +178,6 @@ vim.api.nvim_set_keymap('n', '<leader>;w', ':set wrap!<CR>', { noremap = true, s
 vim.api.nvim_set_keymap('n', '<leader>;r', ':set relativenumber!<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>;h', ':HardTimeToggle<CR>', { noremap = true, silent = true })
 
--- Neogit
-map('<leader>gG', ':DiffviewOpen<CR>', '[G]it changes')
-map('<leader>gg', ':G<CR>', '[G]it Fugitive')
-map('<leader>gS', ':Gwrite<CR>', 'Add/[S)tage current buffer')
-
-map('<leader>gb', ':G branch --sort=-committerdate<CR>', 'Git [b]ranches')
-map('<leader>gB', ':G blame <CR>', 'Git [b]lame')
-
--- Devdocs
-map('<leader>Do', ':DevdocsOpen<CR>', 'Devdocs [O]pen')
-map('<leader>Di', ':DevdocsInstall<CR>', 'Devdocs [I]nstall')
-map('<leader>Du', ':DevdocsUpdateAll<CR>', 'Devdocs [U]pdate All')
-map('<leader>Dg', ':lua Devdocs_grep()<CR>', 'Devdocs [G]rep')
-map('<leader>Dt', ':Telescope tldr<CR>', 'TLDR')
-
 -- Format and Save
 -- vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
 -- vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.format()<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
@@ -227,9 +212,9 @@ map('<leader>mn', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
 --   -- vim.api.nvim_create_autocmd('VimEnter', { pattern = '*', command = 'Obsession' })
 -- end
 
-map('<leader>SS', ':Obsess<CR>', 'Create [S]ession')
-map('<leader>SL', ':source Session.vim<CR>', '[L]oad Session')
-map('<leader>SD', ':Obsess!<CR>', '[D]elete Session')
+-- map('<leader>SS', ':Obsess<CR>', 'Create [S]ession')
+-- map('<leader>SL', ':source Session.vim<CR>', '[L]oad Session')
+-- map('<leader>SD', ':Obsess!<CR>', '[D]elete Session')
 
 -- Function to confirm and undo the last commit
 local function confirm_undo_last_commit()
@@ -381,24 +366,27 @@ require('lazy').setup({
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     config = function() -- This is the function that runs, AFTER loading
       require('which-key').setup()
+      -- TODO: work out how to get this going
+      -- Hydra mode is a special mode that keeps the popup open until you hit <esc>.
+      -- require('which-key').show {
+      --   keys = '<c-w>',
+      --   loop = true, -- this will keep the popup open until you hit <esc>
+      -- }
 
       -- Document existing key chains
-      require('which-key').register {
-        ['<leader>c'] = { name = '+[C]ode', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '+[S]earch', _ = 'which_key_ignore' },
-        ['<leader>;'] = { name = '+[T]oggle', _ = 'which_key_ignore' },
-        ['<leader>l'] = { name = '+[L]sp', _ = 'which_key_ignore' },
-        ['<leader>b'] = { name = '+[B]uffers', _ = 'which_key_ignore' },
-        ['<leader>g'] = { name = '+[G]it', _ = 'which_key_ignore' },
-        ['<leader>Y'] = { name = '+[Y]ank', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '+[R]est', _ = 'which_key_ignore' },
-        ['<leader>m'] = { name = '+[M]erge', _ = 'which_key_ignore' },
-        ['<leader>t'] = { name = '+[t]abs', _ = 'which_key_ignore' },
+      require('which-key').add {
+        { '<leader>c', group = 'Code' },
+        { '<leader>s', group = 'Search' },
+        { '<leader>;', group = 'Toggle' },
+        { '<leader>l', group = 'Lsp' },
+        { '<leader>b', group = 'Buffers' },
+        { '<leader>g', group = 'Git' },
+        { '<leader>Y', group = 'Yank' },
+        { '<leader>r', group = 'Rest' },
+        { '<leader>m', group = 'Merge' },
+        { '<leader>t', group = 'Tabs' },
+        { '<leader>n', group = 'Notes' },
       }
-      -- visual mode
-      require('which-key').register({
-        ['<leader>g'] = { '[g]it' },
-      }, { mode = 'v' })
     end,
   },
 
@@ -1366,7 +1354,7 @@ vim.api.nvim_create_autocmd('BufRead', {
   end,
 })
 
--- vim.treesitter.language.register('markdown', 'octo')
+-- vim.treesitter.language.add('markdown', 'octo')
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
@@ -1581,19 +1569,17 @@ function Open_notes_workspace_Tab()
   -- vim.cmd 'Neotree dir=./'
 end
 
-wk.register {
-  ['<leader>n'] = {
-    name = '+[N]otes',
-    s = { Search_notes, 'Search' },
-    n = { Create_note, 'New' },
-    r = { Recent_notes, 'Recent' },
-    w = { Open_notes_workspace_Tab, '[W]orkspace Tab' },
-  },
+wk.add {
+  -- name = '+[N]otes',
+  { '<leader>ns', Search_notes, desc = 'Search' },
+  { '<leader>nn', Create_note, desc = 'New' },
+  { '<leader>nr', Recent_notes, desc = 'Recent' },
+  { '<leader>nw', Open_notes_workspace_Tab, desc = 'Workspace Tab' },
 }
 
 -- map('<leader>rr', ':Rest run<CR>', 'Rest run')
 -- map('<leader>rl', ':Rest run last<CR>', 'Rest run last')
--- wk.register {
+-- wk.add {
 --   ['<leader>r'] = {
 --     name = 'Ship',
 --     -- TODO: make it create a folder for ship and do global ignore
@@ -1623,3 +1609,19 @@ vim.keymap.set('n', 'dsi', function()
 end, { desc = 'Delete Surrounding Indentation' })
 
 vim.g.python3_host_prog = vim.fn.expand '$HOME/.local/venv/nvim/bin/python'
+
+-- Neogit
+local wk = require 'which-key'
+wk.add { '<leader>gG', ':DiffviewOpen<CR>', desc = '[G]it changes' }
+wk.add { '<leader>gg', ':G<CR>', desc = '[G]it Fugitive' }
+wk.add { '<leader>gS', ':Gwrite<CR>', desc = 'Add/[S })tage current buffer' }
+
+wk.add { '<leader>gb', ':G branch --sort=-committerdate<CR>', desc = 'Git [b]ranches' }
+wk.add { '<leader>gB', ':G blame <CR>', desc = 'Git [b]lame' }
+
+-- Devdocs
+wk.add { '<leader>Do', ':DevdocsOpen<CR>', desc = 'Devdocs [O]pen' }
+wk.add { '<leader>Di', ':DevdocsInstall<CR>', desc = 'Devdocs [I]nstall' }
+wk.add { '<leader>Du', ':DevdocsUpdateAll<CR>', desc = 'Devdocs [U]pdate All' }
+wk.add { '<leader>Dg', ':lua Devdocs_grep()<CR>', desc = 'Devdocs [G]rep' }
+wk.add { '<leader>Dt', ':Telescope tldr<CR>', desc = 'TLDR' }
