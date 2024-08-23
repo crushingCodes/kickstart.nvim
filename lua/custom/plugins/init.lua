@@ -341,7 +341,7 @@ return {
     end,
   },
   -- { 'mg979/vim-visual-multi' },
-  -- { 'takac/vim-hardtime' },
+  { 'takac/vim-hardtime' },
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },

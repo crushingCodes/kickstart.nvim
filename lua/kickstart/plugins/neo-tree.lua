@@ -199,6 +199,12 @@ return {
           end,
         },
         {
+          event = 'neo_tree_buffer_enter',
+          handler = function(arg)
+            vim.opt.relativenumber = true
+          end,
+        },
+        {
           event = 'file_opened',
           handler = function(file_path)
             --auto close
