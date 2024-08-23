@@ -72,7 +72,7 @@ return {
         local fn = vim.fn
         local utils = require 'auto-save.utils.data'
 
-        if fn.getbufvar(buf, '&modifiable') == 1 and utils.not_in(fn.getbufvar(buf, '&filetype'), { 'octo', 'sql', 'python' }) then
+        if fn.getbufvar(buf, '&modifiable') == 1 and utils.not_in(fn.getbufvar(buf, '&filetype'), { 'octo', 'sql', 'python', 'gdscript' }) then
           return true -- met condition(s), can save
         end
         return false -- can't save
@@ -84,9 +84,20 @@ return {
     'pmizio/typescript-tools.nvim',
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     config = function()
+      local api = require 'typescript-tools.api'
+
       require('typescript-tools').setup {
         settings = {
-          separate_diagnostic_server = false,
+          handlers = {
+            -- ['textDocument/publishDiagnostics'] = api.filter_diagnostics(
+            --   -- Ignore 'This may be converted to an async function' diagnostics.
+            --   function(diagnostics)
+            --     print(vim.inspect(diagnostics))
+            --   end
+            --   -- { 80006 }
+            -- ),
+          },
+          separate_diagnostic_server = true,
           expose_as_code_action = {
             'add_missing_imports',
             'remove_unused_imports',
@@ -95,6 +106,20 @@ return {
           tsserver_file_preferences = {
             importModuleSpecifierPreference = 'non-relative',
             importModuleSpecifierEnding = 'minimal',
+          },
+          -- CodeLens
+          -- WARNING: Experimental feature also in VSCode, because it might hit performance of server.
+          -- possible values: ("off"|"all"|"implementations_only"|"references_only")
+          -- code_lens = 'implementations_only',
+
+          -- tsserver_file_preferences = {
+          --   includeInlayParameterNameHints = 'all',
+          --   includeCompletionsForModuleExports = true,
+          --   quotePreference = 'auto',
+          -- },
+          jsx_close_tag = {
+            enable = true,
+            filetypes = { 'javascriptreact', 'typescriptreact' },
           },
         },
       }
@@ -165,10 +190,10 @@ return {
   { dir = '/Users/personal/Projects/vim-be-good' },
   { 'PeterRincker/vim-argumentative' },
   -- { 'rizzatti/dash.vim' },
-  {
-    'stevearc/dressing.nvim',
-    opts = {},
-  },
+  -- {
+  --   'stevearc/dressing.nvim',
+  --   opts = {},
+  -- },
   { 'junegunn/fzf' },
   { 'junegunn/fzf.vim' },
   -- {
@@ -229,7 +254,7 @@ return {
       { 'nvim-telescope/telescope-fzy-native.nvim' },
     },
   },
-  { 'nvimtools/none-ls.nvim' },
+  -- { 'nvimtools/none-ls.nvim' },
   -- { 'ldelossa/litee.nvim' },
   -- TODO: move this to private repo
   -- { dir = '~/Projects/plugins/neotest-python' },
@@ -481,4 +506,20 @@ return {
     end,
   },
   { 'onsails/lspkind.nvim' },
+  { 'habamax/vim-godot', event = 'VimEnter' },
+  -- Lazy
+  -- {
+  --   'olimorris/onedarkpro.nvim',
+  --   priority = 1000, -- Ensure it loads first
+  --   config = function()
+  --     -- somewhere in your config:
+  --     vim.cmd 'colorscheme onedark_dark'
+  --     require('onedarkpro').setup {
+  --       on_highlights = function(highlights, colors)
+  --         highlights.GitSignsAdd = { fg = colors.green, bg = colors.none, bold = true }
+  --         highlights.GitSignsChange = { fg = colors.orange, bg = colors.none, bold = true }
+  --         highlights.GitSignsDelete = { fg = colors.red, bg = colors.none, bold = true }
+  --       end,
+  --     }
+  --   end,
 }

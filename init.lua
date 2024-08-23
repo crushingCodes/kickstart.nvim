@@ -182,7 +182,6 @@ vim.api.nvim_set_keymap('n', '<leader>;h', ':HardTimeToggle<CR>', { noremap = tr
 map('<leader>gG', ':DiffviewOpen<CR>', '[G]it changes')
 map('<leader>gg', ':G<CR>', '[G]it Fugitive')
 map('<leader>gS', ':Gwrite<CR>', 'Add/[S)tage current buffer')
-map('<leader>gb', ':Gwrite<CR>', 'Add/[S)tage current buffer')
 
 map('<leader>gb', ':G branch --sort=-committerdate<CR>', 'Git [b]ranches')
 
@@ -195,7 +194,8 @@ map('<leader>Dt', ':Telescope tldr<CR>', 'TLDR')
 
 -- Format and Save
 -- vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
-vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.format()<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
+-- vim.api.nvim_set_keymap('n', '<leader>w', ':lua vim.lsp.buf.format()<CR>:w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
+-- vim.api.nvim_set_keymap('n', '<leader>w', ':w<CR>', { noremap = true, silent = true, desc = 'Format & Write' })
 
 -- Format
 vim.api.nvim_set_keymap('n', '<leader>f', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true, desc = 'Format' })
@@ -245,10 +245,11 @@ map('<leader>gU', ':lua confirm_undo_last_commit()<CR>', '[U]ndo last commit')
 map('<leader>gH', ':lua require("telescope").extensions.git_file_history.git_file_history()<CR>', 'File History')
 
 -- Utils for getting file paths
-map('<leader>Yr', ':let @*=expand("%")<CR>', 'Yank [r]elative file path')
-map('<leader>Yp', ':let @*=expand("%:p")<CR>', 'Yank full file [p]ath')
-map('<leader>Yn', ':let @*=expand("%:t")<CR>', 'Yank file [n]ame')
-map('<leader>Yd', ':let @*=expand("%:p:h")<CR>', 'Yank directory [n]ame')
+map('<leader>Yr', ':let @*=expand("%")<CR>', '[r]elative file path')
+map('<leader>Yp', ':let @*=expand("%:p")<CR>', 'full file [p]ath')
+map('<leader>Yn', ':let @*=expand("%:t")<CR>', 'file [n]ame')
+map('<leader>Yd', ':let @*=expand("%:p:h")<CR>', 'directory [n]ame')
+map('<leader>Yt', ':lua _G.get_test_path()<CR>', 'Python [t]est path')
 
 map('<leader>t/', ':tabnew<CR>|:terminal<CR>', 'New Terminal')
 map('<leader>tn', ':tabnew<CR>', '[N]ew Tab')
@@ -388,6 +389,7 @@ require('lazy').setup({
         ['<leader>l'] = { name = '+[L]sp', _ = 'which_key_ignore' },
         ['<leader>b'] = { name = '+[B]uffers', _ = 'which_key_ignore' },
         ['<leader>g'] = { name = '+[G]it', _ = 'which_key_ignore' },
+        ['<leader>Y'] = { name = '+[Y]ank', _ = 'which_key_ignore' },
         ['<leader>r'] = { name = '+[R]est', _ = 'which_key_ignore' },
         ['<leader>m'] = { name = '+[M]erge', _ = 'which_key_ignore' },
         ['<leader>t'] = { name = '+[t]abs', _ = 'which_key_ignore' },
@@ -478,7 +480,16 @@ require('lazy').setup({
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
-        --
+        defaults = {
+          layout_strategy = 'vertical',
+          -- other settings if you have any
+          -- vertical = { bottom_pane = {
+          --   height = 25,
+          --   preview_cutoff = 1000,
+          --   prompt_position = 'top',
+          -- } },
+          path_display = { 'smart' },
+        },
         -- defaults = {
         --   mappings = {
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
@@ -659,7 +670,12 @@ require('lazy').setup({
           map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
           -- Find references for the word under your cursor.
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gr', function()
+            require('telescope.builtin').lsp_references {
+              -- show_line = false,
+              fname_width = 80,
+            }
+          end, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
@@ -689,6 +705,36 @@ require('lazy').setup({
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
+
+          function _G.get_test_path()
+            local current_file = vim.fn.expand '%:.'
+            local test_class = ''
+            local test_method = vim.fn.expand '<cword>'
+
+            -- Get the lines from the start to the current line
+            local lines = vim.api.nvim_buf_get_lines(0, 0, vim.fn.line '.', false)
+
+            -- Find the current class and method under cursor
+            for _, line in ipairs(lines) do
+              local class_name = line:match '^%s*class%s+([%w_]+)'
+              if class_name then
+                test_class = class_name
+              end
+            end
+
+            -- Convert the file path to a dotted module path (relative to project root)
+            local module_path = current_file:gsub('/', '.'):gsub('.py$', '')
+
+            -- Format the test path
+            local test_path = string.format('%s.%s.%s', module_path, test_class, test_method)
+
+            -- Copy to clipboard
+            vim.fn.setreg('+', test_path)
+            print('Copied to clipboard: ' .. test_path)
+          end
+
+          -- Map the function to a key
+          -- vim.api.nvim_set_keymap('n', '<leader>Yt', ':lua _G.get_test_path()<CR>', { noremap = true, silent = true, desc = 'Python test path' })
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -749,7 +795,9 @@ require('lazy').setup({
 
       local lspconfig = require 'lspconfig'
 
-      lspconfig.gdscript.setup {}
+      lspconfig.gdscript.setup {
+        capabilities = capabilities,
+      }
       -- Set global defaults for all servers
       lspconfig.util.default_config = vim.tbl_extend('force', lspconfig.util.default_config, {
         capabilities = vim.tbl_deep_extend(
@@ -887,43 +935,58 @@ require('lazy').setup({
     end,
   },
 
-  -- { -- Autoformat
-  --   'stevearc/conform.nvim',
-  --   lazy = false,
-  --   keys = {
-  --     {
-  --       '<leader>w',
-  --       function()
-  --         require('conform').format { async = true, lsp_fallback = true }
-  --         vim.cmd 'w'
-  --       end,
-  --       mode = '',
-  --       desc = '[F]ormat buffer',
-  --     },
-  --   },
-  --   opts = {
-  --     notify_on_error = false,
-  --     -- format_on_save = function(bufnr)
-  --     --   -- Disable "format_on_save lsp_fallback" for languages that don't
-  --     --   -- have a well standardized coding style. You can add additional
-  --     --   -- languages here or re-enable it for the disabled ones.
-  --     --   local disable_filetypes = { c = true, cpp = true }
-  --     --   return {
-  --     --     timeout_ms = 1000,
-  --     --     lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-  --     --   }
-  --     -- end,
-  --     formatters_by_ft = {
-  --       lua = { 'stylua' },
-  --       -- Conform can also run multiple formatters sequentially
-  --       -- python = { "isort", "black" },
-  --       --
-  --       -- You can use a sub-list to tell conform to run *until* a formatter
-  --       -- is found.
-  --       -- javascript = { { "prettierd", "prettier" } },
-  --     },
-  --   },
-  -- },
+  { -- Autoformat
+    'stevearc/conform.nvim',
+    lazy = false,
+    keys = {
+      {
+        '<leader>f',
+        function()
+          require('conform').format { async = false, lsp_fallback = true }
+        end,
+        mode = '',
+        desc = '[F]ormat buffer',
+      },
+      {
+        '<leader>w',
+        function()
+          require('conform').format { async = false, lsp_fallback = true }
+          vim.cmd 'w'
+        end,
+        mode = '',
+        desc = 'Format & Save Buffer',
+      },
+    },
+    opts = {
+      -- notify_on_error = false,
+      -- format_on_save = function(bufnr)
+      --   -- Disable "format_on_save lsp_fallback" for languages that don't
+      --   -- have a well standardized coding style. You can add additional
+      --   -- languages here or re-enable it for the disabled ones.
+      --   local disable_filetypes = { c = true, cpp = true }
+      --   return {
+      --     timeout_ms = 500,
+      --     lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+      --   }
+      -- end,
+      formatters_by_ft = {
+        lua = { 'stylua' },
+        -- Conform can also run multiple formatters sequentially
+        python = { 'black' },
+        --
+        -- You can use a sub-list to tell conform to run *until* a formatter
+        -- is found.
+        -- javascript = { { 'prettierd', 'prettier' } },
+        javascript = { 'prettier' },
+        javascriptreact = { 'prettier' },
+        typescript = { 'prettier' },
+        typescriptreact = { 'prettier' },
+        json = { 'prettier' },
+        yaml = { 'prettier' },
+        markdown = { 'prettier' },
+      },
+    },
+  },
 
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -959,7 +1022,10 @@ require('lazy').setup({
       --  nvim-cmp does not ship with all sources by default. They are split
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
+      'hrsh7th/cmp-cmdline',
+      'hrsh7th/nvim-cmp',
     },
     config = function()
       -- See `:help cmp`
@@ -1137,6 +1203,7 @@ require('lazy').setup({
         'http',
         'json',
         'graphql',
+        'gdscript',
       },
 
       textobjects = {
@@ -1324,20 +1391,20 @@ vim.api.nvim_create_autocmd('BufWinLeave', {
 vim.cmd 'set autoread'
 vim.cmd 'au CursorHold * checktime'
 
-local null_ls = require 'null-ls'
-require('null-ls').setup {
-  sources = {
-    null_ls.builtins.formatting.stylua,
-    null_ls.builtins.completion.spell,
-    null_ls.builtins.formatting.prettier,
-    null_ls.builtins.diagnostics.stylint,
-    null_ls.builtins.formatting.black,
-    null_ls.builtins.formatting.gdformat,
-    -- null_ls.builtins.formatting.gofumpt,
-    -- null_ls.builtins.formatting.goimports_reviser,
-    -- require 'none-ls.diagnostics.eslint', -- requires none-ls-extras.nvim
-  },
-}
+-- local null_ls = require 'null-ls'
+-- require('null-ls').setup {
+--   sources = {
+--     -- null_ls.builtins.formatting.stylua,
+--     -- null_ls.builtins.completion.spell,
+--     -- null_ls.builtins.formatting.prettier,
+--     -- null_ls.builtins.diagnostics.stylint,
+--     -- null_ls.builtins.formatting.black,
+--     -- null_ls.builtins.formatting.gdformat,
+--     -- null_ls.builtins.formatting.gofumpt,
+--     -- null_ls.builtins.formatting.goimports_reviser,
+--     -- require 'none-ls.diagnostics.eslint', -- requires none-ls-extras.nvim
+--   },
+-- }
 
 -- Custom function to close all buffers with a warning if there are unsaved changes
 function Close_all_buffers()
