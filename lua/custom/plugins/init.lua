@@ -73,7 +73,7 @@ return {
             --   -- { 80006 }
             -- ),
           },
-          separate_diagnostic_server = true,
+          separate_diagnostic_server = false,
           expose_as_code_action = {
             'add_missing_imports',
             'remove_unused_imports',
@@ -341,7 +341,12 @@ return {
     end,
   },
   -- { 'mg979/vim-visual-multi' },
-  { 'takac/vim-hardtime' },
+  {
+    'takac/vim-hardtime',
+    config = function()
+      -- vim.cmd 'autocmd BufEnter * HardTimeOn'
+    end,
+  },
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
@@ -432,18 +437,6 @@ return {
   --     { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
   --   },
   -- },
-  {
-    'mikesmithgh/kitty-scrollback.nvim',
-    enabled = true,
-    lazy = true,
-    cmd = { 'KittyScrollbackGenerateKittens', 'KittyScrollbackCheckHealth' },
-    event = { 'User KittyScrollbackLaunch' },
-    -- version = '*', -- latest stable version, may have breaking changes if major version changed
-    -- version = '^5.0.0', -- pin major version, include fixes and features that do not have breaking changes
-    config = function()
-      require('kitty-scrollback').setup()
-    end,
-  },
   {
     {
       'antosha417/nvim-lsp-file-operations',

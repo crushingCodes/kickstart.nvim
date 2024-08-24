@@ -1545,7 +1545,6 @@ vim.cmd [[
     autocmd VimLeavePre * DiffviewClose
   augroup END
 ]]
-vim.cmd 'autocmd BufEnter * HardTimeOn'
 vim.cmd 'autocmd User DBUIOpened setlocal number relativenumber'
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = '*',
