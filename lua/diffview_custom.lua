@@ -246,13 +246,13 @@ vim.api.nvim_exec2(
 
 function _G.Open_Diffview_PR()
   -- pull origin to get the latest changes
-  vim.cmd 'G pull -q'
+  vim.cmd 'G fetch origin -q'
 
-  local base = Get_base_ref()
+  -- local base = Get_base_ref()
   M.file_statuses = Get_Pr_Files()
   _G.set_use_custom_label(true)
   local diffview = require 'diffview'
-  diffview.open { base, 'HEAD' }
+  diffview.open { 'origin/master', 'HEAD' }
 end
 
 vim.keymap.set('n', '<leader>hp', _G.Open_Diffview_PR, { desc = 'Preview PR Diff' })
