@@ -1,6 +1,6 @@
 local M = {}
-
--- execute command and clean the resulting string
+--
+-- -- execute command and clean the resulting string
 function Get_cmd_result(cmd)
   local handle = io.popen(cmd)
   if handle == nil then
@@ -10,13 +10,11 @@ function Get_cmd_result(cmd)
   handle:close()
   return result
 end
-
--- get the base commit hash for the active gh pr
+--
+-- -- get the base commit hash for the active gh pr
 function Get_base_ref()
   local base_ref_name = Get_cmd_result 'gh pr view --json baseRefName | jq ".baseRefName"'
-  local current_branch = Get_cmd_result 'git branch --show-current'
-  local cmd = 'git merge-base ' .. base_ref_name .. ' ' .. current_branch
-  return Get_cmd_result(cmd)
+  return base_ref_name
 end
 
 package.loaded['diffview.ui.models.file_tree.node'] = nil
@@ -246,14 +244,19 @@ vim.api.nvim_exec2(
 
 function _G.Open_Diffview_PR()
   -- pull origin to get the latest changes
-  vim.cmd 'G fetch origin -q'
+  local base = Get_base_ref()
+  local fetch_command = 'G fetch origin ' .. base .. ' -q'
+  vim.cmd(fetch_command)
 
-  -- local base = Get_base_ref()
   M.file_statuses = Get_Pr_Files()
   _G.set_use_custom_label(true)
   local diffview = require 'diffview'
-  diffview.open { 'origin/master', 'HEAD' }
+
+  -- TODO: replace master with result of gh pr view --json baseRefName
+  local base_ref = 'origin/' .. base
+  diffview.open { base_ref, 'HEAD' }
 end
 
 vim.keymap.set('n', '<leader>hp', _G.Open_Diffview_PR, { desc = 'Preview PR Diff' })
+
 return M
