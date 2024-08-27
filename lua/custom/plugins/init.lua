@@ -449,31 +449,31 @@ return {
       end,
     },
   },
-  {
-    'MunifTanjim/prettier.nvim',
-
-    config = function()
-      local prettier = require 'prettier'
-
-      prettier.setup {
-        bin = 'prettier', -- or `'prettierd'` (v0.23.3+)
-        filetypes = {
-          'css',
-          'graphql',
-          'html',
-          'javascript',
-          'javascriptreact',
-          'json',
-          'less',
-          'markdown',
-          'scss',
-          'typescript',
-          'typescriptreact',
-          'yaml',
-        },
-      }
-    end,
-  },
+  -- {
+  --   'MunifTanjim/prettier.nvim',
+  --
+  --   config = function()
+  --     local prettier = require 'prettier'
+  --
+  --     prettier.setup {
+  --       bin = 'prettier', -- or `'prettierd'` (v0.23.3+)
+  --       filetypes = {
+  --         'css',
+  --         'graphql',
+  --         'html',
+  --         'javascript',
+  --         'javascriptreact',
+  --         'json',
+  --         'less',
+  --         'markdown',
+  --         'scss',
+  --         'typescript',
+  --         'typescriptreact',
+  --         'yaml',
+  --       },
+  --     }
+  --   end,
+  -- },
   { 'onsails/lspkind.nvim' },
   { 'habamax/vim-godot', event = 'VimEnter' },
   {
@@ -489,6 +489,119 @@ return {
     },
     config = function()
       require('barbecue').setup()
+    end,
+  },
+  {
+    'lewis6991/satellite.nvim',
+    config = function()
+      require('satellite').setup {
+        current_only = false,
+        winblend = 50,
+        zindex = 40,
+        excluded_filetypes = {},
+        width = 2,
+        handlers = {
+          cursor = {
+            enable = true,
+            -- Supports any number of symbols
+            symbols = { '⎺', '⎻', '⎼', '⎽' },
+            -- symbols = { '⎻', '⎼' }
+            -- Highlights:
+            -- - SatelliteCursor (default links to NonText
+          },
+          search = {
+            enable = true,
+            -- Highlights:
+            -- - SatelliteSearch (default links to Search)
+            -- - SatelliteSearchCurrent (default links to SearchCurrent)
+          },
+          diagnostic = {
+            enable = true,
+            signs = { '-', '=', '≡' },
+            min_severity = vim.diagnostic.severity.ERROR,
+            -- Highlights:
+            -- - SatelliteDiagnosticError (default links to DiagnosticError)
+            -- - SatelliteDiagnosticWarn (default links to DiagnosticWarn)
+            -- - SatelliteDiagnosticInfo (default links to DiagnosticInfo)
+            -- - SatelliteDiagnosticHint (default links to DiagnosticHint)
+          },
+          gitsigns = {
+            enable = true,
+            signs = { -- can only be a single character (multibyte is okay)
+              add = '│',
+              change = '│',
+              delete = '-',
+            },
+            -- Highlights:
+            -- SatelliteGitSignsAdd (default links to GitSignsAdd)
+            -- SatelliteGitSignsChange (default links to GitSignsChange)
+            -- SatelliteGitSignsDelete (default links to GitSignsDelete)
+          },
+          marks = {
+            enable = true,
+            show_builtins = false, -- shows the builtin marks like [ ] < >
+            key = 'm',
+            -- Highlights:
+            -- SatelliteMark (default links to Normal)
+          },
+          quickfix = {
+            signs = { '-', '=', '≡' },
+            -- Highlights:
+            -- SatelliteQuickfix (default links to WarningMsg)
+          },
+        },
+      }
+    end,
+  },
+  {
+    'folke/trouble.nvim',
+    opts = {}, -- for default options, refer to the configuration section for custom setup.
+    cmd = 'Trouble',
+    keys = {
+      {
+        '<leader>xx',
+        '<cmd>Trouble diagnostics toggle<cr>',
+        desc = 'Diagnostics (Trouble)',
+      },
+      {
+        '<leader>xX',
+        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+        desc = 'Buffer Diagnostics (Trouble)',
+      },
+      {
+        '<leader>cs',
+        '<cmd>Trouble symbols toggle focus=false<cr>',
+        desc = 'Symbols (Trouble)',
+      },
+      {
+        '<leader>cl',
+        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+        desc = 'LSP Definitions / references / ... (Trouble)',
+      },
+      {
+        '<leader>xL',
+        '<cmd>Trouble loclist toggle<cr>',
+        desc = 'Location List (Trouble)',
+      },
+      {
+        '<leader>xQ',
+        '<cmd>Trouble qflist toggle<cr>',
+        desc = 'Quickfix List (Trouble)',
+      },
+    },
+  },
+  {
+    'zapling/mason-lock.nvim',
+    -- :MasonLock Creates a lockfile that includes all currently installed packages
+    -- :MasonLockRestore Re-installs all packages with the version specified in the lockfile
+    config = function()
+      require('mason-lock').setup {
+        lockfile_path = vim.fn.stdpath 'config' .. '/mason-lock.json', -- (default)
+      }
+      -- lockfile_path =
+      --   vim.fn.stdpath 'config' .. '/mason-lock.json', -- (default)
+      --   print 'lockfile_path'
+      -- print(lockfile_path)
     end,
   },
 }

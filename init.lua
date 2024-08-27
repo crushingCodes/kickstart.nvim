@@ -166,6 +166,7 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>lR', ':LspRestart<CR>', { desc = 'Restart LSP' })
 
 local map = function(keys, func, desc)
   vim.keymap.set('n', keys, func, { desc = desc })
@@ -904,9 +905,8 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'black',
-        'prettier',
         'eslint',
-        'typescript-language-server',
+        -- 'typescript-language-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -1627,3 +1627,12 @@ wk.add { '<leader>Dt', ':Telescope tldr<CR>', desc = 'TLDR' }
 
 -- add easier map to goto the middle of the line
 vim.api.nvim_set_keymap('n', 'gm', ":call cursor(0, virtcol('$')/2)<CR>", { noremap = true, silent = true })
+
+-- Silence the message from nvim-navic
+local original_notify = vim.notify
+vim.notify = function(msg, log_level, opts)
+  if msg:match 'nvim%-navic' then
+    return -- Ignore the message by not calling the original notify
+  end
+  original_notify(msg, log_level, opts)
+end

@@ -72,6 +72,7 @@ function Toggle_viewed_state(file_path, viewed)
       pr_number
     )
   end
+
   local cmd = string.format('gh api graphql -f query=%s', vim.fn.shellescape(query))
 
   local handle = io.popen(cmd)
@@ -246,7 +247,7 @@ function _G.Open_Diffview_PR()
   -- pull origin to get the latest changes
   local base = Get_base_ref()
   local fetch_command = 'G fetch origin ' .. base .. ' -q'
-  vim.cmd(fetch_command)
+  -- vim.cmd(fetch_command)
 
   M.file_statuses = Get_Pr_Files()
   _G.set_use_custom_label(true)
