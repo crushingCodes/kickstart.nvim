@@ -201,10 +201,10 @@ map('<leader>bD', Delete_all_buffers, '[d]elete all buffers')
 map('<leader>bn', ':enew<CR>', '[n]ew buffer')
 
 -- Merge conflicts
-map('<leader>mm', ':Gdiffsplit!<CR>', 'View [m]erge conflicts')
-map('<leader>mM', ':Gwrite<CR>', 'Save [M]erge resolution')
-map('<leader>mc', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
-map('<leader>mn', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
+-- map('<leader>mm', ':Gdiffsplit!<CR>', 'View [m]erge conflicts')
+-- map('<leader>mM', ':Gwrite<CR>', 'Save [M]erge resolution')
+-- map('<leader>mc', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
+-- map('<leader>mn', ':Neotree git_status<CR>', 'Show [c]onflicts in Neotree')
 -- TODO: next and previous conflict
 
 -- if vim.fn.filereadable 'Session.vim' == 1 then
@@ -384,7 +384,7 @@ require('lazy').setup({
         { '<leader>g', group = 'Git' },
         { '<leader>Y', group = 'Yank' },
         { '<leader>r', group = 'Rest' },
-        { '<leader>m', group = 'Merge' },
+        -- { '<leader>m', group = 'Merge' },
         { '<leader>t', group = 'Tabs' },
         { '<leader>n', group = 'Notes' },
       }
@@ -763,7 +763,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      -- { 'j-hui/fidget.nvim', opts = {} },
 
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
@@ -1105,6 +1105,7 @@ require('lazy').setup({
       },
     },
     opts = {
+      log_level = vim.log.levels.ERROR,
       -- notify_on_error = false,
       -- format_on_save = function(bufnr)
       --   -- Disable "format_on_save lsp_fallback" for languages that don't
@@ -1776,18 +1777,18 @@ vim.api.nvim_set_keymap('n', 'gm', ":call cursor(0, virtcol('$')/2)<CR>", { nore
 
 local null_ls = require 'null-ls'
 
-null_ls.setup {
-  sources = {
-    -- null_ls.builtins.formatting.stylua,
-    -- null_ls.builtins.completion.spell,
-    -- require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
-    null_ls.builtins.formatting.sqlfluff.with {
-      extra_args = { '--dialect', 'sqlite' }, -- change to your dialect
-    },
-    null_ls.builtins.diagnostics.sqlfluff.with {
-      extra_args = { '--dialect', 'sqlite' }, -- change to your dialect
-    },
-  },
-}
+-- null_ls.setup {
+--   sources = {
+--     -- null_ls.builtins.formatting.stylua,
+--     -- null_ls.builtins.completion.spell,
+--     -- require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
+--     null_ls.builtins.formatting.sqlfluff.with {
+--       extra_args = { '--dialect', 'sqlite' }, -- change to your dialect
+--     },
+--     null_ls.builtins.diagnostics.sqlfluff.with {
+--       extra_args = { '--dialect', 'sqlite' }, -- change to your dialect
+--     },
+--   },
+-- }
 
 -- print(vim.inspect(vim.treesitter.("python", "injections")))
