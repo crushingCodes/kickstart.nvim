@@ -274,10 +274,10 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Resizing
-vim.keymap.set('n', '<SC-H>', '<C-w><C->>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<SC-L>', '<C-w><C-<>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<SC-J>', '<C-w><C-->', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<SC-K>', '<C-w><C-+>', { desc = 'Move focus to the upper window' })
+vim.keymap.set('n', '<C-Left>', '<C-w><C->>', { desc = 'Increase window size left' })
+vim.keymap.set('n', '<C-Right>', '<C-w><C-<>', { desc = 'Increase window size right' })
+vim.keymap.set('n', '<C-Down>', '<C-w><C-->', { desc = 'Increase window size down' })
+vim.keymap.set('n', '<C-Up>', '<C-w><C-+>', { desc = 'Increase window size up' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -464,7 +464,121 @@ require('lazy').setup({
       -- This opens a window that shows you all of the keymaps for the current
       -- Telescope picker. This is really useful to discover what Telescope can
       -- do as well as how to actually do it!
+      --
+      --
+      local telescope = require 'telescope'
+      local actions = require 'telescope.actions'
+      local action_state = require 'telescope.actions.state'
+      local themes = require 'telescope.themes'
+      -- local finders = require 'telescope.finders'
+      local conf = require('telescope.config').values
 
+      -- local function entry_maker(action, index)
+      --   return {
+      --     value = action,
+      --     display = action.title,
+      --     ordinal = action.title,
+      --     index = index, -- Assign the index here
+      --   }
+      -- end
+      --
+      -- local function create_finder_with_indexed_entries(actions)
+      --   local indexed_entries = {}
+      --   for i, action in ipairs(actions) do
+      --     indexed_entries[i] = entry_maker(action, i)
+      --   end
+      --   return finders.new_table {
+      --     results = indexed_entries,
+      --   }
+      -- end
+      --
+      local function custom_sorter(entry1, entry2)
+        return 0
+      end
+      -- local text1 = entry1.ordinal or entry1.display or ''
+      -- local text2 = entry2.ordinal or entry2.display or ''
+      --
+      -- print('Entry1:', text1, 'Index1:', entry1.index)
+      -- print('Entry2:', text2, 'Index2:', entry2.index)
+      --
+      -- local priority_keywords = {
+      --   'Update import',
+      --   'Add import',
+      -- }
+      --
+      -- local function get_priority(text)
+      --   for i, keyword in ipairs(priority_keywords) do
+      --     if text:match(keyword) then
+      --       return i
+      --     end
+      --   end
+      --   return nil
+      -- end
+      --
+      -- local priority1 = get_priority(text1)
+      -- local priority2 = get_priority(text2)
+      --
+      -- if priority1 and priority2 then
+      --   return priority1 < priority2
+      -- elseif priority1 then
+      --   return true
+      -- elseif priority2 then
+      --   return false
+      -- end
+      --
+      -- local is_eslint1 = text1:match 'eslint'
+      -- local is_eslint2 = text2:match 'eslint'
+      --
+      -- -- print(vim.inspect(entry1))
+      -- -- print(text2)
+      -- if is_eslint1 and not is_eslint2 then
+      --   return false
+      -- elseif not is_eslint1 and is_eslint2 then
+      --   return true
+      -- else
+      --   return 0
+      -- end
+      -- end
+
+      -- local function custom_sorter(entry1, entry2)
+      --   -- local text1 = entry1.ordinal or entry1.display or ''
+      --   -- local text2 = entry2.ordinal or entry2.display or ''
+      --   --
+      --   -- local is_eslint1 = text1:match 'eslint'
+      --   -- local is_eslint2 = text2:match 'eslint'
+      --   --
+      --   -- if is_eslint1 and not is_eslint2 then
+      --   --   return 0
+      --   -- elseif not is_eslint1 and is_eslint2 then
+      --   --   return 1
+      --   -- else
+      --   --   return text1 < text2
+      --   -- end
+      --   -- print(entry1)
+      --   -- print(vim.inspect(entry1))
+      --
+      --   local text1 = entry1.ordinal or entry1.display or ''
+      --   local text2 = entry2.ordinal or entry2.display or ''
+      --
+      --   local is_eslint1 = text1:match 'eslint'
+      --   local is_eslint2 = text2:match 'eslint'
+      --
+      --   -- Assign weights to ESLint actions
+      --   local weight1 = is_eslint1 and 1 or 0
+      --   local weight2 = is_eslint2 and 1 or 0
+      --
+      --   if weight1 ~= weight2 then
+      --     return weight1 < weight2
+      --   else
+      --     -- Preserve original order for non-ESLint actions
+      --     -- return entry1.index < entry2.index
+      --     return 0
+      --   end
+      -- end
+      -- local telescope = require 'telescope'
+      -- local actions = require 'telescope.actions'
+      -- local action_state = require 'telescope.actions.state'
+      -- local themes = require 'telescope.themes'
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
@@ -485,10 +599,51 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
-        -- pickers = {}
         extensions = {
           ['ui-select'] = {
-            require('telescope.themes').get_dropdown(),
+            require('telescope.themes').get_dropdown {
+              -- Apply the custom sorter here
+              -- finder = create_finder_with_indexed_entries(actions),
+              -- sorter = require('telescope.sorters').Sorter:new {
+              --   scoring_function = custom_sorter,
+              -- },
+              -- sorter = conf.generic_sorters {},
+              -- },
+              -- sorter = {
+              --   scoring_function = function(item1, item2)
+              --     -- print(item1)
+              --     -- print(vim.inpsect(item1))
+              --   end,
+              -- },
+            },
+
+            -- sorter = eslint_sorter(),
+
+            -- require('telescope.themes').get_dropdown(),
+            -- pseudo code / specification for writing custom displays, like the one
+            -- for "codeactions"
+            -- specific_opts = {
+            --   [kind] = {
+            --     make_indexed = function(items) -> indexed_items, width,
+            --     make_displayer = function(widths) -> displayer
+            --     make_display = function(displayer) -> function(e)
+            --     make_ordinal = function(e) -> string
+            --   },
+            --   -- for example to disable the custom builtin "codeactions" display
+            --      do the following
+            --   codeactions = false,
+            -- }
+            -- codeactions = {
+            --   -- make_indexed = function(items) -> indexed_items, width,
+            --   -- make_displayer = function(widths) -> displayer
+            --   -- make_display = function(displayer) -> function(e)
+            --   make_ordinal = function(e)
+            --     print 'hello'
+            --     print(vim.inspect(e))
+            --     return e
+            --   end,
+            -- },
+            -- },
           },
         },
       }
@@ -496,6 +651,8 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+
+      -- vim.api.nvim_set_keymap('n', '<leader>ca', ':Telescope lsp_code_actions<CR>', { noremap = true, silent = true })
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -904,7 +1061,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'black',
+        -- 'black',
         'eslint',
         -- 'typescript-language-server',
       })
@@ -1151,7 +1308,7 @@ require('lazy').setup({
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      -- require('mini.surround').setup()
+      require('mini.surround').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -1194,6 +1351,7 @@ require('lazy').setup({
         'json',
         'graphql',
         'gdscript',
+        'sql',
       },
 
       textobjects = {
@@ -1266,6 +1424,9 @@ require('lazy').setup({
       auto_install = true,
       highlight = {
         enable = true,
+        custom_captures = {
+          ['sql'] = 'SQL',
+        },
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
@@ -1380,21 +1541,6 @@ vim.api.nvim_create_autocmd('BufWinLeave', {
 -- https://superuser.com/a/1090762/1573671
 vim.cmd 'set autoread'
 vim.cmd 'au CursorHold * checktime'
-
--- local null_ls = require 'null-ls'
--- require('null-ls').setup {
---   sources = {
---     -- null_ls.builtins.formatting.stylua,
---     -- null_ls.builtins.completion.spell,
---     -- null_ls.builtins.formatting.prettier,
---     -- null_ls.builtins.diagnostics.stylint,
---     -- null_ls.builtins.formatting.black,
---     -- null_ls.builtins.formatting.gdformat,
---     -- null_ls.builtins.formatting.gofumpt,
---     -- null_ls.builtins.formatting.goimports_reviser,
---     -- require 'none-ls.diagnostics.eslint', -- requires none-ls-extras.nvim
---   },
--- }
 
 -- Custom function to close all buffers with a warning if there are unsaved changes
 function Close_all_buffers()
@@ -1628,11 +1774,20 @@ wk.add { '<leader>Dt', ':Telescope tldr<CR>', desc = 'TLDR' }
 -- add easier map to goto the middle of the line
 vim.api.nvim_set_keymap('n', 'gm', ":call cursor(0, virtcol('$')/2)<CR>", { noremap = true, silent = true })
 
--- Silence the message from nvim-navic
-local original_notify = vim.notify
-vim.notify = function(msg, log_level, opts)
-  if msg:match 'nvim%-navic' then
-    return -- Ignore the message by not calling the original notify
-  end
-  original_notify(msg, log_level, opts)
-end
+local null_ls = require 'null-ls'
+
+null_ls.setup {
+  sources = {
+    -- null_ls.builtins.formatting.stylua,
+    -- null_ls.builtins.completion.spell,
+    -- require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
+    null_ls.builtins.formatting.sqlfluff.with {
+      extra_args = { '--dialect', 'sqlite' }, -- change to your dialect
+    },
+    null_ls.builtins.diagnostics.sqlfluff.with {
+      extra_args = { '--dialect', 'sqlite' }, -- change to your dialect
+    },
+  },
+}
+
+-- print(vim.inspect(vim.treesitter.("python", "injections")))

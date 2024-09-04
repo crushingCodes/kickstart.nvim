@@ -1,10 +1,7 @@
 {
-  "black": "24.4.2",
   "eslint-lsp": "4.10.0",
-  "jedi-language-server": "0.41.4",
-  "lua-language-server": "3.9.1",
+  "lua-language-server": "3.10.5",
   "prettier": "2.3.2",
-  "pyright": "1.1.365",
-  "rust-analyzer": "2024-05-27",
+  "pyright": "1.1.378",
   "stylua": "v0.20.0"
 }
