@@ -1,7 +1,13 @@
 {
   "eslint-lsp": "4.10.0",
-  "lua-language-server": "3.10.5",
-  "prettier": "2.3.2",
-  "pyright": "1.1.378",
+  "gofumpt": "v0.6.0",
+  "goimports": "v0.22.0",
+  "goimports-reviser": "v3.6.5",
+  "golines": "v0.12.2",
+  "gopls": "v0.16.1",
+  "lua-language-server": "3.9.3",
+  "prettier": "3.3.2",
+  "pyright": "1.1.370",
+  "rust-analyzer": "2024-07-01",
   "stylua": "v0.20.0"
 }
