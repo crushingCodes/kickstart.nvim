@@ -146,12 +146,12 @@ return {
       git_status = {
         window = {
           mappings = {
-            ['gR'] = 'revert_merge_resolution',
+            ['gR'] = 'git_revert_merge_resolution',
           },
         },
       },
       commands = {
-        revert_merge_resolution = function(state)
+        git_revert_merge_resolution = function(state)
           local node = state.tree:get_node()
           if node and node.type == 'file' then
             local filepath = node.path
