@@ -1800,7 +1800,7 @@ wk.add { '<leader>gB', ':G blame <CR>', desc = 'Git [B]lame' }
 -- add easier map to goto the middle of the line
 vim.api.nvim_set_keymap('n', 'gm', ":call cursor(0, virtcol('$')/2)<CR>", { noremap = true, silent = true })
 
-local null_ls = require 'null-ls'
+-- local null_ls = require 'null-ls'
 
 -- null_ls.setup {
 --   sources = {
@@ -1820,15 +1820,4 @@ local null_ls = require 'null-ls'
 --
 --
 
-_G.open_git_status_sorted = function()
-  -- Delay execution to ensure Neo-tree is fully initialized
-  vim.cmd 'Neotree source=git_status reveal=true'
-  -- vim.defer_fn(function()
-  --   local neotree_commands = require 'neo-tree.sources.common.commands'
-  --   -- print(vim.inspect(neotree_commands))
-  --   neotree_commands.order_by_type()
-  -- end, 100)
-end
-
--- vim.api.nvim_set_keymap('n', '<leader>T', ':lua Neotest_actions()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>gG', ':lua _G.open_git_status_sorted()<CR>', { noremap = true, silent = true, desc = 'Open Git Status in Neotree' })
+vim.api.nvim_set_keymap('n', '<leader>gG', ':Neotree source=git_status reveal=true<CR>', { noremap = true, silent = true, desc = 'Open Git Status in Neotree' })

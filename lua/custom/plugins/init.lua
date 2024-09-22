@@ -622,7 +622,7 @@ return {
       -- print(lockfile_path)
     end,
   },
-  { 'nvimtools/none-ls.nvim' },
+  -- { 'nvimtools/none-ls.nvim' },
   {
     'stevearc/oil.nvim',
     config = function()
