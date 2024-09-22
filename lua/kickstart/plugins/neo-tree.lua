@@ -220,10 +220,11 @@ return {
         {
           event = 'neo_tree_window_after_open',
           handler = function(args)
-            print('neo_tree_window_before_open', vim.inspect(args))
             if args.source == 'git_status' then
-              print 'opened git status'
               vim.defer_fn(function()
+                -- Call the sort by name to prevent it toggling order
+                local state = require('neo-tree.sources.manager').get_state 'git_status'
+                require('neo-tree.sources.common.commands').order_by_name(state)
                 local state = require('neo-tree.sources.manager').get_state 'git_status'
                 require('neo-tree.sources.common.commands').order_by_type(state)
               end, 10)
