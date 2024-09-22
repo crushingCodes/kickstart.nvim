@@ -763,7 +763,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      -- { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
@@ -970,7 +970,7 @@ require('lazy').setup({
           -- clangd = {},
           -- gopls = {},
           pyright = {
-            single_file_support = true,
+            -- single_file_support = true,
             settings = {
               python = {
                 analysis = {
@@ -1125,7 +1125,7 @@ require('lazy').setup({
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         -- javascript = { { 'prettierd', 'prettier' } },
-        go = { "goimports", "gofmt" },
+        go = { 'goimports', 'gofmt' },
         javascript = { 'prettier' },
         javascriptreact = { 'prettier' },
         typescript = { 'prettier' },
@@ -1264,20 +1264,11 @@ require('lazy').setup({
       }
     end,
   },
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+  {
     'folke/tokyonight.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'tokyonight-night'
-
-      -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
     end,
     config = function()
@@ -1290,8 +1281,7 @@ require('lazy').setup({
       }
     end,
   },
-
-  -- Highlight todo, notes, etc in comments
+  -- -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
@@ -1355,7 +1345,15 @@ require('lazy').setup({
         'gdscript',
         'sql',
       },
-
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = '<C-space>',
+          node_incremental = '<C-space>',
+          scope_incremental = false,
+          node_decremental = '<bs>',
+        },
+      },
       textobjects = {
         select = {
           enable = true,
@@ -1383,58 +1381,59 @@ require('lazy').setup({
             ['@class.outer'] = '<c-v>', -- blockwise
           },
         },
-      },
-      move = {
-        enable = true,
-        set_jumps = true, -- whether to set jumps in the jumplist
-        goto_next_start = {
-          [']m'] = '@function.outer',
-          [']]'] = { query = '@class.outer', desc = 'Next class start' },
-          --
-          -- You can use regex matching (i.e. lua pattern) and/or pass a list in a "query" key to group multiple queires.
-          [']o'] = '@loop.*',
-          -- ["]o"] = { query = { "@loop.inner", "@loop.outer" } }
-          --
-          -- You can pass a query group to use query from `queries/<lang>/<query_group>.scm file in your runtime path.
-          -- Below example nvim-treesitter's `locals.scm` and `folds.scm`. They also provide highlights.scm and indent.scm.
-          [']s'] = { query = '@scope', query_group = 'locals', desc = 'Next scope' },
-          [']z'] = { query = '@fold', query_group = 'folds', desc = 'Next fold' },
-        },
-        goto_next_end = {
-          [']M'] = '@function.outer',
-          [']['] = '@class.outer',
-        },
-        goto_previous_start = {
-          ['[m'] = '@function.outer',
-          ['[['] = '@class.outer',
-        },
-        goto_previous_end = {
-          ['[M'] = '@function.outer',
-          ['[]'] = '@class.outer',
-        },
-        -- Below will go to either the start or the end, whichever is closer.
-        -- Use if you want more granular movements
-        -- Make it even more gradual by adding multiple queries and regex.
-        goto_next = {
-          [']d'] = '@conditional.outer',
-        },
-        goto_previous = {
-          ['[d'] = '@conditional.outer',
+        move = {
+          -- https://www.josean.com/posts/nvim-treesitter-and-textobjects
+          enable = true,
+          set_jumps = true, -- whether to set jumps in the jumplist
+          goto_next_start = {
+            -- [']f'] = { query = '@call.outer', desc = 'Next function call start' },
+            [']f'] = { query = '@function.outer', desc = 'Next method/function def start' },
+            [']c'] = { query = '@class.outer', desc = 'Next class start' },
+            [']i'] = { query = '@conditional.outer', desc = 'Next conditional start' },
+            [']l'] = { query = '@loop.outer', desc = 'Next loop start' },
+
+            -- You can pass a query group to use query from `queries/<lang>/<query_group>.scm file in your runtime path.
+            -- Below example nvim-treesitter's `locals.scm` and `folds.scm`. They also provide highlights.scm and indent.scm.
+            [']s'] = { query = '@scope', query_group = 'locals', desc = 'Next scope' },
+            [']z'] = { query = '@fold', query_group = 'folds', desc = 'Next fold' },
+          },
+          goto_next_end = {
+            -- [']F'] = { query = '@call.outer', desc = 'Next function call end' },
+            [']F'] = { query = '@function.outer', desc = 'Next method/function def end' },
+            [']C'] = { query = '@class.outer', desc = 'Next class end' },
+            [']I'] = { query = '@conditional.outer', desc = 'Next conditional end' },
+            [']L'] = { query = '@loop.outer', desc = 'Next loop end' },
+          },
+          goto_previous_start = {
+            -- ['[f'] = { query = '@call.outer', desc = 'Prev function call start' },
+            ['[f'] = { query = '@function.outer', desc = 'Prev method/function def start' },
+            ['[c'] = { query = '@class.outer', desc = 'Prev class start' },
+            ['[i'] = { query = '@conditional.outer', desc = 'Prev conditional start' },
+            ['[l'] = { query = '@loop.outer', desc = 'Prev loop start' },
+          },
+          goto_previous_end = {
+            --   ['[F'] = { query = '@call.outer', desc = 'Prev function call end' },
+            ['[F'] = { query = '@function.outer', desc = 'Prev method/function def end' },
+            ['[C'] = { query = '@class.outer', desc = 'Prev class end' },
+            ['[I'] = { query = '@conditional.outer', desc = 'Prev conditional end' },
+            ['[L'] = { query = '@loop.outer', desc = 'Prev loop end' },
+          },
         },
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
         enable = true,
-        custom_captures = {
-          ['sql'] = 'SQL',
-        },
+        -- custom_captures = {
+        --   ['sql'] = 'SQL',
+        -- },
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
+        -- additional_vim_regex_highlighting = { 'ruby' },
+        additional_vim_regex_highlighting = false,
       },
-      indent = { enable = true, disable = { 'ruby' } },
+      indent = { enable = true },
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -1450,6 +1449,17 @@ require('lazy').setup({
       --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
       --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+      local ts_repeat_move = require 'nvim-treesitter.textobjects.repeatable_move'
+
+      -- vim way: ; goes to the direction you were moving.
+      vim.keymap.set({ 'n', 'x', 'o' }, ';', ts_repeat_move.repeat_last_move)
+      vim.keymap.set({ 'n', 'x', 'o' }, ',', ts_repeat_move.repeat_last_move_opposite)
+
+      -- Optionally, make builtin f, F, t, T also repeatable with ; and ,
+      vim.keymap.set({ 'n', 'x', 'o' }, 'f', ts_repeat_move.builtin_f)
+      vim.keymap.set({ 'n', 'x', 'o' }, 'F', ts_repeat_move.builtin_F)
+      vim.keymap.set({ 'n', 'x', 'o' }, 't', ts_repeat_move.builtin_t)
+      vim.keymap.set({ 'n', 'x', 'o' }, 'T', ts_repeat_move.builtin_T)
     end,
   },
 
@@ -1757,21 +1767,35 @@ end, { desc = 'Delete Surrounding Indentation' })
 
 vim.g.python3_host_prog = vim.fn.expand '$HOME/.local/venv/nvim/bin/python'
 
--- Neogit
 local wk = require 'which-key'
-wk.add { '<leader>gG', ':DiffviewOpen<CR>', desc = '[G]it changes' }
+-- wk.add { '<leader>gG', ':DiffviewOpen<CR>', desc = '[G]it changes' }
 wk.add { '<leader>gg', ':G<CR>', desc = '[G]it Fugitive' }
-wk.add { '<leader>gS', ':Gwrite<CR>', desc = 'Add/[S })tage current buffer' }
+wk.add { '<leader>gS', ':Gwrite<CR>', desc = 'Gwrite - [S]tage current buffer' }
 
 wk.add { '<leader>gb', ':G branch --sort=-committerdate<CR>', desc = 'Git [b]ranches' }
-wk.add { '<leader>gB', ':G blame <CR>', desc = 'Git [b]lame' }
+-- wk.add { '<leader>gb', ':Telescope git_branches<CR>', desc = 'Git [b]ranches' }
+wk.add { '<leader>gB', ':G blame <CR>', desc = 'Git [B]lame' }
+
+-- TODO:
+-- local builtin = require 'telescope.builtin'
+-- -- Create a custom function to pass the sorting option
+-- function _G.custom_git_branches()
+--   builtin.git_branches {
+--     -- pattern = '--sort=-committerdate',
+--     pattern = { '--sort', '-committerdate' },
+--   }
+-- end
+-- wk.add { '<leader>gb', ':lua _G.custom_git_branches()<CR>', desc = 'Git [b]ranches' }
+
+-- Map the custom function to a keybinding
+-- vim.api.nvim_set_keymap('n', '<leader>gb', ':lua custom_git_branches()<CR>', { noremap = true, silent = true })
 
 -- Devdocs
-wk.add { '<leader>Do', ':DevdocsOpen<CR>', desc = 'Devdocs [O]pen' }
-wk.add { '<leader>Di', ':DevdocsInstall<CR>', desc = 'Devdocs [I]nstall' }
-wk.add { '<leader>Du', ':DevdocsUpdateAll<CR>', desc = 'Devdocs [U]pdate All' }
-wk.add { '<leader>Dg', ':lua Devdocs_grep()<CR>', desc = 'Devdocs [G]rep' }
-wk.add { '<leader>Dt', ':Telescope tldr<CR>', desc = 'TLDR' }
+-- wk.add { '<leader>Do', ':DevdocsOpen<CR>', desc = 'Devdocs [O]pen' }
+-- wk.add { '<leader>Di', ':DevdocsInstall<CR>', desc = 'Devdocs [I]nstall' }
+-- wk.add { '<leader>Du', ':DevdocsUpdateAll<CR>', desc = 'Devdocs [U]pdate All' }
+-- wk.add { '<leader>Dg', ':lua Devdocs_grep()<CR>', desc = 'Devdocs [G]rep' }
+-- wk.add { '<leader>Dt', ':Telescope tldr<CR>', desc = 'TLDR' }
 
 -- add easier map to goto the middle of the line
 vim.api.nvim_set_keymap('n', 'gm', ":call cursor(0, virtcol('$')/2)<CR>", { noremap = true, silent = true })
@@ -1793,3 +1817,18 @@ local null_ls = require 'null-ls'
 -- }
 
 -- print(vim.inspect(vim.treesitter.("python", "injections")))
+--
+--
+
+_G.open_git_status_sorted = function()
+  -- Delay execution to ensure Neo-tree is fully initialized
+  vim.cmd 'Neotree source=git_status reveal=true'
+  -- vim.defer_fn(function()
+  --   local neotree_commands = require 'neo-tree.sources.common.commands'
+  --   -- print(vim.inspect(neotree_commands))
+  --   neotree_commands.order_by_type()
+  -- end, 100)
+end
+
+-- vim.api.nvim_set_keymap('n', '<leader>T', ':lua Neotest_actions()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>gG', ':lua _G.open_git_status_sorted()<CR>', { noremap = true, silent = true, desc = 'Open Git Status in Neotree' })

@@ -8,8 +8,23 @@ return {
   -- { 'tpope/vim-surround' },
   { 'tpope/vim-abolish' },
   { 'tpope/vim-repeat' },
-  { 'tpope/vim-unimpaired' },
-  { 'tpope/vim-obsession' },
+  -- { 'tpope/vim-unimpaired' },
+  -- { 'tpope/vim-obsession' },
+  -- { 'inkarkat/vim-ConflictMotions' },
+  -- {
+  --   'inkarkat/vim-ConflictMotions',
+  --   dependencies = { 'inkarkat/vim-CountJump' }, -- Add the dependency
+  --   lazy = false, -- Load it immediately
+  -- },
+  -- {
+  --   'inkarkat/vim-ConflictMotions',
+  --   dependencies = {
+  --     'inkarkat/vim-CountJump', -- Dependency 1
+  --     'inkarkat/vim-ingo-library', -- Dependency 2 (ingo-library)
+  --   },
+  --   lazy = false, -- Load it immediately
+  -- },
+  { 'rhysd/conflict-marker.vim' },
   { 'tpope/vim-sleuth' },
   -- {
   --   'rmagatti/auto-session',
@@ -639,6 +654,11 @@ return {
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require('lualine').setup {
+        options = {
+          -- theme = bubbles_theme,
+          component_separators = '',
+          section_separators = { left = '', right = '' },
+        },
         sections = {
           lualine_x = {
             {

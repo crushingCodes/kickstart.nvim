@@ -212,34 +212,41 @@ return {
       auto_clean_after_session_restore = true, -- Automatically clean up broken neo-tree buffers saved in sessions
       event_handlers = {
         {
-          event = 'before_render',
-          handler = function(state)
-            -- add something to the state that can be used by custom components
-          end,
-        },
-        {
           event = 'neo_tree_buffer_enter',
           handler = function(arg)
             vim.opt.relativenumber = true
           end,
         },
         {
-          event = 'file_opened',
-          handler = function(file_path)
-            --auto close
-            require('neo-tree.command').execute { action = 'close' }
-            -- Import necessary modules
-
-            -- -- Configure Neo-tree to trigger the function on file open
-            -- vim.cmd [[
-            -- augroup NeoTreeTelescopeIntegration
-            --     autocmd!
-            --     autocmd BufEnter * if &filetype ==# 'neo-tree' | autocmd BufEnter * lua Add_to_telescope_history(vim.fn.expand("<afile>")) | endif
-            -- augroup END
-            -- ]]
-            --
+          event = 'neo_tree_window_after_open',
+          handler = function(args)
+            print('neo_tree_window_before_open', vim.inspect(args))
+            if args.source == 'git_status' then
+              print 'opened git status'
+              vim.defer_fn(function()
+                local state = require('neo-tree.sources.manager').get_state 'git_status'
+                require('neo-tree.sources.common.commands').order_by_type(state)
+              end, 10)
+            end
           end,
         },
+        -- {
+        --   event = 'file_opened',
+        --   handler = function(file_path)
+        --     --auto close
+        --     require('neo-tree.command').execute { action = 'close' }
+        --     -- Import necessary modules
+        --
+        --     -- -- Configure Neo-tree to trigger the function on file open
+        --     -- vim.cmd [[
+        --     -- augroup NeoTreeTelescopeIntegration
+        --     --     autocmd!
+        --     --     autocmd BufEnter * if &filetype ==# 'neo-tree' | autocmd BufEnter * lua Add_to_telescope_history(vim.fn.expand("<afile>")) | endif
+        --     -- augroup END
+        --     -- ]]
+        --     --
+        --   end,
+        -- },
         -- {
         --   event = 'file_open_requested',
         --   handler = function(args)
