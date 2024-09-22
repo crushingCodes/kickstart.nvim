@@ -91,7 +91,9 @@ return {
     -- Y = 'hello',
   },
   config = function()
-    require('neo-tree').setup {
+    local neo_tree = require 'neo-tree'
+
+    neo_tree.setup {
       sources = {
         'filesystem',
         'buffers',
@@ -141,7 +143,26 @@ return {
           },
         },
       },
+      git_status = {
+        window = {
+          mappings = {
+            ['gR'] = 'revert_merge_resolution',
+          },
+        },
+      },
       commands = {
+        revert_merge_resolution = function(state)
+          local node = state.tree:get_node()
+          if node and node.type == 'file' then
+            local filepath = node.path
+            -- Execute the git checkout --merge command
+            vim.cmd('silent !git checkout --merge ' .. filepath)
+            -- Optionally refresh Neo-tree after the reset
+            local neo_tree_manager = require 'neo-tree.sources.manager'
+            neo_tree_manager.refresh 'git_status'
+            -- neo_tree.refresh()
+          end
+        end,
         system_open = function(state)
           local node = state.tree:get_node()
           local path = node:get_id()
@@ -231,36 +252,36 @@ return {
             end
           end,
         },
-        -- {
-        --   event = 'file_opened',
-        --   handler = function(file_path)
-        --     --auto close
-        --     require('neo-tree.command').execute { action = 'close' }
-        --     -- Import necessary modules
-        --
-        --     -- -- Configure Neo-tree to trigger the function on file open
-        --     -- vim.cmd [[
-        --     -- augroup NeoTreeTelescopeIntegration
-        --     --     autocmd!
-        --     --     autocmd BufEnter * if &filetype ==# 'neo-tree' | autocmd BufEnter * lua Add_to_telescope_history(vim.fn.expand("<afile>")) | endif
-        --     -- augroup END
-        --     -- ]]
-        --     --
-        --   end,
-        -- },
-        -- {
-        --   event = 'file_open_requested',
-        --   handler = function(args)
-        --     local state = args.state
-        --     local path = args.path
-        --     -- local open_cmd = args.open_cmd or "edit"
-        --
-        --     -- Determine the relative path
-        --     local relative_path = vim.fn.fnamemodify(path, ':.' .. state.path)
-        --     Add_to_recent_files(relative_path, state.path)
-        --   end,
-        -- },
       },
+      -- {
+      --   event = 'file_opened',
+      --   handler = function(file_path)
+      --     --auto close
+      --     require('neo-tree.command').execute { action = 'close' }
+      --     -- Import necessary modules
+      --
+      --     -- -- Configure Neo-tree to trigger the function on file open
+      --     -- vim.cmd [[
+      --     -- augroup NeoTreeTelescopeIntegration
+      --     --     autocmd!
+      --     --     autocmd BufEnter * if &filetype ==# 'neo-tree' | autocmd BufEnter * lua Add_to_telescope_history(vim.fn.expand("<afile>")) | endif
+      --     -- augroup END
+      --     -- ]]
+      --     --
+      --   end,
+      -- },
+      -- {
+      --   event = 'file_open_requested',
+      --   handler = function(args)
+      --     local state = args.state
+      --     local path = args.path
+      --     -- local open_cmd = args.open_cmd or "edit"
+      --
+      --     -- Determine the relative path
+      --     local relative_path = vim.fn.fnamemodify(path, ':.' .. state.path)
+      --     Add_to_recent_files(relative_path, state.path)
+      --   end,
+      -- },
     }
   end,
 }

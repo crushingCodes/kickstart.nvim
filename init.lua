@@ -230,6 +230,7 @@ _G.confirm_undo_last_commit = confirm_undo_last_commit
 
 map('<leader>gU', ':lua confirm_undo_last_commit()<CR>', '[U]ndo last commit')
 map('<leader>gH', ':lua require("telescope").extensions.git_file_history.git_file_history()<CR>', 'File History')
+map('<leader>gd', ':Gvdiffsplit!<CR>', 'Open [d]iff in 3 way split')
 
 -- Utils for getting file paths
 map('<leader>Yr', ':let @*=expand("%")<CR>', '[r]elative file path')
