@@ -1389,6 +1389,7 @@ require('lazy').setup({
           goto_next_start = {
             -- [']f'] = { query = '@call.outer', desc = 'Next function call start' },
             [']f'] = { query = '@function.outer', desc = 'Next method/function def start' },
+            [']v'] = { query = '@assignment.outer', desc = 'Next assignment/variable start' },
             [']c'] = { query = '@class.outer', desc = 'Next class start' },
             [']i'] = { query = '@conditional.outer', desc = 'Next conditional start' },
             [']l'] = { query = '@loop.outer', desc = 'Next loop start' },
@@ -1401,6 +1402,7 @@ require('lazy').setup({
           goto_next_end = {
             -- [']F'] = { query = '@call.outer', desc = 'Next function call end' },
             [']F'] = { query = '@function.outer', desc = 'Next method/function def end' },
+            [']V'] = { query = '@assignment.outer', desc = 'Next assignment/variable end' },
             [']C'] = { query = '@class.outer', desc = 'Next class end' },
             [']I'] = { query = '@conditional.outer', desc = 'Next conditional end' },
             [']L'] = { query = '@loop.outer', desc = 'Next loop end' },
@@ -1408,6 +1410,7 @@ require('lazy').setup({
           goto_previous_start = {
             -- ['[f'] = { query = '@call.outer', desc = 'Prev function call start' },
             ['[f'] = { query = '@function.outer', desc = 'Prev method/function def start' },
+            ['[v'] = { query = '@assignment.outer', desc = 'Prev assignment/variable start' },
             ['[c'] = { query = '@class.outer', desc = 'Prev class start' },
             ['[i'] = { query = '@conditional.outer', desc = 'Prev conditional start' },
             ['[l'] = { query = '@loop.outer', desc = 'Prev loop start' },
@@ -1415,6 +1418,7 @@ require('lazy').setup({
           goto_previous_end = {
             --   ['[F'] = { query = '@call.outer', desc = 'Prev function call end' },
             ['[F'] = { query = '@function.outer', desc = 'Prev method/function def end' },
+            ['[V'] = { query = '@assignment.outer', desc = 'Prev assignment/variable end' },
             ['[C'] = { query = '@class.outer', desc = 'Prev class end' },
             ['[I'] = { query = '@conditional.outer', desc = 'Prev conditional end' },
             ['[L'] = { query = '@loop.outer', desc = 'Prev loop end' },
@@ -1818,7 +1822,13 @@ vim.api.nvim_set_keymap('n', 'gm', ":call cursor(0, virtcol('$')/2)<CR>", { nore
 -- }
 
 -- print(vim.inspect(vim.treesitter.("python", "injections")))
---
---
 
+-- Keymap for showing git status in neotree
 vim.api.nvim_set_keymap('n', '<leader>gG', ':Neotree source=git_status reveal=true<CR>', { noremap = true, silent = true, desc = 'Open Git Status in Neotree' })
+
+-- Keymap for navigating quickfix list
+vim.api.nvim_set_keymap('n', ']q', ':cnext<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '[q', ':cprev<CR>', { noremap = true, silent = true })
+
+-- Keymap for reselecting pasted text
+-- vim.api.nvim_set_keymap('n', 'gp', '`[v`]', { noremap = true, silent = true })
