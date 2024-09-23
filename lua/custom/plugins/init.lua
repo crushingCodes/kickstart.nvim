@@ -358,7 +358,7 @@ return {
       }
     end,
   },
-  -- { 'mg979/vim-visual-multi' },
+  { 'mg979/vim-visual-multi' },
   {
     'takac/vim-hardtime',
     config = function()

@@ -408,19 +408,19 @@ require('lazy').setup({
       -- { 'nvim-telescope/telescope-github.nvim' },
       -- { dir = '/Users/work/Projects/plugins/telescope-github.nvim' },
       { 'crushingCodes/telescope-github.nvim' },
-      {
-        'ahmedkhalf/project.nvim',
-        config = function()
-          require('project_nvim').setup {
-            manual_mode = true,
-            patterns = { '.git', '_darcs', '.hg', '.bzr', '.svn', 'Makefile', 'package.json', 'requirements.txt', 'pyproject.toml', 'manage.py' },
-
-            -- your configuration comes here
-            -- or leave it empty to use the default settings
-            -- refer to the configuration section below
-          }
-        end,
-      },
+      -- {
+      --   'ahmedkhalf/project.nvim',
+      --   config = function()
+      --     require('project_nvim').setup {
+      --       manual_mode = true,
+      --       patterns = { '.git', '_darcs', '.hg', '.bzr', '.svn', 'Makefile', 'package.json', 'requirements.txt', 'pyproject.toml', 'manage.py' },
+      --
+      --       -- your configuration comes here
+      --       -- or leave it empty to use the default settings
+      --       -- refer to the configuration section below
+      --     }
+      --   end,
+      -- },
       {
         'isak102/telescope-git-file-history.nvim',
         dependencies = { 'tpope/vim-fugitive' },
@@ -439,6 +439,8 @@ require('lazy').setup({
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
+      { 'nvim-lua/popup.nvim' },
+      { 'jvgrootveld/telescope-zoxide' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
@@ -449,8 +451,11 @@ require('lazy').setup({
       -- many different aspects of Neovim, your workspace, LSP, and more!
       --
       require('telescope').load_extension 'gh'
-      require('telescope').load_extension 'projects'
-      map('<leader>p', ':lua require("telescope").extensions.projects.projects()<CR>', 'Projects')
+      require('telescope').load_extension 'zoxide'
+
+      local z_utils = require 'telescope._extensions.zoxide.utils'
+      -- require('telescope').load_extension 'projects'
+      -- map('<leader>p', ':lua require("telescope").extensions.projects.projects()<CR>', 'Projects')
       -- The easiest way to use Telescope, is to start by doing something like:
       --  :Telescope help_tags
       --
@@ -466,120 +471,6 @@ require('lazy').setup({
       -- Telescope picker. This is really useful to discover what Telescope can
       -- do as well as how to actually do it!
       --
-      --
-      local telescope = require 'telescope'
-      local actions = require 'telescope.actions'
-      local action_state = require 'telescope.actions.state'
-      local themes = require 'telescope.themes'
-      -- local finders = require 'telescope.finders'
-      local conf = require('telescope.config').values
-
-      -- local function entry_maker(action, index)
-      --   return {
-      --     value = action,
-      --     display = action.title,
-      --     ordinal = action.title,
-      --     index = index, -- Assign the index here
-      --   }
-      -- end
-      --
-      -- local function create_finder_with_indexed_entries(actions)
-      --   local indexed_entries = {}
-      --   for i, action in ipairs(actions) do
-      --     indexed_entries[i] = entry_maker(action, i)
-      --   end
-      --   return finders.new_table {
-      --     results = indexed_entries,
-      --   }
-      -- end
-      --
-      local function custom_sorter(entry1, entry2)
-        return 0
-      end
-      -- local text1 = entry1.ordinal or entry1.display or ''
-      -- local text2 = entry2.ordinal or entry2.display or ''
-      --
-      -- print('Entry1:', text1, 'Index1:', entry1.index)
-      -- print('Entry2:', text2, 'Index2:', entry2.index)
-      --
-      -- local priority_keywords = {
-      --   'Update import',
-      --   'Add import',
-      -- }
-      --
-      -- local function get_priority(text)
-      --   for i, keyword in ipairs(priority_keywords) do
-      --     if text:match(keyword) then
-      --       return i
-      --     end
-      --   end
-      --   return nil
-      -- end
-      --
-      -- local priority1 = get_priority(text1)
-      -- local priority2 = get_priority(text2)
-      --
-      -- if priority1 and priority2 then
-      --   return priority1 < priority2
-      -- elseif priority1 then
-      --   return true
-      -- elseif priority2 then
-      --   return false
-      -- end
-      --
-      -- local is_eslint1 = text1:match 'eslint'
-      -- local is_eslint2 = text2:match 'eslint'
-      --
-      -- -- print(vim.inspect(entry1))
-      -- -- print(text2)
-      -- if is_eslint1 and not is_eslint2 then
-      --   return false
-      -- elseif not is_eslint1 and is_eslint2 then
-      --   return true
-      -- else
-      --   return 0
-      -- end
-      -- end
-
-      -- local function custom_sorter(entry1, entry2)
-      --   -- local text1 = entry1.ordinal or entry1.display or ''
-      --   -- local text2 = entry2.ordinal or entry2.display or ''
-      --   --
-      --   -- local is_eslint1 = text1:match 'eslint'
-      --   -- local is_eslint2 = text2:match 'eslint'
-      --   --
-      --   -- if is_eslint1 and not is_eslint2 then
-      --   --   return 0
-      --   -- elseif not is_eslint1 and is_eslint2 then
-      --   --   return 1
-      --   -- else
-      --   --   return text1 < text2
-      --   -- end
-      --   -- print(entry1)
-      --   -- print(vim.inspect(entry1))
-      --
-      --   local text1 = entry1.ordinal or entry1.display or ''
-      --   local text2 = entry2.ordinal or entry2.display or ''
-      --
-      --   local is_eslint1 = text1:match 'eslint'
-      --   local is_eslint2 = text2:match 'eslint'
-      --
-      --   -- Assign weights to ESLint actions
-      --   local weight1 = is_eslint1 and 1 or 0
-      --   local weight2 = is_eslint2 and 1 or 0
-      --
-      --   if weight1 ~= weight2 then
-      --     return weight1 < weight2
-      --   else
-      --     -- Preserve original order for non-ESLint actions
-      --     -- return entry1.index < entry2.index
-      --     return 0
-      --   end
-      -- end
-      -- local telescope = require 'telescope'
-      -- local actions = require 'telescope.actions'
-      -- local action_state = require 'telescope.actions.state'
-      -- local themes = require 'telescope.themes'
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
@@ -602,49 +493,27 @@ require('lazy').setup({
         -- },
         extensions = {
           ['ui-select'] = {
-            require('telescope.themes').get_dropdown {
-              -- Apply the custom sorter here
-              -- finder = create_finder_with_indexed_entries(actions),
-              -- sorter = require('telescope.sorters').Sorter:new {
-              --   scoring_function = custom_sorter,
-              -- },
-              -- sorter = conf.generic_sorters {},
-              -- },
-              -- sorter = {
-              --   scoring_function = function(item1, item2)
-              --     -- print(item1)
-              --     -- print(vim.inpsect(item1))
-              --   end,
-              -- },
+            require('telescope.themes').get_dropdown {},
+          },
+          zoxide = {
+            prompt_title = '[ Walking on the shoulders of TJ ]',
+            mappings = {
+              default = {
+                after_action = function(selection)
+                  print('Update to (' .. selection.z_score .. ') ' .. selection.path)
+                end,
+              },
+              ['<C-s>'] = {
+                before_action = function(selection)
+                  print 'before C-s'
+                end,
+                action = function(selection)
+                  vim.cmd.edit(selection.path)
+                end,
+              },
+              -- Opens the selected entry in a new split
+              ['<C-q>'] = { action = z_utils.create_basic_command 'split' },
             },
-
-            -- sorter = eslint_sorter(),
-
-            -- require('telescope.themes').get_dropdown(),
-            -- pseudo code / specification for writing custom displays, like the one
-            -- for "codeactions"
-            -- specific_opts = {
-            --   [kind] = {
-            --     make_indexed = function(items) -> indexed_items, width,
-            --     make_displayer = function(widths) -> displayer
-            --     make_display = function(displayer) -> function(e)
-            --     make_ordinal = function(e) -> string
-            --   },
-            --   -- for example to disable the custom builtin "codeactions" display
-            --      do the following
-            --   codeactions = false,
-            -- }
-            -- codeactions = {
-            --   -- make_indexed = function(items) -> indexed_items, width,
-            --   -- make_displayer = function(widths) -> displayer
-            --   -- make_display = function(displayer) -> function(e)
-            --   make_ordinal = function(e)
-            --     print 'hello'
-            --     print(vim.inspect(e))
-            --     return e
-            --   end,
-            -- },
-            -- },
           },
         },
       }
