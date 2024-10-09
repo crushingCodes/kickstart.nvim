@@ -409,43 +409,51 @@ return {
   --   ft = { 'go', 'gomod' },
   --   build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   -- },
+  -- {
+  --   'javiorfo/nvim-ship',
+  --   lazy = true,
+  --   ft = 'ship',
+  --   cmd = { 'ShipCreate', 'ShipCreateEnv' },
+  --   dependencies = {
+  --     'javiorfo/nvim-spinetta',
+  --     'javiorfo/nvim-popcorn',
+  --     'hrsh7th/nvim-cmp', -- nvim-cmp is optional
+  --   },
+  --   opts = {
+  --     -- Not necessary. Only if you want to change the setup.
+  --     -- The following are the default values
+  --     view = {
+  --       autocomplete = true,
+  --     },
+  --     request = {
+  --       timeout = 30,
+  --       autosave = true,
+  --       insecure = false,
+  --     },
+  --     response = {
+  --       show_headers = 'all',
+  --       window_type = 'h',
+  --       --    border_type = require'popcorn.borders'.double_border, -- Only applied for 'p' window_type
+  --       size = 20,
+  --       redraw = true,
+  --     },
+  --     output = {
+  --       save = true,
+  --       override = true,
+  --       folder = 'output',
+  --     },
+  --     internal = {
+  --       log_debug = false,
+  --     },
+  --   },
+  -- },
   {
-    'javiorfo/nvim-ship',
-    lazy = true,
-    ft = 'ship',
-    cmd = { 'ShipCreate', 'ShipCreateEnv' },
+    'oysandvik94/curl.nvim',
+    cmd = { 'CurlOpen' },
     dependencies = {
-      'javiorfo/nvim-spinetta',
-      'javiorfo/nvim-popcorn',
-      'hrsh7th/nvim-cmp', -- nvim-cmp is optional
+      'nvim-lua/plenary.nvim',
     },
-    opts = {
-      -- Not necessary. Only if you want to change the setup.
-      -- The following are the default values
-      -- view = {
-      --   autocomplete = false,
-      -- },
-      request = {
-        timeout = 30,
-        autosave = true,
-        insecure = false,
-      },
-      response = {
-        show_headers = 'all',
-        window_type = 'h',
-        --    border_type = require'popcorn.borders'.double_border, -- Only applied for 'p' window_type
-        size = 20,
-        redraw = true
-      },
-      output = {
-        save = false,
-        override = true,
-        folder = 'output',
-      },
-      internal = {
-        log_debug = false,
-      },
-    },
+    config = true,
   },
   -- {
   --   'folke/flash.nvim',
@@ -593,12 +601,12 @@ return {
         desc = 'Buffer Diagnostics (Trouble)',
       },
       {
-        '<leader>cs',
+        '<leader>xs',
         '<cmd>Trouble symbols toggle focus=false<cr>',
         desc = 'Symbols (Trouble)',
       },
       {
-        '<leader>cl',
+        '<leader>xl',
         '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
         desc = 'LSP Definitions / references / ... (Trouble)',
       },

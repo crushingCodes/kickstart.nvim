@@ -1726,7 +1726,6 @@ autocmd BufNewFile,BufRead *.styl setlocal filetype=stylus
 autocmd BufNewFile,BufRead *.stylus setlocal filetype=stylus
 ]]
 
-
 vim.api.nvim_set_keymap(
   'n',
   '<leader>lf',
@@ -1739,7 +1738,6 @@ vim.api.nvim_set_keymap(
   ':!stylus-supremacy format % -r --options stylus-supremacy-css.json<CR>',
   { noremap = true, silent = true, desc = 'Format Stylus' }
 )
-
 
 local ts_utils = require 'nvim-treesitter.ts_utils'
 
@@ -1761,3 +1759,31 @@ end
 
 -- Keymap to move to parent node
 vim.api.nvim_set_keymap('n', '<leader>p', ':lua _G.move_to_parent_node()<CR>', { noremap = true, silent = true })
+
+local curl = require 'curl'
+curl.setup {}
+
+vim.keymap.set('n', '<leader>cc', function()
+  curl.open_curl_tab()
+end, { desc = 'Open a curl tab scoped to the current working directory' })
+
+vim.keymap.set('n', '<leader>co', function()
+  curl.open_global_tab()
+end, { desc = 'Open a curl tab with gloabl scope' })
+
+-- These commands will prompt you for a name for your collection
+vim.keymap.set('n', '<leader>csc', function()
+  curl.create_scoped_collection()
+end, { desc = 'Create or open a collection with a name from user input' })
+
+vim.keymap.set('n', '<leader>cgc', function()
+  curl.create_global_collection()
+end, { desc = 'Create or open a global collection with a name from user input' })
+
+vim.keymap.set('n', '<leader>fsc', function()
+  curl.pick_scoped_collection()
+end, { desc = 'Choose a scoped collection and open it' })
+
+vim.keymap.set('n', '<leader>fgc', function()
+  curl.pick_global_collection()
+end, { desc = 'Choose a global collection and open it' })
