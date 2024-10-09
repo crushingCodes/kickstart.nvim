@@ -386,7 +386,13 @@ return {
     main = 'ibl',
     opts = {},
     config = function()
-      require('ibl').setup()
+      -- require('ibl').setup()
+      require('ibl').setup {
+        indent = {
+          char = '▎',
+          tab_char = '▎', -- this is a workaround to rm the arrows from tabs
+        },
+      }
     end,
   },
   -- {
@@ -429,7 +435,7 @@ return {
         window_type = 'h',
         --    border_type = require'popcorn.borders'.double_border, -- Only applied for 'p' window_type
         size = 20,
-        redraw = true,
+        redraw = true
       },
       output = {
         save = false,
@@ -729,4 +735,15 @@ return {
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
   },
+  -- { 'ChiliConSql/neovim-stylus' },
+  { 'wavded/vim-stylus' },
+  -- { 'tpope/vim-haml' },
+  {
+    'NvChad/nvim-colorizer.lua',
+
+    config = function()
+      require('colorizer').setup()
+    end,
+  },
+  -- { 'mattn/emmet-vim' },
 }

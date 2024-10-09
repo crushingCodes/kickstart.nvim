@@ -229,6 +229,9 @@ end
 _G.confirm_undo_last_commit = confirm_undo_last_commit
 
 map('<leader>gU', ':lua confirm_undo_last_commit()<CR>', '[U]ndo last commit')
+map('<leader>gE', ':G update-index --assume-unchanged %<CR>', '[E]xclude current file from git tracking')
+map('<leader>gT', ':G update-index --no-assume-unchanged %<CR>', '[T]rack current file(opposite of exclude)')
+
 map('<leader>gH', ':lua require("telescope").extensions.git_file_history.git_file_history()<CR>', 'File History')
 map('<leader>gd', ':Gvdiffsplit!<CR>', 'Open [d]iff in 3 way split')
 
@@ -864,6 +867,15 @@ require('lazy').setup({
           -- tsserver = {},
           --
 
+          -- stylelint = {
+          --   filetypes = { 'css', 'less', 'scss', 'sugarss', 'vue', 'wxss', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'stylus' }, -- Add 'styl' here
+          -- },
+          -- stylelint_lsp = {
+          --   filetypes = { 'css', 'less', 'scss', 'sugarss', 'vue', 'wxss', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'stylus' }, -- Add 'styl' here
+          -- },
+          -- cssls = {
+          --   filetypes = { 'css', 'less', 'scss', 'sugarss', 'vue', 'wxss', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'stylus' }, -- Add 'styl' here
+          -- },
           lua_ls = {
             -- cmd = {...},
             -- filetypes = { ...},
@@ -1214,6 +1226,7 @@ require('lazy').setup({
         'graphql',
         'gdscript',
         'sql',
+        'css',
       },
       incremental_selection = {
         enable = true,
@@ -1648,7 +1661,7 @@ wk.add { '<leader>gS', ':Gwrite<CR>', desc = 'Gwrite - [S]tage current buffer' }
 
 wk.add { '<leader>gb', ':G branch --sort=-committerdate<CR>', desc = 'Git [b]ranches' }
 -- wk.add { '<leader>gb', ':Telescope git_branches<CR>', desc = 'Git [b]ranches' }
-wk.add { '<leader>gB', ':G blame <CR>', desc = 'Git [B]lame' }
+wk.add { '<leader>gB', ':Gitsigns blame<CR>', desc = 'Git [B]lame' }
 
 -- TODO:
 -- local builtin = require 'telescope.builtin'
@@ -1701,3 +1714,50 @@ vim.api.nvim_set_keymap('n', '[q', ':cprev<CR>', { noremap = true, silent = true
 
 -- Keymap for reselecting pasted text
 -- vim.api.nvim_set_keymap('n', 'gp', '`[v`]', { noremap = true, silent = true })
+--
+--
+
+vim.cmd [[
+  au BufRead,BufNewFile *.styl set filetype=css
+]]
+
+vim.cmd [[
+autocmd BufNewFile,BufRead *.styl setlocal filetype=stylus
+autocmd BufNewFile,BufRead *.stylus setlocal filetype=stylus
+]]
+
+
+vim.api.nvim_set_keymap(
+  'n',
+  '<leader>lf',
+  ':!stylus-supremacy format % -r --options stylus-supremacy.json<CR>',
+  { noremap = true, silent = true, desc = 'Format Stylus' }
+)
+vim.api.nvim_set_keymap(
+  'n',
+  '<leader>lF',
+  ':!stylus-supremacy format % -r --options stylus-supremacy-css.json<CR>',
+  { noremap = true, silent = true, desc = 'Format Stylus' }
+)
+
+
+local ts_utils = require 'nvim-treesitter.ts_utils'
+
+-- Function to move to the parent function/class node
+function _G.move_to_parent_node()
+  local node = ts_utils.get_node_at_cursor()
+  if node then
+    local parent = node:parent()
+    if parent then
+      local start_row, start_col, _, _ = parent:range()
+      vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+    else
+      print 'No parent node found.'
+    end
+  else
+    print 'No Treesitter node at cursor.'
+  end
+end
+
+-- Keymap to move to parent node
+vim.api.nvim_set_keymap('n', '<leader>p', ':lua _G.move_to_parent_node()<CR>', { noremap = true, silent = true })
