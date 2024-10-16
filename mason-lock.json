@@ -2,7 +2,7 @@
   "css-lsp": "4.10.0",
   "eslint-lsp": "4.10.0",
   "lua-language-server": "3.10.5",
-  "prettier": "2.3.2",
+  "prettier": "3.3.3",
   "pyright": "1.1.378",
   "some-sass-language-server": "1.8.3",
   "stylelint": "16.9.0",

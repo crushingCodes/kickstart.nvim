@@ -161,6 +161,9 @@ vim.opt.scrolloff = 10
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+
+vim.opt.jumpoptions = 'stack'
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
@@ -556,6 +559,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>s.', function()
         require('telescope.builtin').oldfiles()
       end, { desc = '[S]earch Recent Files ("." for repeat)' })
+
       vim.keymap.set('n', '<leader><leader>', function()
         -- require('telescope.builtin').buffers()
         -- vim.cmd ':Neotree buffers'
@@ -622,6 +626,9 @@ require('lazy').setup({
           -- ['extension_name#extension_method'] = {
           --   -- [...]
           -- },
+          ['smart_open#smart_open'] = {
+            sorting = 'recent',
+          },
         },
       }
     end,
@@ -1787,3 +1794,10 @@ end, { desc = 'Choose a scoped collection and open it' })
 vim.keymap.set('n', '<leader>fgc', function()
   curl.pick_global_collection()
 end, { desc = 'Choose a global collection and open it' })
+
+vim.keymap.set('n', '<leader>q', function()
+  require('notify').dismiss()
+end, { desc = 'Dismiss all notifications' })
+
+
+
