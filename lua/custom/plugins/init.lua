@@ -743,7 +743,7 @@ return {
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
   },
-  -- { 'ChiliConSql/neovim-stylus' },
+  -- This doesnt give syntax hightlighting { 'ChiliConSql/neovim-stylus' },
   { 'wavded/vim-stylus' },
   -- { 'tpope/vim-haml' },
   {
