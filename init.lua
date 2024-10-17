@@ -179,7 +179,7 @@ local map = function(keys, func, desc)
 end
 
 -- Toggles
-vim.api.nvim_set_keymap('n', '<leader>;a', ':ASToggle<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>;a', ':ASToggle<CR>', { noremap = true, silent = true, desc="Autosave Toggle" })
 vim.api.nvim_set_keymap('n', '<leader>;m', ':lua vim.bo.modifiable = not vim.bo.modifiable<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>;w', ':set wrap!<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>;r', ':set relativenumber!<CR>', { noremap = true, silent = true })
@@ -1349,6 +1349,13 @@ require('lazy').setup({
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         -- additional_vim_regex_highlighting = { 'ruby' },
+
+        -- disable treesitter for large files
+        disable = function(lang, bufnr) --
+          -- Extend this to other languages by adding `lang == "x"` where x is the language
+          return vim.api.nvim_buf_line_count(bufnr) > 10000
+        end,
+
         additional_vim_regex_highlighting = false,
       },
       indent = { enable = true },
