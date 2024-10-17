@@ -86,9 +86,7 @@ return {
   },
   cmd = 'Neotree',
   keys = {
-    { '\\', ':Neotree reveal<CR>', { desc = 'NeoTree reveal' } },
-    n = 'copy_selector',
-    -- Y = 'hello',
+    { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
   },
   config = function()
     local neo_tree = require 'neo-tree'
