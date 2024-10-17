@@ -164,7 +164,6 @@ vim.opt.scrolloff = 10
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
-
 vim.opt.jumpoptions = 'stack'
 
 -- Diagnostic keymaps
@@ -179,7 +178,7 @@ local map = function(keys, func, desc)
 end
 
 -- Toggles
-vim.api.nvim_set_keymap('n', '<leader>;a', ':ASToggle<CR>', { noremap = true, silent = true, desc="Autosave Toggle" })
+vim.api.nvim_set_keymap('n', '<leader>;a', ':ASToggle<CR>', { noremap = true, silent = true, desc = 'Autosave Toggle' })
 vim.api.nvim_set_keymap('n', '<leader>;m', ':lua vim.bo.modifiable = not vim.bo.modifiable<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>;w', ':set wrap!<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>;r', ':set relativenumber!<CR>', { noremap = true, silent = true })
@@ -448,6 +447,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
       { 'nvim-lua/popup.nvim' },
       { 'jvgrootveld/telescope-zoxide' },
+      { 'Snikimonkd/telescope-git-conflicts.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
@@ -459,6 +459,7 @@ require('lazy').setup({
       --
       require('telescope').load_extension 'gh'
       require('telescope').load_extension 'zoxide'
+      require('telescope').load_extension 'conflicts'
 
       local z_utils = require 'telescope._extensions.zoxide.utils'
       -- require('telescope').load_extension 'projects'
@@ -571,6 +572,7 @@ require('lazy').setup({
         }
       end, { desc = '[ ] Find existing buffers' })
 
+      vim.keymap.set('n', '<leader>gX', ':Telescope conflicts<cr>', { desc = 'Git conflicts' })
       -- Custom
       vim.keymap.set('n', '<leader>e', ':Neotree toggle<cr>', { desc = 'Open filetree' })
 
@@ -648,7 +650,7 @@ require('lazy').setup({
     },
   },
   { 'Bilal2453/luvit-meta', lazy = true },
-    -- Main LSP Configuration
+  -- Main LSP Configuration
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -743,7 +745,7 @@ require('lazy').setup({
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>la', vim.lsp.buf.code_action, '[C]ode [A]ction',{'n', 'x'})
+          map('<leader>la', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
@@ -995,7 +997,7 @@ require('lazy').setup({
       {
         '<leader>f',
         function()
-          require('conform').format { async = false, lsp_format = 'fallback'}
+          require('conform').format { async = false, lsp_format = 'fallback' }
         end,
         mode = '',
         desc = '[F]ormat buffer',
@@ -1388,8 +1390,7 @@ require('lazy').setup({
     end,
   },
 
-
- -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
+  -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
 
@@ -1830,6 +1831,3 @@ end, { desc = 'Choose a global collection and open it' })
 vim.keymap.set('n', '<leader>q', function()
   require('notify').dismiss()
 end, { desc = 'Dismiss all notifications' })
-
-
-
