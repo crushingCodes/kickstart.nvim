@@ -1043,6 +1043,32 @@ require('lazy').setup({
         yaml = { 'prettier' },
         markdown = { 'prettier' },
         rust = { 'rustfmt', lsp_format = 'fallback' },
+        stylus = { 'stylus_supremacy' },
+        css = { 'stylus_supremacy' },
+      },
+      formatters = {
+        -- stylus_supremacy = {
+        --   command = 'stylus-supremacy',
+        --   args = { 'format', '--stdin', '--options', 'stylus-supremacy.json' },
+        --   stdin = true,
+        --   -- Set the working directory to the file's directory to locate the options file
+        --   cwd = function(ctx)
+        --     return vim.fn.fnamemodify(ctx.filename, ':p:h')
+        --   end,
+        -- },
+        stylus_supremacy = {
+          -- Command to run the formatter
+          command = 'stylus-supremacy',
+          -- Arguments for the command
+          args = { 'format', '$FILENAME', '-r', '--options', 'stylus-supremacy.json' },
+          -- We are not using stdin/stdout
+          stdin = false,
+          -- Set the working directory to the file's directory
+          cwd = function(ctx)
+            return vim.fn.fnamemodify(ctx.filename, ':p:h')
+          end,
+          require_cwd = true,
+        },
       },
     },
   },
@@ -1758,14 +1784,14 @@ vim.api.nvim_set_keymap('n', '[q', ':cprev<CR>', { noremap = true, silent = true
 --
 --
 
-vim.cmd [[
-  au BufRead,BufNewFile *.styl set filetype=css
-]]
+-- vim.cmd [[
+--   au BufRead,BufNewFile *.styl set filetype=css
+-- ]]
 
-vim.cmd [[
-autocmd BufNewFile,BufRead *.styl setlocal filetype=stylus
-autocmd BufNewFile,BufRead *.stylus setlocal filetype=stylus
-]]
+-- vim.cmd [[
+-- autocmd BufNewFile,BufRead *.styl setlocal filetype=stylus
+-- autocmd BufNewFile,BufRead *.stylus setlocal filetype=stylus
+-- ]]
 
 vim.api.nvim_set_keymap(
   'n',
