@@ -575,6 +575,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>gX', ':Telescope conflicts<cr>', { desc = 'Git conflicts' })
       -- Custom
       vim.keymap.set('n', '<leader>e', ':Neotree toggle<cr>', { desc = 'Open filetree' })
+      vim.keymap.set('n', '<leader>E', ':Neotree focus<cr>', { desc = 'Focus filetree' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -1041,6 +1042,7 @@ require('lazy').setup({
         json = { 'prettier' },
         yaml = { 'prettier' },
         markdown = { 'prettier' },
+        rust = { 'rustfmt', lsp_format = 'fallback' },
       },
     },
   },
@@ -1357,7 +1359,6 @@ require('lazy').setup({
           -- Extend this to other languages by adding `lang == "x"` where x is the language
           return vim.api.nvim_buf_line_count(bufnr) > 10000
         end,
-
         additional_vim_regex_highlighting = false,
       },
       indent = { enable = true },
