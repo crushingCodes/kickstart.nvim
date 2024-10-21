@@ -115,10 +115,10 @@ return {
           --   includeCompletionsForModuleExports = true,
           --   quotePreference = 'auto',
           -- },
-          -- jsx_close_tag = {
-          --   enable = true,
-          --   filetypes = { 'javascriptreact', 'typescriptreact' },
-          -- },
+          jsx_close_tag = {
+            enable = true,
+            filetypes = { 'javascriptreact', 'typescriptreact' },
+          },
           -- -----------------------------------------------------------------------------
           -- spawn additional tsserver instance to calculate diagnostics on it
           separate_diagnostic_server = true,
