@@ -743,7 +743,7 @@ return {
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
   },
-  -- { 'ChiliConSql/neovim-stylus' },
+  -- This doesnt give syntax hightlighting { 'ChiliConSql/neovim-stylus' },
   { 'wavded/vim-stylus' },
   -- { 'tpope/vim-haml' },
   {
@@ -753,5 +753,34 @@ return {
       require('colorizer').setup()
     end,
   },
-  -- { 'mattn/emmet-vim' },
+  -- {
+  --   'nvim-telescope/telescope.nvim',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'Snikimonkd/telescope-git-conflicts.nvim',
+  --   },
+  --   config = function()
+  --     require('telescope').setup {}
+  --     require('telescope').load_extension 'conflicts'
+  --   end,
+  -- },
+  {
+    'LunarVim/bigfile.nvim',
+    config = function ()
+      require("bigfile").setup {
+  filesize = 2, -- size of the file in MiB, the plugin round file sizes to the closest MiB
+  pattern = { "*" }, -- autocmd pattern or function see <### Overriding the detection of big files>
+  features = { -- features to disable
+    "indent_blankline",
+    "illuminate",
+    "lsp",
+    "treesitter",
+    "syntax",
+    "matchparen",
+    "vimopts",
+    "filetype",
+  },
+}
+    end
+  },
 }
