@@ -1832,7 +1832,7 @@ vim.api.nvim_set_keymap('n', '<leader>p', ':lua _G.move_to_parent_node()<CR>', {
 local curl = require 'curl'
 curl.setup {}
 
-vim.api.nvim_set_keymap('n', '<leader>c', ':ChatGPT<CR>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<leader>c', ':ChatGPT<CR>', { noremap = true, silent = true })
 
 -- vim.keymap.set('n', '<leader>cc', function()
 --   curl.open_curl_tab()

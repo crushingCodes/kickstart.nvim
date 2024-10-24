@@ -1,9 +1,12 @@
 return {
   'jackMort/ChatGPT.nvim',
-  event = 'VeryLazy',
+  -- event = 'VeryLazy',
+  lazy = true,
+  keys = {
+    { '<leader>c', '<cmd>ChatGPT<cr>', desc = 'ChatGPT' },
+  },
   config = function()
     local home = vim.fn.expand '$HOME'
-    lazy = true
     -- print(vim.cmd('gpg --decrypt --no-symkey-cache ' .. home .. '/openai.txt.gpg'))
     require('chatgpt').setup {
       -- this config assumes you have OPENAI_API_KEY environment variable set
