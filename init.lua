@@ -236,6 +236,7 @@ _G.confirm_undo_last_commit = confirm_undo_last_commit
 map('<leader>gU', ':lua confirm_undo_last_commit()<CR>', '[U]ndo last commit')
 map('<leader>gE', ':G update-index --assume-unchanged %<CR>', '[E]xclude current file from git tracking')
 map('<leader>gT', ':G update-index --no-assume-unchanged %<CR>', '[T]rack current file(opposite of exclude)')
+map('<leader>gc', ':Telescope git_status<CR>', '[C]hanged Files')
 
 map('<leader>gH', ':lua require("telescope").extensions.git_file_history.git_file_history()<CR>', 'File History')
 map('<leader>gd', ':Gvdiffsplit!<CR>', 'Open [d]iff in 3 way split')
