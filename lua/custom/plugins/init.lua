@@ -754,25 +754,25 @@ return {
     config = function()
       require('package-info').setup()
       -- Show dependency versions
-      vim.keymap.set({ 'n' }, '<LEADER>Ns', require('package-info').show, { silent = true, noremap = true })
-
-      -- Hide dependency versions
-      vim.keymap.set({ 'n' }, '<LEADER>Nc', require('package-info').hide, { silent = true, noremap = true })
-
-      -- Toggle dependency versions
-      vim.keymap.set({ 'n' }, '<LEADER>Nt', require('package-info').toggle, { silent = true, noremap = true })
-
-      -- Update dependency on the line
-      vim.keymap.set({ 'n' }, '<LEADER>Nu', require('package-info').update, { silent = true, noremap = true })
-
-      -- Delete dependency on the line
-      vim.keymap.set({ 'n' }, '<LEADER>Nd', require('package-info').delete, { silent = true, noremap = true })
-
-      -- Install a new dependency
-      vim.keymap.set({ 'n' }, '<LEADER>Ni', require('package-info').install, { silent = true, noremap = true })
-
-      -- Install a different dependency version
-      vim.keymap.set({ 'n' }, '<LEADER>Np', require('package-info').change_version, { silent = true, noremap = true })
+      -- vim.keymap.set({ 'n' }, '<LEADER>Ns', require('package-info').show, { silent = true, noremap = true })
+      --
+      -- -- Hide dependency versions
+      -- vim.keymap.set({ 'n' }, '<LEADER>Nc', require('package-info').hide, { silent = true, noremap = true })
+      --
+      -- -- Toggle dependency versions
+      -- vim.keymap.set({ 'n' }, '<LEADER>Nt', require('package-info').toggle, { silent = true, noremap = true })
+      --
+      -- -- Update dependency on the line
+      -- vim.keymap.set({ 'n' }, '<LEADER>Nu', require('package-info').update, { silent = true, noremap = true })
+      --
+      -- -- Delete dependency on the line
+      -- vim.keymap.set({ 'n' }, '<LEADER>Nd', require('package-info').delete, { silent = true, noremap = true })
+      --
+      -- -- Install a new dependency
+      -- vim.keymap.set({ 'n' }, '<LEADER>Ni', require('package-info').install, { silent = true, noremap = true })
+      --
+      -- -- Install a different dependency version
+      -- vim.keymap.set({ 'n' }, '<LEADER>Np', require('package-info').change_version, { silent = true, noremap = true })
     end,
   },
   {
