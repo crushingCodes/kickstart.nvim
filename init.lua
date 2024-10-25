@@ -1562,7 +1562,15 @@ function Neotest_actions()
   require('neotest').summary.open()
 end
 
-vim.api.nvim_set_keymap('n', '<leader>T', ':lua Neotest_actions()<CR>', { noremap = true, silent = true })
+function Neotest_actions_debug()
+  require('neotest').run.run { strategy = 'dap' }
+  -- require('neotest').output_panel.open()
+  -- require('neotest').summary.open()
+end
+
+vim.api.nvim_set_keymap('n', '<leader>T', ':lua Neotest_actions()<CR>', { noremap = true, silent = true, desc = 'Run Nearest Test' })
+vim.api.nvim_set_keymap('n', '<leader>D', ':lua Neotest_actions_debug()<CR>', { noremap = true, silent = true, desc = 'Debug Nearest Test' })
+vim.api.nvim_set_keymap('n', '<leader>B', ':DapToggleBreakpoint<CR>', { noremap = true, silent = true, desc = 'Toggle Breakpoint' })
 map('<leader>.', ':DotEnv<CR>', 'Load .env')
 
 local diffview_custom = require 'diffview_custom'

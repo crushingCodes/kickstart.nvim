@@ -298,6 +298,45 @@ return {
   -- TODO: move this to private repo
   -- { dir = '~/Projects/plugins/neotest-python' },
   {
+    'mfussenegger/nvim-dap-python',
+    config = function()
+      local mason_path = vim.fn.glob(vim.fn.stdpath 'data' .. '/mason/')
+      require('dap-python').setup(mason_path .. 'packages/debugpy/venv/bin/python')
+    end,
+  },
+  {
+    'rcarriga/nvim-dap-ui',
+    dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' },
+
+    config = function()
+      require('dapui').setup()
+      vim.fn.sign_define('DapBreakpoint', { text = '', texthl = 'DapBreakpoint', linehl = '', numhl = '' })
+      vim.fn.sign_define('DapStopped', { text = '', texthl = 'DapStopped', linehl = '', numhl = '' })
+      vim.fn.sign_define('DapBreakpointRejected', { text = '', texthl = 'DapBreakpointRejected', linehl = '', numhl = '' })
+
+      vim.cmd [[
+        highlight DapBreakpoint guifg=#E06C75
+        highlight DapStopped guifg=#98C379
+        highlight DapBreakpointRejected guifg=#E5C07B
+      ]]
+
+      local dap, dapui = require 'dap', require 'dapui'
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
+    end,
+  },
+
+  {
     'nvim-neotest/neotest',
     dependencies = {
       'nvim-neotest/nvim-nio',
@@ -306,6 +345,7 @@ return {
       'nvim-treesitter/nvim-treesitter',
       'nvim-neotest/neotest-jest',
       'nvim-neotest/neotest-python',
+      'mfussenegger/nvim-dap-python',
     },
     config = function()
       require('custom.plugins.neotest_setup').setup_neotest()
