@@ -297,37 +297,36 @@ return {
   },
   -- TODO: move this to private repo
   -- { dir = '~/Projects/plugins/neotest-python' },
-  -- {
-  --   'nvim-neotest/neotest',
-  --   dependencies = {
-  --     'nvim-neotest/nvim-nio',
-  --     'nvim-lua/plenary.nvim',
-  --     'antoinemadec/FixCursorHold.nvim',
-  --     'nvim-treesitter/nvim-treesitter',
-  --     'nvim-neotest/neotest-jest',
-  --     -- dir = '~/Projects/plugins/neotest-python',
-  --     -- 'nvim-neotest/neotest-python',
-  --   },
-  --   config = function()
-  --     -- require('custom.plugins.neotest_setup').setup_neotest()
-  --
-  --     require('neotest').setup {
-  --       adapters = {
-  --         -- require 'neotest-python' {
-  --         --   args = { '--keepdb', '--interactive', 'False' },
-  --         -- },
-  --         require 'neotest-jest' {
-  --           jestCommand = 'npm jest --',
-  --           jestConfigFile = 'jest.config.ts',
-  --           -- env = { CI = true },
-  --           cwd = function(path)
-  --             return vim.fn.getcwd()
-  --           end,
-  --         },
-  --       },
-  --     }
-  --   end,
-  -- },
+  {
+    'nvim-neotest/neotest',
+    dependencies = {
+      'nvim-neotest/nvim-nio',
+      'nvim-lua/plenary.nvim',
+      'antoinemadec/FixCursorHold.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-neotest/neotest-jest',
+      'nvim-neotest/neotest-python',
+    },
+    config = function()
+      require('custom.plugins.neotest_setup').setup_neotest()
+
+      require('neotest').setup {
+        adapters = {
+          require 'neotest-python' {
+            args = { '--keepdb' },
+          },
+          -- require 'neotest-jest' {
+          --   jestCommand = 'npm jest --',
+          --   jestConfigFile = 'jest.config.ts',
+          --   -- env = { CI = true },
+          --   cwd = function(path)
+          --     return vim.fn.getcwd()
+          --   end,
+          -- },
+        },
+      }
+    end,
+  },
   -- { 'ldelossa/gh.nvim' },
   {
     'sindrets/diffview.nvim',
@@ -766,21 +765,21 @@ return {
   -- },
   {
     'LunarVim/bigfile.nvim',
-    config = function ()
-      require("bigfile").setup {
-  filesize = 2, -- size of the file in MiB, the plugin round file sizes to the closest MiB
-  pattern = { "*" }, -- autocmd pattern or function see <### Overriding the detection of big files>
-  features = { -- features to disable
-    "indent_blankline",
-    "illuminate",
-    "lsp",
-    "treesitter",
-    "syntax",
-    "matchparen",
-    "vimopts",
-    "filetype",
-  },
-}
-    end
+    config = function()
+      require('bigfile').setup {
+        filesize = 2, -- size of the file in MiB, the plugin round file sizes to the closest MiB
+        pattern = { '*' }, -- autocmd pattern or function see <### Overriding the detection of big files>
+        features = { -- features to disable
+          'indent_blankline',
+          'illuminate',
+          'lsp',
+          'treesitter',
+          'syntax',
+          'matchparen',
+          'vimopts',
+          'filetype',
+        },
+      }
+    end,
   },
 }
