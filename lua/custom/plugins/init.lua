@@ -297,37 +297,76 @@ return {
   },
   -- TODO: move this to private repo
   -- { dir = '~/Projects/plugins/neotest-python' },
-  -- {
-  --   'nvim-neotest/neotest',
-  --   dependencies = {
-  --     'nvim-neotest/nvim-nio',
-  --     'nvim-lua/plenary.nvim',
-  --     'antoinemadec/FixCursorHold.nvim',
-  --     'nvim-treesitter/nvim-treesitter',
-  --     'nvim-neotest/neotest-jest',
-  --     -- dir = '~/Projects/plugins/neotest-python',
-  --     -- 'nvim-neotest/neotest-python',
-  --   },
-  --   config = function()
-  --     -- require('custom.plugins.neotest_setup').setup_neotest()
-  --
-  --     require('neotest').setup {
-  --       adapters = {
-  --         -- require 'neotest-python' {
-  --         --   args = { '--keepdb', '--interactive', 'False' },
-  --         -- },
-  --         require 'neotest-jest' {
-  --           jestCommand = 'npm jest --',
-  --           jestConfigFile = 'jest.config.ts',
-  --           -- env = { CI = true },
-  --           cwd = function(path)
-  --             return vim.fn.getcwd()
-  --           end,
-  --         },
-  --       },
-  --     }
-  --   end,
-  -- },
+  {
+    'mfussenegger/nvim-dap-python',
+    config = function()
+      local mason_path = vim.fn.glob(vim.fn.stdpath 'data' .. '/mason/')
+      require('dap-python').setup(mason_path .. 'packages/debugpy/venv/bin/python')
+    end,
+  },
+  {
+    'rcarriga/nvim-dap-ui',
+    dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' },
+
+    config = function()
+      require('dapui').setup()
+      vim.fn.sign_define('DapBreakpoint', { text = '', texthl = 'DapBreakpoint', linehl = '', numhl = '' })
+      vim.fn.sign_define('DapStopped', { text = '', texthl = 'DapStopped', linehl = '', numhl = '' })
+      vim.fn.sign_define('DapBreakpointRejected', { text = '', texthl = 'DapBreakpointRejected', linehl = '', numhl = '' })
+
+      vim.cmd [[
+        highlight DapBreakpoint guifg=#E06C75
+        highlight DapStopped guifg=#98C379
+        highlight DapBreakpointRejected guifg=#E5C07B
+      ]]
+
+      local dap, dapui = require 'dap', require 'dapui'
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
+    end,
+  },
+
+  {
+    'nvim-neotest/neotest',
+    dependencies = {
+      'nvim-neotest/nvim-nio',
+      'nvim-lua/plenary.nvim',
+      'antoinemadec/FixCursorHold.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-neotest/neotest-jest',
+      'nvim-neotest/neotest-python',
+      'mfussenegger/nvim-dap-python',
+    },
+    config = function()
+      require('custom.plugins.neotest_setup').setup_neotest()
+
+      require('neotest').setup {
+        adapters = {
+          require 'neotest-python' {
+            args = { '--keepdb' },
+          },
+          -- require 'neotest-jest' {
+          --   jestCommand = 'npm jest --',
+          --   jestConfigFile = 'jest.config.ts',
+          --   -- env = { CI = true },
+          --   cwd = function(path)
+          --     return vim.fn.getcwd()
+          --   end,
+          -- },
+        },
+      }
+    end,
+  },
   -- { 'ldelossa/gh.nvim' },
   {
     'sindrets/diffview.nvim',
@@ -734,25 +773,25 @@ return {
     config = function()
       require('package-info').setup()
       -- Show dependency versions
-      vim.keymap.set({ 'n' }, '<LEADER>Ns', require('package-info').show, { silent = true, noremap = true })
-
-      -- Hide dependency versions
-      vim.keymap.set({ 'n' }, '<LEADER>Nc', require('package-info').hide, { silent = true, noremap = true })
-
-      -- Toggle dependency versions
-      vim.keymap.set({ 'n' }, '<LEADER>Nt', require('package-info').toggle, { silent = true, noremap = true })
-
-      -- Update dependency on the line
-      vim.keymap.set({ 'n' }, '<LEADER>Nu', require('package-info').update, { silent = true, noremap = true })
-
-      -- Delete dependency on the line
-      vim.keymap.set({ 'n' }, '<LEADER>Nd', require('package-info').delete, { silent = true, noremap = true })
-
-      -- Install a new dependency
-      vim.keymap.set({ 'n' }, '<LEADER>Ni', require('package-info').install, { silent = true, noremap = true })
-
-      -- Install a different dependency version
-      vim.keymap.set({ 'n' }, '<LEADER>Np', require('package-info').change_version, { silent = true, noremap = true })
+      -- vim.keymap.set({ 'n' }, '<LEADER>Ns', require('package-info').show, { silent = true, noremap = true })
+      --
+      -- -- Hide dependency versions
+      -- vim.keymap.set({ 'n' }, '<LEADER>Nc', require('package-info').hide, { silent = true, noremap = true })
+      --
+      -- -- Toggle dependency versions
+      -- vim.keymap.set({ 'n' }, '<LEADER>Nt', require('package-info').toggle, { silent = true, noremap = true })
+      --
+      -- -- Update dependency on the line
+      -- vim.keymap.set({ 'n' }, '<LEADER>Nu', require('package-info').update, { silent = true, noremap = true })
+      --
+      -- -- Delete dependency on the line
+      -- vim.keymap.set({ 'n' }, '<LEADER>Nd', require('package-info').delete, { silent = true, noremap = true })
+      --
+      -- -- Install a new dependency
+      -- vim.keymap.set({ 'n' }, '<LEADER>Ni', require('package-info').install, { silent = true, noremap = true })
+      --
+      -- -- Install a different dependency version
+      -- vim.keymap.set({ 'n' }, '<LEADER>Np', require('package-info').change_version, { silent = true, noremap = true })
     end,
   },
   {

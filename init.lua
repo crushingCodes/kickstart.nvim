@@ -393,7 +393,8 @@ require('lazy').setup({
         { '<leader>Y', group = 'Yank' },
         { '<leader>r', group = 'Rest' },
         -- { '<leader>m', group = 'Merge' },
-        { '<leader>t', group = 'Tabs' },
+        { '<leader>t', group = 'Test' },
+        { '<leader>T', group = 'Tabs' },
         { '<leader>n', group = 'Notes' },
       }
     end,
@@ -1561,8 +1562,30 @@ function Neotest_actions()
   require('neotest').output_panel.open()
   require('neotest').summary.open()
 end
+function Neotest_actions_last()
+  require('neotest').run.run_last()
+  require('neotest').output_panel.open()
+  require('neotest').summary.open()
+end
 
-vim.api.nvim_set_keymap('n', '<leader>T', ':lua Neotest_actions()<CR>', { noremap = true, silent = true })
+function Neotest_actions_debug()
+  require('neotest').run.run { strategy = 'dap' }
+  -- require('neotest').output_panel.open()
+  -- require('neotest').summary.open()
+end
+function Neotest_actions_debug_last()
+  require('neotest').run.run_last { strategy = 'dap' }
+  -- require('neotest').output_panel.open()
+  -- require('neotest').summary.open()
+end
+
+vim.api.nvim_set_keymap('n', '<leader>tt', ':lua Neotest_actions()<CR>', { noremap = true, silent = true, desc = 'Run Nearest Test' })
+vim.api.nvim_set_keymap('n', '<leader>tT', ':lua Neotest_actions()<CR>', { noremap = true, silent = true, desc = 'Run Last Test' })
+vim.api.nvim_set_keymap('n', '<leader>td', ':lua Neotest_actions_debug()<CR>', { noremap = true, silent = true, desc = 'Debug Nearest Test' })
+vim.api.nvim_set_keymap('n', '<leader>tD', ':lua Neotest_actions_debug_last()<CR>', { noremap = true, silent = true, desc = 'Debug Last Test' })
+vim.api.nvim_set_keymap('n', '<leader>tb', ':DapToggleBreakpoint<CR>', { noremap = true, silent = true, desc = 'Toggle Breakpoint' })
+vim.api.nvim_set_keymap('n', '<leader>tc', ':DapContinue<CR>', { noremap = true, silent = true, desc = 'Continue' })
+vim.api.nvim_set_keymap('n', '<leader>ts', ':DapDisconnect<CR>', { noremap = true, silent = true, desc = 'Disconnect' })
 map('<leader>.', ':DotEnv<CR>', 'Load .env')
 
 local diffview_custom = require 'diffview_custom'
