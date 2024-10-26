@@ -686,6 +686,25 @@ return {
     end,
   },
   {
+    'rcarriga/nvim-notify',
+    opts = {
+      timeout = 3000,
+      render = 'compact',
+      stages = 'fade',
+      top_down = false,
+    },
+  },
+  -- TODO: work out how to prevent the current one loading
+  -- {
+  --   'mrded/nvim-lsp-notify',
+  --   requires = { 'rcarriga/nvim-notify' },
+  --   config = function()
+  --     require('lsp-notify').setup {
+  --       notify = require 'notify',
+  --     }
+  --   end,
+  -- },
+  {
     'folke/noice.nvim',
     event = 'VeryLazy',
     opts = {
@@ -766,21 +785,21 @@ return {
   -- },
   {
     'LunarVim/bigfile.nvim',
-    config = function ()
-      require("bigfile").setup {
-  filesize = 2, -- size of the file in MiB, the plugin round file sizes to the closest MiB
-  pattern = { "*" }, -- autocmd pattern or function see <### Overriding the detection of big files>
-  features = { -- features to disable
-    "indent_blankline",
-    "illuminate",
-    "lsp",
-    "treesitter",
-    "syntax",
-    "matchparen",
-    "vimopts",
-    "filetype",
-  },
-}
-    end
+    config = function()
+      require('bigfile').setup {
+        filesize = 2, -- size of the file in MiB, the plugin round file sizes to the closest MiB
+        pattern = { '*' }, -- autocmd pattern or function see <### Overriding the detection of big files>
+        features = { -- features to disable
+          'indent_blankline',
+          'illuminate',
+          'lsp',
+          'treesitter',
+          'syntax',
+          'matchparen',
+          'vimopts',
+          'filetype',
+        },
+      }
+    end,
   },
 }
