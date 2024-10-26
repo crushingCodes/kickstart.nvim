@@ -63,9 +63,9 @@ return {
     cmd = 'ASToggle', -- optional for lazy loading on command
     event = { 'InsertLeave', 'TextChanged' }, -- optional for lazy loading on trigger events
     opts = {
-      execution_message = {
-        enabled = false,
-      },
+      -- execution_message = {
+      --   enabled = false,
+      -- },
       condition = function(buf)
         local fn = vim.fn
         local utils = require 'auto-save.utils.data'
@@ -731,18 +731,23 @@ return {
       render = 'compact',
       stages = 'fade',
       top_down = false,
+      max_height = 5,
     },
   },
   -- TODO: work out how to prevent the current one loading
-  -- {
-  --   'mrded/nvim-lsp-notify',
-  --   requires = { 'rcarriga/nvim-notify' },
-  --   config = function()
-  --     require('lsp-notify').setup {
-  --       notify = require 'notify',
-  --     }
-  --   end,
-  -- },
+  {
+    'mrded/nvim-lsp-notify',
+    requires = { 'rcarriga/nvim-notify' },
+    config = function()
+      vim.lsp.handlers['window/showMessage'] = function() end
+      vim.lsp.handlers['window/logMessage'] = function() end
+      vim.lsp.handlers['$/progress'] = function() end
+      require('lsp-notify').setup {
+        notify = require 'notify',
+        -- Disable default LSP handlers for notifications and progress
+      }
+    end,
+  },
   {
     'folke/noice.nvim',
     event = 'VeryLazy',
