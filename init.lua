@@ -1436,7 +1436,10 @@ require('lazy').setup({
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- custom plugins
+  require 'custom.plugins.nvim-notify',
+  require 'custom.plugins.nvim-dap-python',
   require 'custom.plugins',
+  require 'custom.plugins.satelite',
   require 'custom.plugins.chatgpt',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
