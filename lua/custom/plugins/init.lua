@@ -553,10 +553,12 @@ return {
       -- configurations go here
     },
     config = function()
-      require('barbecue').setup()
+      require('barbecue').setup {
+        -- theme = 'tokyonight',
+      }
     end,
   },
-  
+
   {
     'folke/trouble.nvim',
     opts = {}, -- for default options, refer to the configuration section for custom setup.
@@ -642,6 +644,7 @@ return {
       require('lualine').setup {
         options = {
           -- theme = bubbles_theme,
+          -- theme = 'tokyonight',
           component_separators = '',
           section_separators = { left = '', right = '' },
         },
@@ -657,21 +660,21 @@ return {
       }
     end,
   },
-  
+
   -- TODO: work out how to prevent the current one loading
-  {
-    'mrded/nvim-lsp-notify',
-    requires = { 'rcarriga/nvim-notify' },
-    config = function()
-      vim.lsp.handlers['window/showMessage'] = function() end
-      vim.lsp.handlers['window/logMessage'] = function() end
-      vim.lsp.handlers['$/progress'] = function() end
-      require('lsp-notify').setup {
-        notify = require 'notify',
-        -- Disable default LSP handlers for notifications and progress
-      }
-    end,
-  },
+  -- {
+  --   'mrded/nvim-lsp-notify',
+  --   requires = { 'rcarriga/nvim-notify' },
+  --   config = function()
+  --     vim.lsp.handlers['window/showMessage'] = function() end
+  --     vim.lsp.handlers['window/logMessage'] = function() end
+  --     vim.lsp.handlers['$/progress'] = function() end
+  --     require('lsp-notify').setup {
+  --       notify = require 'notify',
+  --       -- Disable default LSP handlers for notifications and progress
+  --     }
+  --   end,
+  -- },
   {
     'folke/noice.nvim',
     event = 'VeryLazy',

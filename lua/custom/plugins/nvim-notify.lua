@@ -10,6 +10,6 @@ return {
     render = 'compact',
     stages = 'fade',
     top_down = false,
-    max_height = 5,
+    max_height = 20,
   },
 }
