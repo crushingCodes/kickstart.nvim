@@ -340,10 +340,23 @@ return {
       'nvim-neotest/neotest-jest',
       'nvim-neotest/neotest-python',
       'mfussenegger/nvim-dap-python',
+      'rouge8/neotest-rust',
     },
     config = function()
       require('custom.plugins.neotest_setup').setup_neotest()
 
+      local mason_path = vim.fn.glob(vim.fn.stdpath 'data' .. '/mason/')
+      print(mason_path)
+      local codelldb_path = mason_path .. 'bin/codelldb'
+      local dap = require 'dap'
+      dap.adapters.codelldb = {
+        type = 'server',
+        port = '${port}',
+        executable = {
+          command = codelldb_path,
+          args = { '--port', '${port}' },
+        },
+      }
       require('neotest').setup {
         adapters = {
           require 'neotest-python' {
@@ -357,10 +370,15 @@ return {
           --     return vim.fn.getcwd()
           --   end,
           -- },
+          require 'neotest-rust' {
+            -- args = { '--no-capture' },
+            -- dap_adapter = 'lldb',
+          },
         },
       }
     end,
   },
+
   -- { 'ldelossa/gh.nvim' },
   {
     'sindrets/diffview.nvim',
