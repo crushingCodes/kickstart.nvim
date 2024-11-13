@@ -1047,6 +1047,8 @@ require('lazy').setup({
         rust = { 'rustfmt', lsp_format = 'fallback' },
         stylus = { 'stylus_supremacy' },
         css = { 'stylus_supremacy' },
+        sql = { 'sleek' },
+        dbui_sql = { 'sleek' },
       },
       formatters = {
         -- stylus_supremacy = {
@@ -1058,6 +1060,14 @@ require('lazy').setup({
         --     return vim.fn.fnamemodify(ctx.filename, ':p:h')
         --   end,
         -- },
+        --
+        --
+        sleek = {
+          command = 'sleek', -- The command to run the formatter
+          args = {}, -- Any additional arguments for `sleek`
+          stdin = true, -- Whether to pass the buffer via stdin
+          try_node_modules = false, -- Set to true if `sleek` is installed locally in node_modules
+        },
         stylus_supremacy = {
           -- Command to run the formatter
           command = 'stylus-supremacy',
@@ -1889,3 +1899,20 @@ curl.setup {}
 vim.keymap.set('n', '<leader>q', function()
   require('notify').dismiss()
 end, { desc = 'Dismiss all notifications' })
+
+local function add_buffer_to_quickfix()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local filename = vim.api.nvim_buf_get_name(bufnr)
+
+  if filename == '' then
+    print 'No file is associated with this buffer.'
+    return
+  end
+
+  vim.fn.setqflist({
+    { filename = filename },
+  }, 'a') -- "a" for appending to the quickfix list
+  print('Added ' .. filename .. ' to the quickfix list.')
+end
+
+vim.keymap.set('n', '<leader>Q', add_buffer_to_quickfix, { desc = 'Add current buffer to quickfix list' })

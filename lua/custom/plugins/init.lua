@@ -3,6 +3,17 @@
 --
 --
 
+_G.jtest_is_test_file = function(file_path)
+  local is_test_file = vim.endswith(file_path, '.test.tsx')
+    or vim.endswith(file_path, '.jest.tsx')
+    or vim.endswith(file_path, '.test.ts')
+    or vim.endswith(file_path, '.jest.ts')
+    or vim.endswith(file_path, '.test.tsx')
+    or vim.endswith(file_path, '.jest.jsx')
+    or vim.endswith(file_path, '.test.js')
+    or vim.endswith(file_path, '.jest.js')
+  return is_test_file
+end
 -- See the kickstart.nvim README for more information
 return {
   -- { 'tpope/vim-surround' },
@@ -349,16 +360,29 @@ return {
           require 'neotest-python' {
             args = { '--keepdb' },
           },
-          -- require 'neotest-jest' {
-          --   jestCommand = 'npm jest --',
-          --   jestConfigFile = 'jest.config.ts',
-          --   -- env = { CI = true },
-          --   cwd = function(path)
-          --     return vim.fn.getcwd()
-          --   end,
-          -- },
+          require 'neotest-jest' {
+
+            jestCommand = 'npm run jest -- --coverage',
+            jestConfigFile = 'jest.config.ts',
+            -- env = { CI = true },
+            cwd = function(path)
+              return vim.fn.getcwd()
+            end,
+          },
         },
       }
+
+      local jest_adapter = require 'neotest-jest'
+      jest_adapter.is_test_file = _G.jtest_is_test_file
+    end,
+  },
+  {
+    'andythigpen/nvim-coverage',
+    requires = 'nvim-lua/plenary.nvim',
+    -- Optional: needed for PHP when using the cobertura parser
+    rocks = { 'lua-xmlreader' },
+    config = function()
+      require('coverage').setup()
     end,
   },
   -- { 'ldelossa/gh.nvim' },
