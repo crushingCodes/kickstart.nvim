@@ -116,8 +116,8 @@ return {
           --   quotePreference = 'auto',
           -- },
           jsx_close_tag = {
-            enable = true,
-            filetypes = { 'javascriptreact', 'typescriptreact' },
+            enable = false,
+            -- filetypes = { 'javascriptreact', 'typescriptreact' },
           },
           -- -----------------------------------------------------------------------------
           -- spawn additional tsserver instance to calculate diagnostics on it
@@ -400,15 +400,15 @@ return {
   --   end,
   -- },
   -- { 'folke/lazydev.nvim' },
-  {
-    'ellisonleao/dotenv.nvim',
-    config = function()
-      require('dotenv').setup {
-        enable_on_load = true, -- will load your .env file upon loading a buffer
-        verbose = false, -- show error notification if .env file is not found and if .env is loaded
-      }
-    end,
-  },
+  -- {
+  --   'ellisonleao/dotenv.nvim',
+  --   config = function()
+  --     require('dotenv').setup {
+  --       enable_on_load = true, -- will load your .env file upon loading a buffer
+  --       verbose = false, -- show error notification if .env file is not found and if .env is loaded
+  --     }
+  --   end,
+  -- },
   { 'mg979/vim-visual-multi' },
   {
     'takac/vim-hardtime',
@@ -789,6 +789,58 @@ return {
           'filetype',
         },
       }
+    end,
+  },
+  {
+    'zeioth/garbage-day.nvim',
+    dependencies = 'neovim/nvim-lspconfig',
+    event = 'VeryLazy',
+    opts = {
+      -- your options here
+    },
+    {
+      'rachartier/tiny-inline-diagnostic.nvim',
+      event = 'VeryLazy', -- Or `LspAttach`
+      priority = 1000, -- needs to be loaded in first
+      config = function()
+        require('tiny-inline-diagnostic').setup {
+          options = {
+            virt_texts = {
+              priority = 10000,
+            },
+            show_source = true,
+          },
+        }
+      end,
+    },
+  },
+  {
+    'windwp/nvim-ts-autotag',
+    config = function()
+      vim.diagnostic.config { virtual_text = false }
+      require('nvim-ts-autotag').setup {
+        opts = {
+          -- Defaults
+          enable_close = true, -- Auto close tags
+          enable_rename = true, -- Auto rename pairs of tags
+          enable_close_on_slash = false, -- Auto close on trailing </
+        },
+        -- Also override individual filetype configs, these take priority.
+        -- Empty by default, useful if one of the "opts" global settings
+        -- doesn't work well in a specific filetype
+        per_filetype = {
+          ['html'] = {
+            enable_close = false,
+          },
+        },
+      }
+    end,
+  },
+  {
+    'dmmulroy/ts-error-translator.nvim',
+
+    config = function()
+      require('ts-error-translator').setup()
     end,
   },
 }
