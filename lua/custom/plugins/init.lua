@@ -409,7 +409,7 @@ return {
   --     }
   --   end,
   -- },
-  { 'mg979/vim-visual-multi' },
+  -- { 'mg979/vim-visual-multi' },
   {
     'takac/vim-hardtime',
     config = function()
@@ -420,17 +420,17 @@ return {
     'nvim-treesitter/nvim-treesitter-textobjects',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
   },
-  {
-    'chrisgrieser/nvim-various-textobjs',
-    lazy = false,
-    opts = { useDefaultKeymaps = true },
-  },
-  {
-    'obreitwi/vim-sort-folds',
-    config = function()
-      -- require('vimsortfolds').setup()
-    end,
-  },
+  -- {
+  --   'chrisgrieser/nvim-various-textobjs',
+  --   lazy = false,
+  --   opts = { useDefaultKeymaps = true },
+  -- },
+  -- {
+  --   'obreitwi/vim-sort-folds',
+  --   config = function()
+  --     -- require('vimsortfolds').setup()
+  --   end,
+  -- },
   -- { 'nvim-treesitter/nvim-treesitter-context' },
   {
     'lukas-reineke/indent-blankline.nvim',
@@ -629,32 +629,32 @@ return {
     end,
   },
   -- { 'nvimtools/none-ls.nvim' },
-  {
-    'stevearc/oil.nvim',
-    config = function()
-      require('oil').setup {
-        keymaps = {
-          ['g?'] = 'actions.show_help',
-          ['<CR>'] = 'actions.select',
-          ['<C-s>'] = { 'actions.select', opts = { vertical = true }, desc = 'Open the entry in a vertical split' },
-          ['<C-h>'] = { 'actions.select', opts = { horizontal = true }, desc = 'Open the entry in a horizontal split' },
-          ['<C-t>'] = { 'actions.select', opts = { tab = true }, desc = 'Open the entry in new tab' },
-          ['<C-p>'] = 'actions.preview',
-          ['<C-c>'] = 'actions.close',
-          ['<C-l>'] = 'actions.refresh',
-          ['-'] = 'actions.parent',
-          ['_'] = 'actions.open_cwd',
-          ['`'] = 'actions.cd',
-          ['~'] = { 'actions.cd', opts = { scope = 'tab' }, desc = ':tcd to the current oil directory' },
-          ['gs'] = 'actions.change_sort',
-          ['gx'] = 'actions.open_external',
-          ['H'] = 'actions.toggle_hidden',
-          ['g\\'] = 'actions.toggle_trash',
-        },
-      }
-      vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
-    end,
-  },
+  -- {
+  --   'stevearc/oil.nvim',
+  --   config = function()
+  --     require('oil').setup {
+  --       keymaps = {
+  --         ['g?'] = 'actions.show_help',
+  --         ['<CR>'] = 'actions.select',
+  --         ['<C-s>'] = { 'actions.select', opts = { vertical = true }, desc = 'Open the entry in a vertical split' },
+  --         ['<C-h>'] = { 'actions.select', opts = { horizontal = true }, desc = 'Open the entry in a horizontal split' },
+  --         ['<C-t>'] = { 'actions.select', opts = { tab = true }, desc = 'Open the entry in new tab' },
+  --         ['<C-p>'] = 'actions.preview',
+  --         ['<C-c>'] = 'actions.close',
+  --         ['<C-l>'] = 'actions.refresh',
+  --         ['-'] = 'actions.parent',
+  --         ['_'] = 'actions.open_cwd',
+  --         ['`'] = 'actions.cd',
+  --         ['~'] = { 'actions.cd', opts = { scope = 'tab' }, desc = ':tcd to the current oil directory' },
+  --         ['gs'] = 'actions.change_sort',
+  --         ['gx'] = 'actions.open_external',
+  --         ['H'] = 'actions.toggle_hidden',
+  --         ['g\\'] = 'actions.toggle_trash',
+  --       },
+  --     }
+  --     vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+  --   end,
+  -- },
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -708,15 +708,15 @@ return {
       'rcarriga/nvim-notify',
     },
   },
-  {
-    'Wansmer/treesj',
-    keys = { '<space>m', '<space>j', '<space>s' },
-    dependencies = { 'nvim-treesitter/nvim-treesitter' }, -- if you install parsers with `nvim-treesitter`
-    config = function()
-      require('treesj').setup {--[[ your config ]]
-      }
-    end,
-  },
+  -- {
+  --   'Wansmer/treesj',
+  --   keys = { '<space>m', '<space>j', '<space>s' },
+  --   dependencies = { 'nvim-treesitter/nvim-treesitter' }, -- if you install parsers with `nvim-treesitter`
+  --   config = function()
+  --     require('treesj').setup {--[[ your config ]]
+  --     }
+  --   end,
+  -- },
   {
     'vuki656/package-info.nvim',
     requires = 'MunifTanjim/nui.nvim',
@@ -841,6 +841,20 @@ return {
 
     config = function()
       require('ts-error-translator').setup()
+    end,
+  },
+  {
+    'alexpasmantier/pymple.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'MunifTanjim/nui.nvim',
+      -- optional (nicer ui)
+      'stevearc/dressing.nvim',
+      'nvim-tree/nvim-web-devicons',
+    },
+    build = ':PympleBuild',
+    config = function()
+      require('pymple').setup()
     end,
   },
 }
