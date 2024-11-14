@@ -803,12 +803,15 @@ return {
       event = 'VeryLazy', -- Or `LspAttach`
       priority = 1000, -- needs to be loaded in first
       config = function()
+        -- severity_sort
+        vim.diagnostic.config { severity_sort = true }
         require('tiny-inline-diagnostic').setup {
           options = {
             virt_texts = {
               priority = 10000,
             },
             show_source = true,
+            multilines = true,
           },
         }
       end,
