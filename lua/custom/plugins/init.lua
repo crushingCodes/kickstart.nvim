@@ -832,7 +832,7 @@ return {
         require('tiny-inline-diagnostic').setup {
           options = {
             virt_texts = {
-              priority = 10000,
+              priority = 1,
             },
             show_source = true,
             multilines = true,
