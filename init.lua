@@ -1037,13 +1037,13 @@ require('lazy').setup({
         -- is found.
         -- javascript = { { 'prettierd', 'prettier' } },
         go = { 'goimports', 'gofmt' },
-        javascript = { 'prettier' },
-        javascriptreact = { 'prettier' },
-        typescript = { 'prettier' },
-        typescriptreact = { 'prettier' },
-        json = { 'prettier' },
-        yaml = { 'prettier' },
-        markdown = { 'prettier' },
+        javascript = { 'biome', 'prettier' },
+        javascriptreact = { 'biome', 'prettier' },
+        typescript = { 'biome', 'prettier' },
+        typescriptreact = { 'biome', 'prettier' },
+        json = { 'biome', 'prettier' },
+        yaml = { 'biome', 'prettier' },
+        markdown = { 'biome', 'prettier' },
         rust = { 'rustfmt', lsp_format = 'fallback' },
         stylus = { 'stylus_supremacy' },
         css = { 'stylus_supremacy' },
@@ -1573,7 +1573,7 @@ vim.api.nvim_set_keymap('n', '<leader>hh', ':Telescope gh pull_request<CR>', { n
 function Neotest_actions()
   require('neotest').run.run()
   require('neotest').output_panel.open()
-  require('neotest').summary.open()
+  -- require('neotest').summary.open()
 end
 function Neotest_actions_last()
   require('neotest').run.run_last()
@@ -1593,6 +1593,7 @@ function Neotest_actions_debug_last()
 end
 
 vim.api.nvim_set_keymap('n', '<leader>tt', ':lua Neotest_actions()<CR>', { noremap = true, silent = true, desc = 'Run Nearest Test' })
+vim.api.nvim_set_keymap('n', '<leader>te', ':lua require("neotest").summary.open()<CR>', { noremap = true, silent = true, desc = 'Test Explorer' })
 vim.api.nvim_set_keymap('n', '<leader>tT', ':lua Neotest_actions()<CR>', { noremap = true, silent = true, desc = 'Run Last Test' })
 vim.api.nvim_set_keymap('n', '<leader>td', ':lua Neotest_actions_debug()<CR>', { noremap = true, silent = true, desc = 'Debug Nearest Test' })
 vim.api.nvim_set_keymap('n', '<leader>tD', ':lua Neotest_actions_debug_last()<CR>', { noremap = true, silent = true, desc = 'Debug Last Test' })
@@ -1899,20 +1900,3 @@ curl.setup {}
 vim.keymap.set('n', '<leader>q', function()
   require('notify').dismiss()
 end, { desc = 'Dismiss all notifications' })
-
-local function add_buffer_to_quickfix()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local filename = vim.api.nvim_buf_get_name(bufnr)
-
-  if filename == '' then
-    print 'No file is associated with this buffer.'
-    return
-  end
-
-  vim.fn.setqflist({
-    { filename = filename },
-  }, 'a') -- "a" for appending to the quickfix list
-  print('Added ' .. filename .. ' to the quickfix list.')
-end
-
-vim.keymap.set('n', '<leader>Q', add_buffer_to_quickfix, { desc = 'Add current buffer to quickfix list' })

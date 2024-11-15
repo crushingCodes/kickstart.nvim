@@ -127,8 +127,8 @@ return {
           --   quotePreference = 'auto',
           -- },
           jsx_close_tag = {
-            enable = true,
-            filetypes = { 'javascriptreact', 'typescriptreact' },
+            enable = false,
+            -- filetypes = { 'javascriptreact', 'typescriptreact' },
           },
           -- -----------------------------------------------------------------------------
           -- spawn additional tsserver instance to calculate diagnostics on it
@@ -351,10 +351,23 @@ return {
       'nvim-neotest/neotest-jest',
       'nvim-neotest/neotest-python',
       'mfussenegger/nvim-dap-python',
+      'rouge8/neotest-rust',
     },
     config = function()
       require('custom.plugins.neotest_setup').setup_neotest()
 
+      local mason_path = vim.fn.glob(vim.fn.stdpath 'data' .. '/mason/')
+      print(mason_path)
+      local codelldb_path = mason_path .. 'bin/codelldb'
+      local dap = require 'dap'
+      dap.adapters.codelldb = {
+        type = 'server',
+        port = '${port}',
+        executable = {
+          command = codelldb_path,
+          args = { '--port', '${port}' },
+        },
+      }
       require('neotest').setup {
         adapters = {
           require 'neotest-python' {
@@ -368,6 +381,10 @@ return {
             cwd = function(path)
               return vim.fn.getcwd()
             end,
+            require 'neotest-rust' {
+              -- args = { '--no-capture' },
+              -- dap_adapter = 'lldb',
+            },
           },
         },
       }
@@ -385,6 +402,7 @@ return {
       require('coverage').setup()
     end,
   },
+
   -- { 'ldelossa/gh.nvim' },
   {
     'sindrets/diffview.nvim',
@@ -406,16 +424,16 @@ return {
   --   end,
   -- },
   -- { 'folke/lazydev.nvim' },
-  {
-    'ellisonleao/dotenv.nvim',
-    config = function()
-      require('dotenv').setup {
-        enable_on_load = true, -- will load your .env file upon loading a buffer
-        verbose = false, -- show error notification if .env file is not found and if .env is loaded
-      }
-    end,
-  },
-  { 'mg979/vim-visual-multi' },
+  -- {
+  --   'ellisonleao/dotenv.nvim',
+  --   config = function()
+  --     require('dotenv').setup {
+  --       enable_on_load = true, -- will load your .env file upon loading a buffer
+  --       verbose = false, -- show error notification if .env file is not found and if .env is loaded
+  --     }
+  --   end,
+  -- },
+  -- { 'mg979/vim-visual-multi' },
   {
     'takac/vim-hardtime',
     config = function()
@@ -426,17 +444,17 @@ return {
     'nvim-treesitter/nvim-treesitter-textobjects',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
   },
-  {
-    'chrisgrieser/nvim-various-textobjs',
-    lazy = false,
-    opts = { useDefaultKeymaps = true },
-  },
-  {
-    'obreitwi/vim-sort-folds',
-    config = function()
-      -- require('vimsortfolds').setup()
-    end,
-  },
+  -- {
+  --   'chrisgrieser/nvim-various-textobjs',
+  --   lazy = false,
+  --   opts = { useDefaultKeymaps = true },
+  -- },
+  -- {
+  --   'obreitwi/vim-sort-folds',
+  --   config = function()
+  --     -- require('vimsortfolds').setup()
+  --   end,
+  -- },
   -- { 'nvim-treesitter/nvim-treesitter-context' },
   {
     'lukas-reineke/indent-blankline.nvim',
@@ -635,32 +653,32 @@ return {
     end,
   },
   -- { 'nvimtools/none-ls.nvim' },
-  {
-    'stevearc/oil.nvim',
-    config = function()
-      require('oil').setup {
-        keymaps = {
-          ['g?'] = 'actions.show_help',
-          ['<CR>'] = 'actions.select',
-          ['<C-s>'] = { 'actions.select', opts = { vertical = true }, desc = 'Open the entry in a vertical split' },
-          ['<C-h>'] = { 'actions.select', opts = { horizontal = true }, desc = 'Open the entry in a horizontal split' },
-          ['<C-t>'] = { 'actions.select', opts = { tab = true }, desc = 'Open the entry in new tab' },
-          ['<C-p>'] = 'actions.preview',
-          ['<C-c>'] = 'actions.close',
-          ['<C-l>'] = 'actions.refresh',
-          ['-'] = 'actions.parent',
-          ['_'] = 'actions.open_cwd',
-          ['`'] = 'actions.cd',
-          ['~'] = { 'actions.cd', opts = { scope = 'tab' }, desc = ':tcd to the current oil directory' },
-          ['gs'] = 'actions.change_sort',
-          ['gx'] = 'actions.open_external',
-          ['H'] = 'actions.toggle_hidden',
-          ['g\\'] = 'actions.toggle_trash',
-        },
-      }
-      vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
-    end,
-  },
+  -- {
+  --   'stevearc/oil.nvim',
+  --   config = function()
+  --     require('oil').setup {
+  --       keymaps = {
+  --         ['g?'] = 'actions.show_help',
+  --         ['<CR>'] = 'actions.select',
+  --         ['<C-s>'] = { 'actions.select', opts = { vertical = true }, desc = 'Open the entry in a vertical split' },
+  --         ['<C-h>'] = { 'actions.select', opts = { horizontal = true }, desc = 'Open the entry in a horizontal split' },
+  --         ['<C-t>'] = { 'actions.select', opts = { tab = true }, desc = 'Open the entry in new tab' },
+  --         ['<C-p>'] = 'actions.preview',
+  --         ['<C-c>'] = 'actions.close',
+  --         ['<C-l>'] = 'actions.refresh',
+  --         ['-'] = 'actions.parent',
+  --         ['_'] = 'actions.open_cwd',
+  --         ['`'] = 'actions.cd',
+  --         ['~'] = { 'actions.cd', opts = { scope = 'tab' }, desc = ':tcd to the current oil directory' },
+  --         ['gs'] = 'actions.change_sort',
+  --         ['gx'] = 'actions.open_external',
+  --         ['H'] = 'actions.toggle_hidden',
+  --         ['g\\'] = 'actions.toggle_trash',
+  --       },
+  --     }
+  --     vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+  --   end,
+  -- },
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -714,15 +732,15 @@ return {
       'rcarriga/nvim-notify',
     },
   },
-  {
-    'Wansmer/treesj',
-    keys = { '<space>m', '<space>j', '<space>s' },
-    dependencies = { 'nvim-treesitter/nvim-treesitter' }, -- if you install parsers with `nvim-treesitter`
-    config = function()
-      require('treesj').setup {--[[ your config ]]
-      }
-    end,
-  },
+  -- {
+  --   'Wansmer/treesj',
+  --   keys = { '<space>m', '<space>j', '<space>s' },
+  --   dependencies = { 'nvim-treesitter/nvim-treesitter' }, -- if you install parsers with `nvim-treesitter`
+  --   config = function()
+  --     require('treesj').setup {--[[ your config ]]
+  --     }
+  --   end,
+  -- },
   {
     'vuki656/package-info.nvim',
     requires = 'MunifTanjim/nui.nvim',
@@ -797,4 +815,73 @@ return {
       }
     end,
   },
+  {
+    'zeioth/garbage-day.nvim',
+    dependencies = 'neovim/nvim-lspconfig',
+    event = 'VeryLazy',
+    opts = {
+      -- your options here
+    },
+    {
+      'rachartier/tiny-inline-diagnostic.nvim',
+      event = 'VeryLazy', -- Or `LspAttach`
+      priority = 1000, -- needs to be loaded in first
+      config = function()
+        -- severity_sort
+        vim.diagnostic.config { severity_sort = true }
+        require('tiny-inline-diagnostic').setup {
+          options = {
+            virt_texts = {
+              priority = 10000,
+            },
+            show_source = true,
+            multilines = true,
+          },
+        }
+      end,
+    },
+  },
+  {
+    'windwp/nvim-ts-autotag',
+    config = function()
+      vim.diagnostic.config { virtual_text = false }
+      require('nvim-ts-autotag').setup {
+        opts = {
+          -- Defaults
+          enable_close = true, -- Auto close tags
+          enable_rename = true, -- Auto rename pairs of tags
+          enable_close_on_slash = false, -- Auto close on trailing </
+        },
+        -- Also override individual filetype configs, these take priority.
+        -- Empty by default, useful if one of the "opts" global settings
+        -- doesn't work well in a specific filetype
+        per_filetype = {
+          ['html'] = {
+            enable_close = false,
+          },
+        },
+      }
+    end,
+  },
+  {
+    'dmmulroy/ts-error-translator.nvim',
+
+    config = function()
+      require('ts-error-translator').setup()
+    end,
+  },
+  -- {
+  --   'alexpasmantier/pymple.nvim',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'MunifTanjim/nui.nvim',
+  --     -- optional (nicer ui)
+  --     'stevearc/dressing.nvim',
+  --     'nvim-tree/nvim-web-devicons',
+  --   },
+  --   build = ':PympleBuild',
+  --   config = function()
+  --     require('pymple').setup()
+  --   end,
+  -- },
 }
