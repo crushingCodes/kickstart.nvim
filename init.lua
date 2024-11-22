@@ -1046,7 +1046,9 @@ require('lazy').setup({
         markdown = { 'biome', 'prettier' },
         rust = { 'rustfmt', lsp_format = 'fallback' },
         stylus = { 'stylus_supremacy' },
-        css = { 'biome' },
+        css = { 'stylus_supremacy' },
+        sql = { 'sleek' },
+        dbui_sql = { 'sleek' },
       },
       formatters = {
         -- stylus_supremacy = {
@@ -1058,6 +1060,14 @@ require('lazy').setup({
         --     return vim.fn.fnamemodify(ctx.filename, ':p:h')
         --   end,
         -- },
+        --
+        --
+        sleek = {
+          command = 'sleek', -- The command to run the formatter
+          args = {}, -- Any additional arguments for `sleek`
+          stdin = true, -- Whether to pass the buffer via stdin
+          try_node_modules = false, -- Set to true if `sleek` is installed locally in node_modules
+        },
         stylus_supremacy = {
           -- Command to run the formatter
           command = 'stylus-supremacy',
