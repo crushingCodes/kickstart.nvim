@@ -798,29 +798,29 @@ return {
     opts = {
       -- your options here
     },
-    {
-      'rachartier/tiny-inline-diagnostic.nvim',
-      event = 'VeryLazy', -- Or `LspAttach`
-      priority = 1000, -- needs to be loaded in first
-      config = function()
-        -- severity_sort
-        vim.diagnostic.config { severity_sort = true }
-        require('tiny-inline-diagnostic').setup {
-          options = {
-            virt_texts = {
-              priority = 10000,
-            },
-            show_source = true,
-            multilines = true,
-          },
-        }
-      end,
-    },
   },
+  -- {
+  --   'rachartier/tiny-inline-diagnostic.nvim',
+  --   event = 'VeryLazy', -- Or `LspAttach`
+  --   priority = 1000, -- needs to be loaded in first
+  --   config = function()
+  -- vim.diagnostic.config { virtual_text = false }
+  --     -- severity_sort
+  --     vim.diagnostic.config { severity_sort = true }
+  --     require('tiny-inline-diagnostic').setup {
+  --       options = {
+  --         virt_texts = {
+  --           priority = 10000,
+  --         },
+  --         show_source = true,
+  --         multilines = true,
+  --       },
+  --     }
+  --   end,
+  -- },
   {
     'windwp/nvim-ts-autotag',
     config = function()
-      vim.diagnostic.config { virtual_text = false }
       require('nvim-ts-autotag').setup {
         opts = {
           -- Defaults

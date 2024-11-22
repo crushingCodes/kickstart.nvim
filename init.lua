@@ -1113,6 +1113,7 @@ require('lazy').setup({
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
       'hrsh7th/nvim-cmp',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
     },
     config = function()
       -- See `:help cmp`
@@ -1189,6 +1190,7 @@ require('lazy').setup({
           },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
+          { name = 'nvim_lsp_signature_help' },
           { name = 'path', priority = 800 },
         },
       }
@@ -1890,6 +1892,3 @@ curl.setup {}
 vim.keymap.set('n', '<leader>q', function()
   require('notify').dismiss()
 end, { desc = 'Dismiss all notifications' })
-
-
-
