@@ -448,7 +448,7 @@ require('lazy').setup({
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
       { 'nvim-lua/popup.nvim' },
-      { 'jvgrootveld/telescope-zoxide' },
+      -- { 'jvgrootveld/telescope-zoxide' },
       { 'Snikimonkd/telescope-git-conflicts.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
@@ -460,10 +460,10 @@ require('lazy').setup({
       -- many different aspects of Neovim, your workspace, LSP, and more!
       --
       require('telescope').load_extension 'gh'
-      require('telescope').load_extension 'zoxide'
+      -- require('telescope').load_extension 'zoxide'
       require('telescope').load_extension 'conflicts'
 
-      local z_utils = require 'telescope._extensions.zoxide.utils'
+      -- local z_utils = require 'telescope._extensions.zoxide.utils'
       -- require('telescope').load_extension 'projects'
       -- map('<leader>p', ':lua require("telescope").extensions.projects.projects()<CR>', 'Projects')
       -- The easiest way to use Telescope, is to start by doing something like:
@@ -494,7 +494,12 @@ require('lazy').setup({
           --   preview_cutoff = 1000,
           --   prompt_position = 'top',
           -- } },
-          path_display = { 'smart' },
+          -- path_display = { 'smart' },
+          path_display = {
+            filename_first = {
+              reverse_directories = true,
+            },
+          },
         },
         -- defaults = {
         --   mappings = {
@@ -505,31 +510,19 @@ require('lazy').setup({
           ['ui-select'] = {
             require('telescope.themes').get_dropdown {},
           },
-          zoxide = {
-            prompt_title = '[ Walking on the shoulders of TJ ]',
-            mappings = {
-              default = {
-                after_action = function(selection)
-                  print('Update to (' .. selection.z_score .. ') ' .. selection.path)
-                end,
-              },
-              ['<C-s>'] = {
-                before_action = function(selection)
-                  print 'before C-s'
-                end,
-                action = function(selection)
-                  vim.cmd.edit(selection.path)
-                end,
-              },
-              -- Opens the selected entry in a new split
-              ['<C-q>'] = { action = z_utils.create_basic_command 'split' },
-            },
+          recent_files = {
+            only_cwd = true,
+            -- show_current_file = true,
           },
+          -- frecency = {
+          --   show_scores = true,
+          --   show_filter_column = false,
+          -- },
         },
       }
-
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
+      pcall(require('telescope').load_extension, 'recent_files')
       pcall(require('telescope').load_extension, 'ui-select')
 
       -- vim.api.nvim_set_keymap('n', '<leader>ca', ':Telescope lsp_code_actions<CR>', { noremap = true, silent = true })
@@ -542,9 +535,17 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sk', function()
         require('telescope.builtin').keymaps()
       end, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', function()
-        require('telescope.builtin').find_files()
-      end, { desc = '[S]earch [F]iles' })
+      -- vim.keymap.set('n', '<leader>sf', function()
+      --   require('telescope.builtin').find_files()
+      -- end, { desc = '[S]earch [F]iles' })
+      -- vim.keymap.set('n', '<leader>sf', '<cmd>Telescope frecency workspace=CWD<cr>', { desc = '[S]earch [F]iles' })
+      -- vim.keymap.set('n', '<leader>sf', function()
+      -- vim.cmd 'Telescope frecency workspace=CWD'
+
+      -- require('telescope').extensions.frecency.frecency { workspace = 'CWD' }
+      -- end, { desc = '[S]earch [F]iles' })
+
+      vim.api.nvim_set_keymap('n', '<Leader>sf', [[<cmd>lua require('telescope').extensions.recent_files.pick()<CR>]], { noremap = true, silent = true })
       vim.keymap.set('n', '<leader>ss', function()
         require('telescope.builtin').builtin()
       end, { desc = '[S]earch [S]elect Telescope' })
@@ -564,15 +565,15 @@ require('lazy').setup({
         require('telescope.builtin').oldfiles()
       end, { desc = '[S]earch Recent Files ("." for repeat)' })
 
-      vim.keymap.set('n', '<leader><leader>', function()
-        -- require('telescope.builtin').buffers()
-        -- vim.cmd ':Neotree buffers'
-        --
-        require('telescope').extensions.smart_open.smart_open {
-          match_algorithm = 'fzf',
-          cwd_only = true,
-        }
-      end, { desc = '[ ] Find existing buffers' })
+      -- vim.keymap.set('n', '<leader><leader>', function()
+      --   -- require('telescope.builtin').buffers()
+      --   -- vim.cmd ':Neotree buffers'
+      --   --
+      --   require('telescope').extensions.smart_open.smart_open {
+      --     match_algorithm = 'fzf',
+      --     cwd_only = true,
+      --   }
+      -- end, { desc = '[ ] Find existing buffers' })
 
       vim.keymap.set('n', '<leader>gX', ':Telescope conflicts<cr>', { desc = 'Git conflicts' })
       -- Custom
@@ -621,20 +622,20 @@ require('lazy').setup({
             use_cwd = true,
             sorting = 'recent',
           },
-          -- find_files = { -- enable man_pages picker. Disable cwd and use frecency sorting.
-          --   disable = false,
-          --   use_cwd = true,
-          --   sorting = 'recent',
-          -- },
+          find_files = { -- enable man_pages picker. Disable cwd and use frecency sorting.
+            disable = false,
+            use_cwd = true,
+            sorting = 'recent',
+          },
 
           -- change settings for a telescope extension.
           -- To find out about extensions, you can use `print(vim.inspect(require'telescope'.extensions))`
           -- ['extension_name#extension_method'] = {
           --   -- [...]
           -- },
-          ['smart_open#smart_open'] = {
-            sorting = 'recent',
-          },
+          -- ['smart_open#smart_open'] = {
+          --   sorting = 'recent',
+          -- },
         },
       }
     end,
@@ -1452,6 +1453,9 @@ require('lazy').setup({
   require 'custom.plugins.nvim-dap-python',
   require 'custom.plugins',
   require 'custom.plugins.satelite',
+  require 'custom.plugins.snipe',
+  -- require 'custom.plugins.frecency',
+  require 'custom.plugins.recentfiles',
   require 'custom.plugins.chatgpt',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -1902,3 +1906,21 @@ curl.setup {}
 vim.keymap.set('n', '<leader>q', function()
   require('notify').dismiss()
 end, { desc = 'Dismiss all notifications' })
+
+-- Custom grep and operator to search vim object
+vim.opt.grepprg = 'rg --vimgrep -uu'
+vim.opt.grepformat = '%f:%l:%c:%m'
+
+-- Keymap to open :Grepper
+vim.keymap.set('n', '<leader>sG', function()
+  vim.cmd 'Grepper'
+end, { silent = true })
+
+-- configure to use ripgrep and git grep
+vim.g.grepper = {
+  tools = { 'rg', 'git' },
+}
+-- Use gs to take any motion and populate the search prompt
+-- e.g. gsiw will grep for the current word
+vim.keymap.set({ 'n', 'x' }, 'gs', '<plug>(GrepperOperator)')
+vim.keymap.set('n', '<leader><leader>', '<cmd>b#<CR>', { desc = 'alternate buffer' })

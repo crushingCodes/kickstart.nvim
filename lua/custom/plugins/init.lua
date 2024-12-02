@@ -292,20 +292,20 @@ return {
   --   end,
   -- },
   -- { 'rhysd/rust-doc.vim' },
-  {
-    'danielfalk/smart-open.nvim',
-    branch = '0.2.x',
-    config = function()
-      require('telescope').load_extension 'smart_open'
-    end,
-    dependencies = {
-      'kkharji/sqlite.lua',
-      -- Only required if using match_algorithm fzf
-      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-      -- Optional.  If installed, native fzy will be used when match_algorithm is fzy
-      { 'nvim-telescope/telescope-fzy-native.nvim' },
-    },
-  },
+  -- {
+  --   'danielfalk/smart-open.nvim',
+  --   branch = '0.2.x',
+  --   config = function()
+  --     require('telescope').load_extension 'smart_open'
+  --   end,
+  --   dependencies = {
+  --     'kkharji/sqlite.lua',
+  --     -- Only required if using match_algorithm fzf
+  --     { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+  --     -- Optional.  If installed, native fzy will be used when match_algorithm is fzy
+  --     { 'nvim-telescope/telescope-fzy-native.nvim' },
+  --   },
+  -- },
   -- TODO: move this to private repo
   -- { dir = '~/Projects/plugins/neotest-python' },
 
@@ -884,4 +884,7 @@ return {
   --     require('pymple').setup()
   --   end,
   -- },
+  {
+    'mhinz/vim-grepper',
+  },
 }
