@@ -1449,15 +1449,25 @@ require('lazy').setup({
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- custom plugins
-  require 'custom.plugins.nvim-notify',
-  require 'custom.plugins.nvim-dap-python',
   require 'custom.plugins',
-  require 'custom.plugins.satelite',
-  require 'custom.plugins.snipe',
-  require 'custom.plugins.snacks',
-  -- require 'custom.plugins.frecency',
-  require 'custom.plugins.recentfiles',
+  require 'custom.plugins.abolish',
+  require 'custom.plugins.autosave',
   require 'custom.plugins.chatgpt',
+  require 'custom.plugins.conflict-marker',
+  require 'custom.plugins.neotest',
+  require 'custom.plugins.nvim-dap-python',
+  require 'custom.plugins.nvim-notify',
+  require 'custom.plugins.nvim-lspimport',
+  require 'custom.plugins.recentfiles',
+  require 'custom.plugins.plenary',
+  require 'custom.plugins.satelite',
+  require 'custom.plugins.snacks',
+  require 'custom.plugins.snipe',
+  require 'custom.plugins.typescript-tools',
+  require 'custom.plugins.vim-dadbod',
+  require 'custom.plugins.vim-fugitive',
+  require 'custom.plugins.vim-repeat',
+  require 'custom.plugins.vim-slueth',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
