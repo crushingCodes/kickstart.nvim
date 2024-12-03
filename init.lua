@@ -1454,6 +1454,7 @@ require('lazy').setup({
   require 'custom.plugins',
   require 'custom.plugins.satelite',
   require 'custom.plugins.snipe',
+  require 'custom.plugins.snacks',
   -- require 'custom.plugins.frecency',
   require 'custom.plugins.recentfiles',
   require 'custom.plugins.chatgpt',
@@ -1908,8 +1909,8 @@ vim.keymap.set('n', '<leader>q', function()
 end, { desc = 'Dismiss all notifications' })
 
 -- Custom grep and operator to search vim object
-vim.opt.grepprg = 'rg --vimgrep -uu'
-vim.opt.grepformat = '%f:%l:%c:%m'
+-- vim.opt.grepprg = 'rg --vimgrep -uu'
+-- vim.opt.grepformat = '%f:%l:%c:%m'
 
 -- Keymap to open :Grepper
 vim.keymap.set('n', '<leader>sG', function()
