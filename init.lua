@@ -465,7 +465,6 @@ require('lazy').setup({
 
       local z_utils = require 'telescope._extensions.zoxide.utils'
       -- require('telescope').load_extension 'projects'
-      -- map('<leader>p', ':lua require("telescope").extensions.projects.projects()<CR>', 'Projects')
       -- The easiest way to use Telescope, is to start by doing something like:
       --  :Telescope help_tags
       --
@@ -573,6 +572,15 @@ require('lazy').setup({
           cwd_only = true,
         }
       end, { desc = '[ ] Find existing buffers' })
+
+      vim.keymap.set('n', '<leader>p', function()
+        local builtin = require 'telescope.builtin'
+        builtin.buffers {
+          sort_mru = true,
+          ignore_current_buffer = true,
+          path_display = { shorten = { len = 2, exclude = { -1, -2, -3 } } },
+        }
+      end, { desc = '[p] recent buffers' })
 
       vim.keymap.set('n', '<leader>gX', ':Telescope conflicts<cr>', { desc = 'Git conflicts' })
       -- Custom
@@ -1257,6 +1265,8 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
+      require('mini.cursorword').setup()
+
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
@@ -1849,25 +1859,6 @@ vim.api.nvim_set_keymap(
 )
 
 local ts_utils = require 'nvim-treesitter.ts_utils'
-
--- Function to move to the parent function/class node
-function _G.move_to_parent_node()
-  local node = ts_utils.get_node_at_cursor()
-  if node then
-    local parent = node:parent()
-    if parent then
-      local start_row, start_col, _, _ = parent:range()
-      vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
-    else
-      print 'No parent node found.'
-    end
-  else
-    print 'No Treesitter node at cursor.'
-  end
-end
-
--- Keymap to move to parent node
-vim.api.nvim_set_keymap('n', '<leader>p', ':lua _G.move_to_parent_node()<CR>', { noremap = true, silent = true })
 
 local curl = require 'curl'
 curl.setup {}
