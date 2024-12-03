@@ -534,9 +534,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sk', function()
         require('telescope.builtin').keymaps()
       end, { desc = '[S]earch [K]eymaps' })
-      -- vim.keymap.set('n', '<leader>sf', function()
-      --   require('telescope.builtin').find_files()
-      -- end, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', function()
+        require('telescope.builtin').find_files()
+      end, { desc = '[S]earch [F]iles' })
       -- vim.keymap.set('n', '<leader>sf', '<cmd>Telescope frecency workspace=CWD<cr>', { desc = '[S]earch [F]iles' })
       -- vim.keymap.set('n', '<leader>sf', function()
       -- vim.cmd 'Telescope frecency workspace=CWD'
@@ -544,7 +544,6 @@ require('lazy').setup({
       -- require('telescope').extensions.frecency.frecency { workspace = 'CWD' }
       -- end, { desc = '[S]earch [F]iles' })
 
-      vim.api.nvim_set_keymap('n', '<Leader>sf', [[<cmd>lua require('telescope').extensions.recent_files.pick()<CR>]], { noremap = true, silent = true })
       vim.keymap.set('n', '<leader>ss', function()
         require('telescope.builtin').builtin()
       end, { desc = '[S]earch [S]elect Telescope' })
@@ -560,9 +559,10 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', function()
         require('telescope.builtin').resume()
       end, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', function()
-        require('telescope.builtin').oldfiles()
-      end, { desc = '[S]earch Recent Files ("." for repeat)' })
+      -- vim.keymap.set('n', '<leader>s.', function()
+      --   require('telescope.builtin').oldfiles()
+      -- end, { desc = '[S]earch Recent Files ("." for repeat)' })
+      vim.api.nvim_set_keymap('n', '<Leader>s.', [[<cmd>lua require('telescope').extensions.recent_files.pick()<CR>]], { noremap = true, silent = true })
 
       -- vim.keymap.set('n', '<leader><leader>', function()
       --   -- require('telescope.builtin').buffers()
