@@ -87,6 +87,18 @@ return {
   cmd = 'Neotree',
   keys = {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    {
+      '<leader>ls',
+      function()
+        require('neo-tree.command').execute {
+          action = 'show', -- OPTIONAL, this is the default value
+          source = 'document_symbols', -- OPTIONAL, this is the default value
+          position = 'right', -- OPTIONAL, this is the default value
+        }
+      end,
+      desc = 'NeoTree symbols',
+      silent = true,
+    },
   },
   config = function()
     local neo_tree = require 'neo-tree'
@@ -96,12 +108,16 @@ return {
         'filesystem',
         'buffers',
         'git_status',
+        'document_symbols',
         -- 'example', -- <-- external sources need to be a fully qualified path to the module
         -- 'prfiles', -- <-- external sources need to be a fully qualified path to the module
         --"my.name.example" <-- Feel free to add to your folder structure to create a namespace,
         -- The name of the source will be the last part, or whatever your module
         -- exports as the `name` field.
         -- 'stashes',
+      },
+      document_symbols = {
+        follow_cursor = true,
       },
       -- prfiles = {
       --   window = {
@@ -131,6 +147,7 @@ return {
             ['<space>'] = 'noop',
             ['tf'] = 'telescope_find',
             ['tg'] = 'telescope_grep',
+            -- ['o'] = 'system_open',
             ['o'] = 'system_open',
             --   {
             --   nil,
@@ -161,24 +178,33 @@ return {
             -- neo_tree.refresh()
           end
         end,
+
         system_open = function(state)
           local node = state.tree:get_node()
           local path = node:get_id()
-          -- macOs: open file in default application in the background.
-          vim.fn.jobstart({ 'xdg-open', '-g', path }, { detach = true })
-          -- Linux: open file in default application
-          vim.fn.jobstart({ 'xdg-open', path }, { detach = true })
 
-          -- Windows: Without removing the file from the path, it opens in code.exe instead of explorer.exe
-          local p
-          local lastSlashIndex = path:match '^.+()\\[^\\]*$' -- Match the last slash and everything before it
-          if lastSlashIndex then
-            p = path:sub(1, lastSlashIndex - 1) -- Extract substring before the last slash
-          else
-            p = path -- If no slash found, return original path
-          end
-          vim.cmd('silent !start explorer ' .. p)
+          -- macOS: Open folder or file location in Finder
+          vim.fn.jobstart({ 'open', '-R', path }, { detach = true })
         end,
+
+        -- system_open = function(state)
+        --   local node = state.tree:get_node()
+        --   local path = node:get_id()
+        --   -- macOs: open file in default application in the background.
+        --   vim.fn.jobstart({ 'xdg-open', '-g', path }, { detach = true })
+        --   -- Linux: open file in default application
+        --   vim.fn.jobstart({ 'xdg-open', path }, { detach = true })
+        --
+        --   -- Windows: Without removing the file from the path, it opens in code.exe instead of explorer.exe
+        --   local p
+        --   local lastSlashIndex = path:match '^.+()\\[^\\]*$' -- Match the last slash and everything before it
+        --   if lastSlashIndex then
+        --     p = path:sub(1, lastSlashIndex - 1) -- Extract substring before the last slash
+        --   else
+        --     p = path -- If no slash found, return original path
+        --   end
+        --   vim.cmd('silent !start explorer ' .. p)
+        -- end,
         telescope_find = function(state)
           local node = state.tree:get_node()
           local path = node:get_id()
