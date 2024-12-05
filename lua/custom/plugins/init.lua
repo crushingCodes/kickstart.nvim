@@ -5,8 +5,8 @@
 
 -- See the kickstart.nvim README for more information
 return {
-  
-    { 'kristijanhusak/vim-dadbod-completion' },
+
+  { 'kristijanhusak/vim-dadbod-completion' },
   {
     'kristijanhusak/vim-dadbod-ui',
     init = function()
@@ -198,6 +198,23 @@ return {
   --   end,
   -- },
   -- { 'nvim-treesitter/nvim-treesitter-context' },
+  {
+    'linux-cultist/venv-selector.nvim',
+    dependencies = { 'neovim/nvim-lspconfig', 'nvim-telescope/telescope.nvim', 'mfussenegger/nvim-dap-python' },
+    opts = {
+      -- Your options go here
+      -- name = "venv",
+      auto_refresh = false,
+    },
+    branch = 'regexp', -- This is the regexp branch, use this for the new version
+    event = 'VeryLazy', -- Optional: needed only if you want to type `:VenvSelect` without a keymapping
+    keys = {
+      -- Keymap to open VenvSelector to pick a venv.
+      { '<leader>v', '<cmd>VenvSelect<cr>' },
+      -- Keymap to retrieve the venv from a cache (the one previously used for the same project directory).
+      -- { '<leader>vv', '<cmd>VenvSelectCached<cr>' },
+    },
+  },
   {
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',
@@ -421,7 +438,7 @@ return {
   --     vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
   --   end,
   -- },
-  
+
   -- TODO: work out how to prevent the current one loading
   -- {
   --   'mrded/nvim-lsp-notify',

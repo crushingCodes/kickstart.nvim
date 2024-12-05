@@ -277,17 +277,26 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- --  See `:help wincmd` for a list of all window commands
+-- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+-- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+-- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+-- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+--
+-- -- Resizing
+-- vim.keymap.set('n', '<C-Left>', '<C-w><C->>', { desc = 'Increase window size left' })
+-- vim.keymap.set('n', '<C-Right>', '<C-w><C-<>', { desc = 'Increase window size right' })
+-- vim.keymap.set('n', '<C-Down>', '<C-w><C-->', { desc = 'Increase window size down' })
+-- vim.keymap.set('n', '<C-Up>', '<C-w><C-+>', { desc = 'Increase window size up' })
+--
 
--- Resizing
-vim.keymap.set('n', '<C-Left>', '<C-w><C->>', { desc = 'Increase window size left' })
-vim.keymap.set('n', '<C-Right>', '<C-w><C-<>', { desc = 'Increase window size right' })
-vim.keymap.set('n', '<C-Down>', '<C-w><C-->', { desc = 'Increase window size down' })
-vim.keymap.set('n', '<C-Up>', '<C-w><C-+>', { desc = 'Increase window size up' })
+-- moving between splits
+--
+-- vim.keymap.set('n', '<C-h>', require('smart-splits').move_cursor_left)
+-- vim.keymap.set('n', '<C-j>', require('smart-splits').move_cursor_down)
+-- vim.keymap.set('n', '<C-k>', require('smart-splits').move_cursor_up)
+-- vim.keymap.set('n', '<C-l>', require('smart-splits').move_cursor_right)
+-- vim.keymap.set('n', '<C-\\>', require('smart-splits').move_cursor_previous)
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -1017,7 +1026,7 @@ require('lazy').setup({
       {
         '<leader>w',
         function()
-          require('conform').format { async = false, lsp_fallback = true }
+          -- require('conform').format { async = false, lsp_fallback = true }
           vim.cmd 'w'
         end,
         mode = '',
@@ -1037,6 +1046,14 @@ require('lazy').setup({
       --     lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
       --   }
       -- end,
+      -- If this is set, Conform will run the formatter on save.
+      -- It will pass the table to conform.format().
+      -- This can also be a function that returns the table.
+      format_on_save = {
+        -- I recommend these options. See :help conform.format for details.
+        lsp_format = 'fallback',
+        timeout_ms = 500,
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
@@ -1479,6 +1496,7 @@ require('lazy').setup({
   require 'custom.plugins.vim-fugitive',
   require 'custom.plugins.vim-repeat',
   require 'custom.plugins.vim-slueth',
+  require 'custom.plugins.smart-splits',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
@@ -1927,3 +1945,23 @@ vim.g.grepper = {
 -- e.g. gsiw will grep for the current word
 vim.keymap.set({ 'n', 'x' }, 'gs', '<plug>(GrepperOperator)')
 vim.keymap.set('n', '<leader><leader>', '<cmd>b#<CR>', { desc = 'alternate buffer' })
+
+-- recommended mappings
+-- resizing splits
+-- these keymaps will also accept a range,
+-- for example `10<A-h>` will `resize_left` by `(10 * config.default_amount)`
+vim.keymap.set('n', '<A-h>', require('smart-splits').resize_left)
+vim.keymap.set('n', '<A-j>', require('smart-splits').resize_down)
+vim.keymap.set('n', '<A-k>', require('smart-splits').resize_up)
+vim.keymap.set('n', '<A-l>', require('smart-splits').resize_right)
+-- moving between splits
+vim.keymap.set('n', '<C-h>', require('smart-splits').move_cursor_left)
+vim.keymap.set('n', '<C-j>', require('smart-splits').move_cursor_down)
+vim.keymap.set('n', '<C-k>', require('smart-splits').move_cursor_up)
+vim.keymap.set('n', '<C-l>', require('smart-splits').move_cursor_right)
+vim.keymap.set('n', '<C-\\>', require('smart-splits').move_cursor_previous)
+-- swapping buffers between windows
+vim.keymap.set('n', '<leader><leader>h', require('smart-splits').swap_buf_left)
+vim.keymap.set('n', '<leader><leader>j', require('smart-splits').swap_buf_down)
+vim.keymap.set('n', '<leader><leader>k', require('smart-splits').swap_buf_up)
+vim.keymap.set('n', '<leader><leader>l', require('smart-splits').swap_buf_right)
